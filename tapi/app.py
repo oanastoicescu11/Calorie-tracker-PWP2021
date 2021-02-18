@@ -7,6 +7,8 @@ An example from the exercise taken as a base and then modified (Measurement exam
 # BEGIN of the content taken from the exercise example
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship, backref
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
@@ -20,15 +22,28 @@ db = SQLAlchemy(app)
 class Person(db.Model):
     """ Person- All columns required """
     id = db.Column(db.String(128), primary_key=True)
+    activities = relationship("ActivityRecord", cascade="all, delete-orphan")
 
 
 class Activity(db.Model):
-    """ Activity- id ann intensity required"""
+    """ Activity- id, name and intensity required """
     id = db.Column(db.String(128), primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
+    name = db.Column(db.String(128), nullable=True)
     intensity = db.Column(db.Integer, nullable=False)
     # Description max size 8K for simplicity reasons
     description = db.Column(db.String(8*1024), nullable=True)
+    persons = relationship("ActivityRecord", cascade="all, delete-orphan")
+
+
+class ActivityRecord(db.Model):
+    """ ActivityRecord- All columns required """
+    person_id = db.Column(db.String(128), ForeignKey('person.id'), primary_key=True)
+    activity_id = db.Column(db.String(128), ForeignKey('activity.id'), primary_key=True)
+    person = relationship(Person, backref=backref("activityrecords"))
+    activity = relationship(Activity, backref=backref("activityrecords"))
+    duration = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, primary_key=True)
+
 
 # Simple sanity check for Person (ipython)
 # In [1]: from app import db
