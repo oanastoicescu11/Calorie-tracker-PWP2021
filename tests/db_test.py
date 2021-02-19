@@ -245,7 +245,7 @@ def test_activity_record_cascade_on_person(dbh):
 
     dbh.session.delete(runner)
     dbh.session.commit()
-    fetched = ActivityRecord.query.filter(ActivityRecord.person_id == Person.id).first()
+    fetched = ActivityRecord.query.filter(ActivityRecord.person_id == runner.id).first()
     assert (fetched is None)
 
 
@@ -273,7 +273,7 @@ def test_activity_record_cascade_on_activity(dbh):
 
     dbh.session.delete(running)
     dbh.session.commit()
-    fetched = ActivityRecord.query.filter(ActivityRecord.person_id == Person.id).first()
+    fetched = ActivityRecord.query.filter(ActivityRecord.activity_id == running.id).first()
     assert (fetched is None)
 
 
