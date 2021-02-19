@@ -151,7 +151,7 @@ def test_activity_record_creation(dbh):
     dbh.session.add(ac)
     dbh.session.commit()
 
-    fetched = ActivityRecord.query.filter(ActivityRecord.person_id == Person.id).first()
+    fetched = ActivityRecord.query.filter(ActivityRecord.person_id == runner.id).first()
     assert(fetched.activity == running)
 
     # extensive cleanup, will work even when cascade might be broken
@@ -382,7 +382,7 @@ def test_meal_record_creation(dbh):
     dbh.session.add(mc)
     dbh.session.commit()
 
-    fetched = MealRecord.query.filter(MealRecord.person_id == Person.id).first()
+    fetched = MealRecord.query.filter(MealRecord.person_id == person.id).first()
     assert(fetched.meal == soup)
 
     # extensive cleanup, will work even when cascade might be broken
@@ -477,7 +477,7 @@ def test_meal_record_cascade_on_person(dbh):
     dbh.session.delete(person)
     dbh.session.commit()
 
-    fetched = MealRecord.query.filter(MealRecord.person_id == Person.id).first()
+    fetched = MealRecord.query.filter(MealRecord.person_id == person.id).first()
     assert (fetched is None)
 
 def test_meal_record_cascade_on_meal(dbh):
@@ -506,7 +506,7 @@ def test_meal_record_cascade_on_meal(dbh):
     dbh.session.delete(soup)
     dbh.session.commit()
 
-    fetched = MealRecord.query.filter(MealRecord.person_id == Person.id).first()
+    fetched = MealRecord.query.filter(MealRecord.person_id == person.id).first()
     assert (fetched is None)
 
 
