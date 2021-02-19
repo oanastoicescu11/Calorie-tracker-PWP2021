@@ -45,6 +45,26 @@ class ActivityRecord(db.Model):
     timestamp = db.Column(db.DateTime, primary_key=True)
 
 
+class Meal(db.Model):
+    """  id, name and servings required """
+    id = db.Column(db.String(128), primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    servings = db.Column(db.Float, nullable=False)
+    # Description max size 8K for simplicity reasons
+    description = db.Column(db.String(8*1024), nullable=True)
+    persons = relationship("MealRecord", cascade="all, delete-orphan")
+    #portions = relationship("MealPortion", cascade="all, delete-orphan")
+
+
+class MealRecord(db.Model):
+    """ MealRecord- All columns required """
+    person_id = db.Column(db.String(128), ForeignKey('person.id'), primary_key=True)
+    meal_id = db.Column(db.String(128), ForeignKey('meal.id'), primary_key=True)
+    person = relationship(Person, backref=backref("mealrecords"))
+    meal = relationship(Meal, backref=backref("mealrecords"))
+    qty = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime, primary_key=True)
+
 # Simple sanity check for Person (ipython)
 # In [1]: from app import db
 # In [2]: db.create_all()

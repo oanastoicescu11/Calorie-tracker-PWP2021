@@ -6,6 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from tapi.app import app, ActivityRecord
 from tapi.app import db
 from tapi.app import Person, Activity
+from tapi.app import Meal, MealRecord
+
 
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
 
@@ -13,6 +15,7 @@ import os
 import tempfile
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, and_
+from flask_sqlalchemy import SQLAlchemy
 
 
 @pytest.fixture
@@ -333,3 +336,175 @@ def test_activity_record_cascade_many(dbh):
     for i in entities:
         dbh.session.delete(i)
     dbh.session.commit()
+
+
+# 'Create a new instance of the model
+def test_meal_creation(dbh):
+    meal = Meal()
+    meal.id = "123"
+    meal.name = "Soup"
+    meal.servings = 2  # 2 servings
+    dbh.session.add(meal)
+    dbh.session.commit()
+    # And with optional fields
+    a = Meal()
+    a.id = "127"
+    a.name = "Oatmeal"
+    a.servings = 3  # 3 servings
+    a.description = "Juha's morning oatmeal that he eats every morning"
+    dbh.session.add(a)
+    dbh.session.commit()
+
+    dbh.session.delete(meal)
+    dbh.session.delete(a)
+    dbh.session.commit()
+
+
+def test_meal_record_creation(dbh):
+    soup = Meal()
+    soup.id = "1234"
+    soup.name = "Fish Soup"
+    soup.servings = 2.5
+    dbh.session.add(soup)
+    dbh.session.commit()
+
+    person = Person()
+    person.id = '4566'
+    dbh.session.add(person)
+    dbh.session.commit()
+
+    mc = MealRecord()
+    mc.meal = soup
+    mc.person = person
+    mc.qty = 1
+    mc.timestamp = datetime.datetime.now()
+
+    dbh.session.add(mc)
+    dbh.session.commit()
+
+    fetched = MealRecord.query.filter(MealRecord.person_id == Person.id).first()
+    assert(fetched.meal == soup)
+
+    # extensive cleanup, will work even when cascade might be broken
+    dbh.session.delete(mc)
+    dbh.session.delete(soup)
+    dbh.session.delete(person)
+
+
+def test_meal_record_creation_many(dbh):
+    # make sure we can have many records for one person
+    # and many records for one meal
+    p1 = Person(id="333")
+    p2 = Person(id="444")
+    m1 = Meal(id="123", name="meal1", servings=2)
+    m2 = Meal(id="456", name="meal2", servings=2)
+
+    entities = [p1, p2, m1, m2]
+
+    p1m1 = MealRecord()
+    p1m1.person = p1
+    p1m1.meal = m1
+    p1m1.qty = 1
+    p1m1.timestamp = datetime.datetime.now()
+    entities.append(p1m1)
+
+    p1m2 = MealRecord()
+    p1m2.person = p1
+    p1m2.meal = m2
+    p1m2.qty = 1
+    p1m2.timestamp = datetime.datetime.now()
+    entities.append(p1m2)
+
+    p2m1 = MealRecord()
+    p2m1.person = p2
+    p2m1.meal = m1
+    p2m1.qty = 1
+    p2m1.timestamp = datetime.datetime.now()
+    entities.append(p2m1)
+
+    p2m2 = MealRecord()
+    p2m2.person = p2
+    p2m2.meal = m2
+    p2m2.qty = 1.5
+    p2m2.timestamp = datetime.datetime.now()
+    entities.append(p2m2)
+
+    for i in entities:
+        dbh.session.add(i)
+    dbh.session.commit()
+
+    fetched = MealRecord.query.filter(and_(Person.id == p1.id, Meal.id == m1.id)).first()
+    assert (fetched is not None)
+    dbh.session.delete(fetched)
+    fetched = MealRecord.query.filter(and_(Person.id == p1.id, Meal.id == m2.id)).first()
+    assert (fetched is not None)
+    dbh.session.delete(fetched)
+    fetched = MealRecord.query.filter(and_(Person.id == p2.id, Meal.id == m1.id)).first()
+    assert (fetched is not None)
+    dbh.session.delete(fetched)
+    fetched = MealRecord.query.filter(and_(Person.id == p2.id, Meal.id == m2.id)).first()
+    assert (fetched is not None)
+    dbh.session.delete(fetched)
+
+    dbh.session.delete(p1)
+    dbh.session.delete(p1)
+    dbh.session.delete(m1)
+    dbh.session.delete(m2)
+
+
+def test_meal_record_cascade_on_person(dbh):
+    soup = Meal()
+    soup.id = "678"
+    soup.name = "Fish Soup"
+    soup.servings = 2.5
+    dbh.session.add(soup)
+    dbh.session.commit()
+
+    person = Person()
+    person.id = '4566'
+    dbh.session.add(person)
+    dbh.session.commit()
+
+    mc = MealRecord()
+    mc.meal = soup
+    mc.person = person
+    mc.qty = 1.5
+    mc.timestamp = datetime.datetime.now()
+
+    dbh.session.add(mc)
+    dbh.session.commit()
+
+    dbh.session.delete(person)
+    dbh.session.commit()
+
+    fetched = MealRecord.query.filter(MealRecord.person_id == Person.id).first()
+    assert (fetched is None)
+
+def test_meal_record_cascade_on_meal(dbh):
+    soup = Meal()
+    soup.id = "678"
+    soup.name = "Fish Soup"
+    soup.servings = 2.5
+    dbh.session.add(soup)
+    dbh.session.commit()
+
+    person = Person()
+    person.id = '4566'
+    dbh.session.add(person)
+    dbh.session.commit()
+
+    mc = MealRecord()
+    mc.meal = soup
+    mc.person = person
+    mc.qty = 1.5
+    mc.timestamp = datetime.datetime.now()
+
+
+    dbh.session.add(mc)
+    dbh.session.commit()
+
+    dbh.session.delete(soup)
+    dbh.session.commit()
+
+    fetched = MealRecord.query.filter(MealRecord.person_id == Person.id).first()
+    assert (fetched is None)
