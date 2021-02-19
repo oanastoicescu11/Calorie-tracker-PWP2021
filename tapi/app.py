@@ -22,8 +22,7 @@ db = SQLAlchemy(app)
 class Person(db.Model):
     """ Person- All columns required """
     id = db.Column(db.String(128), primary_key=True)
-    activities = relationship("ActivityRecord", cascade="all, delete-orphan")
-    meals = relationship("MealRecord", cascade="all, delete-orphan")
+
 
 class Activity(db.Model):
     """ Activity- id, name and intensity required """
@@ -39,7 +38,7 @@ class ActivityRecord(db.Model):
     """ ActivityRecord- All columns required """
     person_id = db.Column(db.String(128), ForeignKey('person.id'), primary_key=True)
     activity_id = db.Column(db.String(128), ForeignKey('activity.id'), primary_key=True)
-    person = relationship(Person, backref=backref("activityrecords"))
+    person = relationship(Person, backref=backref("activities", cascade="all, delete-orphan"))
     activity = relationship(Activity, backref=backref("activityrecords"))
     duration = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, primary_key=True)
@@ -60,7 +59,7 @@ class MealRecord(db.Model):
     """ MealRecord- All columns required """
     person_id = db.Column(db.String(128), ForeignKey('person.id'), primary_key=True)
     meal_id = db.Column(db.String(128), ForeignKey('meal.id'), primary_key=True)
-    person = relationship(Person, backref=backref("mealrecords"))
+    person = relationship(Person, backref=backref("meals", cascade="all, delete-orphan"))
     meal = relationship(Meal, backref=backref("mealrecords"))
     qty = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, primary_key=True)
