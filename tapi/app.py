@@ -23,7 +23,7 @@ class Person(db.Model):
     """ Person- All columns required """
     id = db.Column(db.String(128), primary_key=True)
     activities = relationship("ActivityRecord", cascade="all, delete-orphan")
-
+    meals = relationship("MealRecord", cascade="all, delete-orphan")
 
 class Activity(db.Model):
     """ Activity- id, name and intensity required """

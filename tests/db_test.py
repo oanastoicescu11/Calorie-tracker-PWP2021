@@ -508,3 +508,62 @@ def test_meal_record_cascade_on_meal(dbh):
 
     fetched = MealRecord.query.filter(MealRecord.person_id == Person.id).first()
     assert (fetched is None)
+
+
+@pytest.mark.filterwarnings("ignore")
+def test_meal_record_cascade_many(dbh):
+    # make sure we can have many records for one person
+    # and many records for one meal
+    p1 = Person(id="333")
+    p2 = Person(id="444")
+    m1 = Meal(id="123", name="meal1", servings=2)
+    m2 = Meal(id="456", name="meal2", servings=2)
+
+    entities = [p1, p2, m1, m2]
+
+    p1m1 = MealRecord()
+    p1m1.person = p1
+    p1m1.meal = m1
+    p1m1.qty = 1.5
+    p1m1.timestamp = datetime.datetime.now()
+    entities.append(p1m1)
+
+    p1m2 = MealRecord()
+    p1m2.person = p1
+    p1m2.meal = m2
+    p1m2.qty = 1
+    p1m2.timestamp = datetime.datetime.now()
+    entities.append(p1m2)
+
+    p2m1 = MealRecord()
+    p2m1.person = p2
+    p2m1.meal = m1
+    p2m1.qty = 1
+    p2m1.timestamp = datetime.datetime.now()
+    entities.append(p2m1)
+
+    p2m2 = MealRecord()
+    p2m2.person = p2
+    p2m2.meal = m2
+    p2m2.qty = 1
+    p2m2.timestamp = datetime.datetime.now()
+    entities.append(p2m2)
+
+    for i in entities:
+        dbh.session.add(i)
+    dbh.session.commit()
+    dbh.session.delete(p1)
+    dbh.session.delete(m1)
+    dbh.session.commit()
+    fetched = MealRecord.query.filter(Person.id == p1.id).first()
+    assert (fetched is None)
+    fetched = MealRecord.query.filter(Meal.id == m1.id).first()
+    assert (fetched is None)
+    fetched = MealRecord.query.filter(Person.id == p2.id).first()
+    assert (fetched is not None)
+    fetched = MealRecord.query.filter(Meal.id == m2.id).first()
+    assert (fetched is not None)
+
+    for i in entities:
+        dbh.session.delete(i)
+    dbh.session.commit()
