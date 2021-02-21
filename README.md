@@ -9,6 +9,13 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 
 ## How to prepare the Python environment and execute the unit tests:
 
+### Linux
+
+
+prerequisite: ** python3 installed ** (tested on: Ubuntu 20.04)
+
+
+
 1. Create a new virtual environment for installation
 
 ```python3 -m venv pwp-environment```
