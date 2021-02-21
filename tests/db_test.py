@@ -145,6 +145,20 @@ def test_activity_unique(dbh):
         db.session.rollback()
 
 
+# Test activity creation: name is required
+def test_activity_creation_limits(dbh):
+    activity = Activity()
+    activity.id = "123"
+    activity.intensity = 600  # 600kcal per hour
+    dbh.session.add(activity)
+    exception_raised = False
+    try:
+        db.session.commit()
+    except IntegrityError:
+        exception_raised = True
+        db.session.rollback()
+
+
 def test_activity_record_creation(dbh):
     running = Activity()
     running.id = "1234"
