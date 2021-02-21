@@ -105,17 +105,12 @@ def test_person_id_required(dbh):
 
 # 'Create a new instance of the model
 def test_activity_creation(dbh):
-    activity = Activity()
-    activity.id = "123"
-    activity.name = "Running"
-    activity.intensity = 600  # 600kcal per hour
+    activity = Activity(id="123", name="Running", intensity=600)
     dbh.session.add(activity)
     dbh.session.commit()
     # And with optional fields
     a = Activity()
-    a.id = "127"
-    a.name = "Running-Hard"
-    a.intensity = 800  # 600kcal per hour
+    a = Activity(id="345", name="Running-hard", intensity=800)
     a.description = "A harder exercise containing a continuous high heart beat running training"
     dbh.session.add(a)
     dbh.session.commit()
@@ -126,18 +121,26 @@ def test_activity_creation(dbh):
 
 
 def test_activity_unique(dbh):
-    same_id = "414"
-    print("hello")
-    activity = Activity()
-    activity.id = "123"
-    activity.name = "Running"
-    activity.intensity = 600  # 600kcal per hour
-
-    a1 = Activity(id=same_id)
-    a2 = Activity(id=same_id)
+    same_id = "123456"
+    a1 = Activity(id=same_id, name="Running", intensity=600)
+    a2 = Activity(id=same_id, name="Running-hard", intensity=800)
 
     dbh.session.add(a1)
     dbh.session.add(a2)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
+
+
+def test_activity_name_needed(dbh):
+    activity = Activity(id="123", name=None, intensity=600)
+    dbh.session.add(activity)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
+
+
+def test_activity_intensity_needed(dbh):
+    activity = Activity(id="123", name="running", intensity=None)
+    dbh.session.add(activity)
     with pytest.raises(IntegrityError):
         dbh.session.commit()
 
