@@ -12,7 +12,7 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 ### Linux
 
 
-prerequisite: ** python3 installed ** (tested on: Ubuntu 20.04)
+prerequisite: **python3 installed** (tested on: Ubuntu 20.04)
 
 
 
