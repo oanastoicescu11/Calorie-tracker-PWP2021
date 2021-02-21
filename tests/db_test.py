@@ -394,10 +394,8 @@ def test_meal_unique(dbh):
     m1 = Meal(id=same_id)
     m2 = Meal(id=same_id)
     dbh.session.add(m1, m2)
-    try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
 
 
 def test_meal_record_creation(dbh):
