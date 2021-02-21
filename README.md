@@ -33,3 +33,24 @@ prerequisite: **python3 installed** (tested on: Ubuntu 20.04)
 ```pytest```
 
 
+### Windows 10
+
+
+prerequisite: **python3 installed** (tested on: Windows 10 Home)
+
+1. Create a new virtual environment for installation
+
+```python -m venv pwp-environment```
+
+2. Switch to the newly create environment
+
+```pwp-environment\Scripts\activate.bat```
+
+3. Install dependencies
+
+```pip install -r requirements.txt```
+
+4. Execute unit tests
+
+```pytest```
+
