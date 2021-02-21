@@ -10,15 +10,19 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 ## How to prepare the Python environment and execute the unit tests:
 
 1. Create a new virtual environment for installation
+
 ```python3 -m venv pwp-environment```
 
 2. Switch to the newly create environment
+
 ```source pwp-environment/bin/activate```
 
 3. Install dependencies
+
 ```pip install -r requirements```
 
 4. Execute unit tests
+
 ```pytest```
 
 
