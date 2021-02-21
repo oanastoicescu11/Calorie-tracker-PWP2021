@@ -1,7 +1,8 @@
 import datetime
 
 import pytest
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, StatementError
+
 
 from tapi.app import app, ActivityRecord
 from tapi.app import db
@@ -16,7 +17,6 @@ import tempfile
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, and_
 from flask_sqlalchemy import SQLAlchemy
-
 
 @pytest.fixture
 def dbh():
@@ -70,7 +70,6 @@ def test_person_combo(dbh):
 
 # TODO: check this part
 # 'Test that onModify and onDelete work as expected
-
 
 def test_person_unique(dbh):
     same_id = "414"
@@ -127,6 +126,23 @@ def test_activity_creation(dbh):
     dbh.session.delete(activity)
     dbh.session.delete(a)
     dbh.session.commit()
+
+
+def test_activity_unique(dbh):
+    same_id = "414"
+    print("hello")
+    activity = Activity()
+    activity.id = "123"
+    activity.name = "Running"
+    activity.intensity = 600  # 600kcal per hour
+
+    a1 = Activity(id=same_id)
+    a2 = Activity(id=same_id)
+    dbh.session.add(a1, a2)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
 
 
 def test_activity_record_creation(dbh):
@@ -360,6 +376,23 @@ def test_meal_creation(dbh):
     dbh.session.commit()
 
 
+def test_meal_unique(dbh):
+    same_id = "414"
+    print("hello")
+    meal = Meal()
+    meal.id = "123"
+    meal.name = "Oatmeal"
+    meal.servings = 1
+
+    m1 = Meal(id=same_id)
+    m2 = Meal(id=same_id)
+    dbh.session.add(m1, m2)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+
+
 def test_meal_record_creation(dbh):
     soup = Meal()
     soup.id = "1234"
@@ -567,3 +600,78 @@ def test_meal_record_cascade_many(dbh):
     for i in entities:
         dbh.session.delete(i)
     dbh.session.commit()
+
+
+# def test_tables_columns(dbh):
+#     """
+#     Tests for column type values. Does not raise a StatementError?
+#     """
+#     running = Activity()
+#     running.id = "1234"
+#     running.name = "456"
+#     running.intensity = "abs" # 600kcal per hour
+#
+#     running.intensity = str(running.intensity)
+#     dbh.session.add(running)
+#     with pytest.raises(StatementError):
+#         dbh.session.commit()
+#
+#     dbh.session.rollback()
+
+
+def test_activity_columns(dbh):
+    """
+    Tests for required columns activity
+    """
+    running = Activity()
+    running.id = "1234"
+    running.name = "running"
+    running.intensity = "abs" # 600kcal per hour
+
+    running.name = None
+    dbh.session.add(running)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
+
+    dbh.session.rollback()
+
+    running.id = None
+    dbh.session.add(running)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
+
+    dbh.session.rollback()
+
+    running.intensity = None
+    dbh.session.add(running)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
+
+
+def test_meal_columns(dbh):
+    """
+    Tests for required columns meal
+    """
+    meal = Meal()
+    meal.id = "123"
+    meal.name = "Soup"
+    meal.servings = 2  # 2 servings
+
+    meal.name = None
+    dbh.session.add(meal)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
+
+    dbh.session.rollback()
+
+    meal.id = None
+    dbh.session.add(meal)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
+
+    dbh.session.rollback()
+
+    meal.servings = None
+    dbh.session.add(meal)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()

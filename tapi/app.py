@@ -26,8 +26,8 @@ class Person(db.Model):
 
 class Activity(db.Model):
     """ Activity- id, name and intensity required """
-    id = db.Column(db.String(128), primary_key=True)
-    name = db.Column(db.String(128), nullable=True)
+    id = db.Column(db.String(128), primary_key=True, nullable=False)
+    name = db.Column(db.String(128), nullable=False)
     intensity = db.Column(db.Integer, nullable=False)
     # Description max size 8K for simplicity reasons
     description = db.Column(db.String(8*1024), nullable=True)
