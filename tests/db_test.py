@@ -76,11 +76,10 @@ def test_person_unique(dbh):
     print("hello")
     p1 = Person(id=same_id)
     p2 = Person(id=same_id)
-    dbh.session.add(p1, p2)
-    try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
+    dbh.session.add(p1)
+    dbh.session.add(p2)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
 
 
 # 'Create a new instance of the model
