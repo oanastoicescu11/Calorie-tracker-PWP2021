@@ -99,10 +99,8 @@ def test_person_creation(dbh):
 def test_person_id_required(dbh):
     person = Person()
     dbh.session.add(person)
-    try:
+    with pytest.raises(IntegrityError):
         dbh.session.commit()
-    except IntegrityError:
-        dbh.session.rollback()
 
 
 # 'Create a new instance of the model
@@ -137,11 +135,11 @@ def test_activity_unique(dbh):
 
     a1 = Activity(id=same_id)
     a2 = Activity(id=same_id)
-    dbh.session.add(a1, a2)
-    try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
+
+    dbh.session.add(a1)
+    dbh.session.add(a2)
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
 
 
 # Test activity creation: name is required
@@ -150,12 +148,8 @@ def test_activity_creation_limits(dbh):
     activity.id = "123"
     activity.intensity = 600  # 600kcal per hour
     dbh.session.add(activity)
-    exception_raised = False
-    try:
-        db.session.commit()
-    except IntegrityError:
-        exception_raised = True
-        db.session.rollback()
+    with pytest.raises(IntegrityError):
+        dbh.session.commit()
 
 
 def test_activity_record_creation(dbh):
