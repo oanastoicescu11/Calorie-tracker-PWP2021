@@ -586,23 +586,6 @@ def test_meal_record_cascade_many(dbh):
     dbh.session.commit()
 
 
-# def test_tables_columns(dbh):
-#     """
-#     Tests for column type values. Does not raise a StatementError?
-#     """
-#     running = Activity()
-#     running.id = "1234"
-#     running.name = "456"
-#     running.intensity = "abs" # 600kcal per hour
-#
-#     running.intensity = str(running.intensity)
-#     dbh.session.add(running)
-#     with pytest.raises(StatementError):
-#         dbh.session.commit()
-#
-#     dbh.session.rollback()
-
-
 def test_activity_columns(dbh):
     """
     Tests for required columns activity
@@ -610,7 +593,15 @@ def test_activity_columns(dbh):
     running = Activity()
     running.id = "1234"
     running.name = "running"
-    running.intensity = "abs" # 600kcal per hour
+
+    with pytest.raises(ValueError):
+        running.intensity = "abs"  # illegal input
+
+    with pytest.raises(ValueError):
+        running.intensity = -1
+
+    with pytest.raises(TypeError):
+        running.intensity = None
 
     running.name = None
     dbh.session.add(running)
@@ -626,7 +617,6 @@ def test_activity_columns(dbh):
 
     dbh.session.rollback()
 
-    running.intensity = None
     dbh.session.add(running)
     with pytest.raises(IntegrityError):
         dbh.session.commit()

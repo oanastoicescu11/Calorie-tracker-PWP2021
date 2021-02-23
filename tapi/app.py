@@ -8,7 +8,7 @@ An example from the exercise taken as a base and then modified (Measurement exam
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, validates
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
@@ -28,10 +28,18 @@ class Activity(db.Model):
     """ Activity- id, name and intensity required """
     id = db.Column(db.String(128), primary_key=True, nullable=False)
     name = db.Column(db.String(128), nullable=False)
-    intensity = db.Column(db.Integer, nullable=False)
+    intensity = db.Column(db.Integer, nullable=False, default=0)
     # Description max size 8K for simplicity reasons
     description = db.Column(db.String(8*1024), nullable=True)
     persons = relationship("ActivityRecord", cascade="all, delete-orphan")
+
+    # intensity is positive integer
+    @validates('intensity')
+    def validate_intensity(self, key, intensity):
+        value = int(intensity)
+        if value < 0:
+            raise ValueError("'intensity' not positive integer!")
+        return intensity
 
 
 class ActivityRecord(db.Model):
