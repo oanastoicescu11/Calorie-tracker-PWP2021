@@ -131,20 +131,6 @@ def test_activity_unique(dbh):
         dbh.session.commit()
 
 
-def test_activity_name_required(dbh):
-    activity = Activity(id="123", name=None, intensity=600)
-    dbh.session.add(activity)
-    with pytest.raises(IntegrityError):
-        dbh.session.commit()
-
-
-def test_activity_intensity_required(dbh):
-    activity = Activity(id="123", name="running", intensity=None)
-    dbh.session.add(activity)
-    with pytest.raises(IntegrityError):
-        dbh.session.commit()
-
-
 def test_activity_record_creation(dbh):
     running = Activity()
     running.id = "1234"
