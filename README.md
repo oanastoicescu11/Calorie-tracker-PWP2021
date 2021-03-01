@@ -26,7 +26,7 @@ prerequisite: **python3 installed** (tested on: Ubuntu 20.04)
 
 3. Install dependencies
 
-```pip install -r requirements```
+```pip install -r requirements.txt```
 
 4. Execute unit tests
 
