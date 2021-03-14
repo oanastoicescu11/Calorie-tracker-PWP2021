@@ -29,14 +29,20 @@ We also presented our current ER Diagram and received supportive feedback and es
 *ONLY USED BY COURSE STAFF: Additional comments from the course staff*
 
 ## Meeting 2.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE:** 2021-03-01
+* **ASSISTANTS:** Ivan
 
 ### Minutes
-*Summary of what was discussed during the meeting*
+Present: Ivan, Oana, Juha, Phong
+
+Group22
+
+We presented our content for the DL2. We got some recommendations on how to connect SQLAlchemy tables: (by using the back populates) method. Our current approach (backref) works, but may not be as streamlined with utilizing the ORM as it could be.
+
+Ivan is going to have a meeting with Phong on Thursday, nevertheless, we should continue on our own. If Phong decides to continue in the project, we need to find out a way for him to catch up.
 
 ### Action points
-*List here the actions points discussed with assistants*
+ - Discuss with Phong within the team about his continuation
 
 
 ### Comments from staff
