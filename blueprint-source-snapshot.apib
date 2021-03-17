@@ -1,0 +1,3734 @@
+FORMAT: 1A
+HOST: http://localhost:5000/
+
+# pwp2021
+
+pwp2021 is the calorie and activity tracker API
+
+# Group Link Relations
+
+## activities-all
+Control for listing all activities in the Database
+
+## activities-by
+Control for listing all activities by a person
+
+## meals-all
+Control for listing all meals in the Database
+
+## portions-all
+Control for listing all portions in the Database
+
+## add-activity
+Control for adding a new activity into the Database
+
+## add-portion
+Control for adding a new portion into the Database
+
+## add-mealportion
+Control for adding a MealPortion into a Meal
+
+## add-meal
+Control for adding a new meal into the Database
+
+## add-activityrecord
+Control for adding a new activity record into the Database
+
+## add-mealrecord
+Control for adding a new meal record into the Database
+
+## activityrecords-all
+Control for listing all activity records in the Database
+
+## mealrecords-all
+Control for listing all meal records in the Database
+
+## activityrecords-by
+Control for listing all activity records in the Database for person
+
+## mealrecords-by
+Control for listing all meal records in the Database for person
+
+## persons-all
+Control for listing all persons in the Database
+
+## person
+Control for getting related person information
+
+## activity
+Control for getting related activity information
+
+## meal
+Control for getting related meal information
+
+## portion
+Control for getting related portion information
+
+## meals-of
+Control for listing all meals containing the given portion
+
+## portions-of
+Control for listing all portions in a meal
+
+## add-person
+Control for adding a new person into the Database
+
+## delete
+Control for erasing an entity and dependent data from the Database
+
+# Group Profiles
+
+Profiles for semantic descriptions.
+
+## Person Profile
+
+Profile definition for Person
+
+### Link Relations
+
+All link-relations related to persons
+
+* [persons-all](/calmeta/link-relations/persons-all)
+* [add-person](/calmeta/link-relations/add-person)
+* [delete](/calmeta/link-relations/delete-person)
+
+### Semantic Descriptors
+
+#### Data Type Person
+
+ * `id`: Person ID. Mandatory.
+
+Link relations used from [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml):
+
+ * collection
+ * edit
+ * profile
+ * self
+
+
+## ActivityRecord Profile
+
+Profile definition for ActivityRecord
+
+## Link Relations
+
+All link-relations related to activity records
+
+ * [activityrecords-all](/calmeta/link-relations/activityrecords-all)
+ * [activityrecords-by](/calmeta/link-relations/activityrecords-by)
+
+
+Link relations from [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml):
+
+ * collection
+ * edit
+ * profile
+ * self
+
+### Semantic Descriptors
+
+#### Data Type ActivityRecord
+
+ * `activity`: ID of the linked activity. Mandatory.
+ * `duration`: Duration of the ActivityRecord in minutes. Mandatory.
+ * `datetime`: UTC Datetime of the activity records - YYYY-MM-DDThh:mm:ssZ - Mandatory.
+ * `person`: Person ID. Mandatory.
+
+## Activity Profile
+
+Profile definition for Activity
+
+## Link Relations
+
+All link-relations related to activities
+
+ * [activities-all](/calmeta/link-relations/activities-all)
+ * [add-activity](/calmeta/link-relations/activities-all)
+ * [activity](/calmeta/link-relations/activity)
+
+
+Link relations from [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml):
+
+ * collection
+ * edit
+ * profile
+ * self
+
+### Semantic Descriptors
+
+#### Data Type Activity
+
+ * `name`: Name of the Activity
+ * `description`: Description of the activity. Should be detailed enough for reader to match his activity based on this field. Optional.
+ * `intensity`: Intensity of the activity (kcal per hour). Mandatory.
+ * `id`: ActivityId, usually activity name in small letters and white spaces replaced with dashes. Mandatory.
+
+
+## Meal Profile
+
+Profile definition for Meal
+
+## Link Relations
+
+All link-relations related to activities
+
+ * [meals-all](/calmeta/link-relations/meals-all)
+ * [add-meal](/calmeta/link-relations/add-meal)
+ * [add-mealportion](/calmeta/link-relations/add-mealportion)
+ * [meals](/calmeta/link-relations/meals)
+
+
+Link relations from [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml):
+
+ * collection
+ * edit
+ * profile
+ * self
+
+### Semantic Descriptors
+
+#### Data Type Meal
+
+ * `name`: Name of the Meal
+ * `description`: Description of the meal. Should be detailed enough for reader to match his meal based on this field. Optional.
+ * `servings`: Number of servings in this meal (used to calculate macros per serving). Mandatory.
+ * `id`: MealId, usually meal name in small letters and white spaces replaced with dashes. Mandatory.
+
+
+## MealRecord Profile
+
+Profile definition for MealRecord
+
+## Link Relations
+
+All link-relations related to meal records
+
+ * [mealrecords-all](/calmeta/link-relations/mealrecords-all)
+ * [mealrecords-by](/calmeta/link-relations/mealrecords-by)
+
+
+Link relations from [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml):
+
+ * collection
+ * edit
+ * profile
+ * self
+
+### Semantic Descriptors
+
+#### Data Type MealRecord
+
+ * `meal`: ID of the linked meal. Mandatory.
+ * `amount`: Number of servings of Meal consumed in this record OR quantity of portion. Mandatory.
+ * `datetime`: UTC Datetime of the activity records - YYYY-MM-DDThh:mm:ssZ - Mandatory.
+ * `person`: Person ID. Mandatory.
+
+
+## Portion Profile
+
+Profile definition for Portion
+
+## Link Relations
+
+All link-relations related to meals
+
+ * [portions-all](/calmeta/link-relations/portions-all)
+ * [add-portion](/calmeta/link-relations/portions-all)
+ * [portions](/calmeta/link-relations/portions)
+
+
+Link relations from [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml):
+
+ * collection
+ * edit
+ * profile
+ * self
+
+### Semantic Descriptors
+
+#### Data Type Portion
+
+ * `name`: Name of the Portion
+ * `description`: Description of the portion. Optional.
+ * `calories`: Number of calories/100g of portion. Mandatory.
+ * `carbs`: Grams of carbs/100g of portion. Optional
+ * `fat`: Grams of fat/100g of portion. Optional
+ * `protein`: Grams of protein/100g of portion. Optional
+ * `id`: PortionId, usually portion name in small letters and white spaces replaced with dashes. Mandatory.
+
+## MealPortion Profile
+
+Profile definition for MealPortion
+
+## Link Relations
+
+All link-relations related to meal portions
+
+ * [portions-of](/calmeta/link-relations/portions-of)
+
+Link relations from [IANA RFC5988](http://www.iana.org/assignments/link-relations/link-relations.xhtml):
+
+ * collection
+ * edit
+ * profile
+ * self
+
+### Semantic Descriptors
+
+#### Data Type Portion
+
+ * `portion`: Id of the related Portion. Mandatory.
+ * `qty`: quantity of portion in grams. Mandatory
+ * `meal`: Id of the related Meal. Mandatory.
+
+
+# Group Entrypoint
+
+## API Entrypoint [/]
+
+### List All Collections (API entrypoint) [GET]
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "@controls": {
+                    "cameta:activities-all": {
+                        "href": "/activities/",
+                        "title": "All Activities"
+                    },
+                    "cameta:persons-all": {
+                        "href": "/persons/",
+                        "title": "All Persons"
+                    },
+                    "cameta:activityrecords-all": {
+                        "href": "/activityrecords/",
+                        "title": "All ActivityRecords"
+                    },
+                    "cameta:meals-all": {
+                        "href": "/meals/",
+                        "title": "All Meals"
+                    },
+                    "cameta:portions-all": {
+                        "href": "/portions/",
+                        "title": "All Portions"
+                    },
+                    "cameta:mealrecords-all": {
+                        "href": "/mealrecords/",
+                        "title": "All MealRecords"
+                    },
+                },
+                
+            }
+
+
+# Group Person
+
+## Person Collection [/persons/]
+
+### List All Persons [GET]
+
++ Relation: persons-all
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "id": "123",
+                    "@controls": {
+                        "self": {
+                            "href": "/persons/123/"
+                        },
+                        "edit": {
+                            "href": "/persons/123/"
+                            "method": "PUT",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "id": "Person id",
+                                        "type": "string",
+                                        "maxLenght": 128,
+                                        "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                    },
+                                },
+                                "required": ["id"]
+                            }
+                        },
+                        "cameta:delete": {
+                            "href": "/persons/123/"
+                            "method": "DELETE"
+                        },
+                        "collection": {
+                            "href": "/persons/"
+                        },
+                        "cameta:activityrecords-by": {
+                            "href": "/persons/123/activityrecords/"
+                        },
+                        "cameta:mealrecords-by": {
+                            "href": "/persons/123/mealrecords/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/persons/"
+                    },
+                    "cameta:persons-all": {
+                        "href": "/persons/"
+                    },
+                    "cameta:add-person": {
+                        "href": "/persons/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "id": "Person id",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                },
+                            },
+                            "required": ["id"]
+                        }
+                    }
+                }
+            }
+
+### Create a New Person [POST]
+
+Creates a new Person based on given JSON.
+https://www.jsonschemavalidator.net/s/gBITtD6B
+
++ Relation: add-person
++ Request (application/json)
+
+        {
+            "id": "123"
+        }
+
+
++ Response 201 (application/vnd.mason+json)
+
+    + Headers
+
+            Location: /persons/123/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/persons/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "id": "Person id",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                },
+                            },
+                            "required": ["id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    Person already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/persons/123",
+                "@error": {
+                    "@message": "Person already exists",
+                    "@messages": [
+                        "Person with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/persons/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+## Person [/persons/{person}/]
+
+Single person
+
++ Parameters
+    + person: "123" - person id (unique)
+
+
+### Person information [GET]
+
+Get Person presentation
+
++ Relation: self
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/cameta/link-relations#"
+                    }
+                },
+                "id": "123",
+                "@controls": {
+                    "self": {
+                        "href": "/persons/123/"
+                    },
+                    "profile": {
+                        "href": "/profiles/person/"
+                    },
+                    "collection": {
+                        "href": "/persons/"
+                    },
+                    "cameta:persons-all": {
+                        "href": "/persons/",
+                        "title": "All persons"
+                    },
+                    "cameta:activityrecords-by": {
+                        "href": "/persons/123/activityrecords/",
+                        "title": "Activityrecords for person"
+                    },
+                    "cameta:mealrecords-by": {
+                        "href": "/persons/123/mealrecords/",
+                        "title": "Mealrecords for person"
+                    },
+                    "edit": {
+                        "href": "/persons/123/"
+                        "method": "PUT",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "id": "Person id",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                },
+                            },
+                            "required": ["id"]
+                        }
+                    },
+                    "cameta:delete": {
+                        "href": "/persons/123/"
+                        "title": "Delete this person and all related data",
+                        "method": "DELETE"
+                    }
+                },
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    Person does not exists with given ID.
+
+    + Body
+    
+            {
+                "resource_url": "/persons/123/",
+                "@error": {
+                    "@message": "Person not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+### Edit Person information [PUT]
+
+Replace Person with according to given JSON.
+Location header only returned if the location was changed due to ID change!
+
++ Relation: edit
++ Request (application/json)
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+
+    + Body
+    
+            {
+                "id": "456",
+            }
+        
++ Response 204
+
+    + Headers
+
+            Location: /persons/456/
+
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/persons/123",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "id": "Person id",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                },
+                            },
+                            "required": ["id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    Person already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/persons/456",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Person with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/persons/123",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Delete Person [DELETE]
+
+Delete person and all related data
+
++ Relation: delete
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    Person with given ID not found
+
+    + Body
+    
+            {
+                "resource_url": "/persons/123",
+                "@error": {
+                    "@message": "Person not found with given ID!",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+# Group Activity
+
+## Activity Collection [/activities/]
+
+### List All Activities [GET]
+
++ Relation: activities-all
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "name": "Running",
+                    "description": "Normal phase running on flat terrain.",
+                    "intensity": 600,
+                    "id": "running",
+                    "@controls": {
+                        "self": {
+                            "href": "/activities/running/"
+                        },
+                        "edit": {
+                            "href": "/activities/running/"
+                            "method": "PUT"
+                        },
+                        "cameta:delete": {
+                            "href": "/activities/running/"
+                            "method": "DELETE"
+                        },
+                        "collection": {
+                            "href": "/activities/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/activities/"
+                    },
+                    "cameta:activities-all": {
+                        "href": "/activities/"
+                    },
+                    "cameta:add-activity": {
+                        "href": "/activities/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "Activity name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "intensity": {
+                                    "description": "Intensity of activity (kcal per hour)",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the activity",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "ActivityId, usually activity name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "intensity", "id"]
+                        }
+                    }
+                }
+            }
+
+### Create a New Activity [POST]
+
+Creates a new Activity based on given JSON.
+https://www.jsonschemavalidator.net/s/JOTrjO4X
+
++ Relation: add-activity
++ Request (application/json)
+
+        {
+            "name":"Running",
+            "intensity":600,
+            "id":"running"
+        }
+
++ Response 201 (application/vnd.mason+json)
+
+    + Headers
+
+            Location: /activities/running/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/activities/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "Activity name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "intensity": {
+                                    "description": "Intensity of activity (kcal per hour)",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the activity",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "ActivityId, usually activity name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "intensity", "id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    Activity already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/activities/running/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Person with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/activities/running/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+
+## Activity [/activities/{activity}]
+
+Single activity
+
++ Parameters
+    + activity: "running" - activity id (unique)
+
+### Activity information [GET]
+
+Get Activity presentation
+
++ Relation: self
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/cameta/link-relations#"
+                    }
+                },
+                "id": "running",
+                "@controls": {
+                    "self": {
+                        "href": "/activities/running/"
+                    },
+                    "profile": {
+                        "href": "/profiles/activity/"
+                    },
+                    "collection": {
+                        "href": "/activities/"
+                    },
+                    "cameta:activities-all": {
+                        "href": "/activities/",
+                        "title": "All activities"
+                    },
+                    "edit": {
+                        "href": "/activities/running/"
+                        "method": "PUT",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "Activity name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "intensity": {
+                                    "description": "Intensity of activity (kcal per hour)",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the activity",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "ActivityId, usually activity name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "intensity", "id"]
+                        }
+                    },
+                    "cameta:delete": {
+                        "href": "/activity/running/"
+                        "title": "Delete this activity and all related data",
+                        "method": "DELETE"
+                    }
+                },
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    Actitivy does not exists with given ID.
+
+    + Body
+    
+            {
+                "resource_url": "/activities/running/",
+                "@error": {
+                    "@message": "Activity not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+### Edit Activity information [PUT]
+
+Replace Activity with according to given JSON.
+Location header only returned if the location was changed due to ID change!
+
++ Relation: edit
++ Request (application/json)
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "name":"Very slow running",
+                "intensity":340,
+                "id":"very-slow-running"
+            }
+        
++ Response 204
+
+    + Headers
+
+            Location: /activities/very-slow-running/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/activities/running/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "Activity name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "intensity": {
+                                    "description": "Intensity of activity (kcal per hour)",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the activity",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "ActivityId, usually activity name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "intensity", "id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    Activity already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/activity/running/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Activity with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/activity/running/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Delete Activity [DELETE]
+
+Delete activity and all related data
+
++ Relation: delete
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    Activity with given ID not found
+
+    + Body
+    
+            {
+                "resource_url": "/activity/running/",
+                "@error": {
+                    "@message": "Activity not found with given ID!",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+# Group Meal
+
+## Meal Collection [/meals/?portionFilter={portion}]
+
+### List All Meals [GET]
+
+A list of all Meals of the database
+
++ Parameters
+
+    + portion (string, optional) - Filter Meals by consisting Portion id
+        + Default: `*`
+
++ Relation: meals-all
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "name": "soup",
+                    "description": "Salmon soup with cream.",
+                    "servings": 4,
+                    "id": "soup",
+                    "@controls": {
+                        "self": {
+                            "href": "/meals/soup/"
+                        },
+                        "edit": {
+                            "href": "/meals/soup/",
+                            "method": "PUT"
+                        },
+                        "cameta:delete": {
+                            "href": "/meals/soup/",
+                            "method": "DELETE"
+                        },
+                        "collection": {
+                            "href": "/meals/"
+                        }
+                        "cameta:portions-of": {
+                            "href": "/meals/soup/mealportions/"
+                        }
+                        
+                        "cameta:add-mealportion": {
+                            "href": /meals/soup/mealportions/",
+                            "method": "POST",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "qty": {
+                                        "description": "quantity of portion in grams or ml",
+                                        "type": "integer",
+                                    },
+                                    "meal": {
+                                        "description": "meal id, meal MUST exist."
+                                        "type": "string",
+                                        "maxLenght": 128
+                                    }
+                                    "portion": {
+                                        "description": "poriton id, portion MUST exist."
+                                        "type": "string",
+                                        "maxLenght": 128
+                                    }
+                                },
+                                "required": ["meal", "qty", "portion"]
+                            }
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/meals/"
+                    },
+                    "cameta:meals-all": {
+                        "href": "/meals/"
+                    },
+                    "cameta:add-meal": {
+                        "href": "/meals/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "meal name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "servings": {
+                                    "description": "Number of servings in this meal",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the meal",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "mealId, usually meal name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "servings", "id"]
+                        }
+                    }
+                }
+            }
+
+### Create a New Meal [POST]
+
+Creates a new meal based on given JSON.
+https://www.jsonschemavalidator.net/s/oK7SbCFn
+
++ Relation: add-meal
++ Request (application/json)
+
+        {
+            "name":"soup",
+            "servings":4,
+            "id":"soup"
+        }
+
++ Response 201 (application/vnd.mason+json)
+
+    + Headers
+
+            Location: /meals/soup/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/meals/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "meal name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "servings": {
+                                    "description": "number of servings in this meal",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the meal",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "mealId, usually meal name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "servings", "id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    meal already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/meals/soup/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Meal with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/meals/soup/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+
+## Meal [/meals/{meal}]
+
+Single meal
+
++ Parameters
+    + meal: "soup" - meal id (unique)
+
+### Meal information [GET]
+
+Get meal presentation
+
++ Relation: self
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/cameta/link-relations#"
+                    }
+                },
+                "id": "soup",
+                "items": [
+                {
+                    "meal": "soup",
+                    "portion": "potato",
+                    "qty": "200",
+                    "id": "potato-soup-200",
+                    "@controls": {
+                        "self": {
+                            "href": "/meals/potato-soup/mealportions/potato-soup-200/"
+                        },
+                        "edit": {
+                            "href": "/meals/potato-soup/mealportions/potato-soup-200/"
+                            "method": "PUT"
+                        },
+                        "cameta:meal": {
+                            "href": "/meals/soup/"
+                        },
+                        "cameta:delete": {
+                            "href": "/meals/potato-soup/mealportions/potato-soup-200/"
+                            "method": "DELETE"
+                        },
+                        "cameta:portions-of": {
+                            "href": "/meals/soup/mealportions/"
+                        },
+                        "cameta:portion": {
+                            "href": "/portion/potato/"
+                        }
+                    }
+                },
+                "@controls": {
+                    "self": {
+                        "href": "/meals/soup/"
+                    },
+                    "profile": {
+                        "href": "/profiles/meal/"
+                    },
+                    "collection": {
+                        "href": "/meals/"
+                    },
+                    "cameta:meals-all": {
+                        "href": "/meals/",
+                        "title": "All meals"
+                    },
+                    "cameta:portions-of": {
+                        "href": "/meals/soup/portions/"
+                    },
+                    "cameta:add-mealportion": {
+                        "href": "meals/soup/mealportions/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "qty": {
+                                    "description": "quantity of portion in grams or ml",
+                                    "type": "integer",
+                                },
+                                "meal": {
+                                    "description": "meal id, meal MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                                "portion": {
+                                    "description": "poriton id, portion MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["meal", "qty", "portion"]
+                        }
+                    },
+                    "edit": {
+                        "href": "/meals/soup/"
+                        "method": "PUT",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "meal name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "servings": {
+                                    "description": "servings of meal (kcal per hour)",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the meal",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "mealId, usually meal name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "servings", "id"]
+                        }
+                    },
+                    "cameta:delete": {
+                        "href": "/meal/soup/"
+                        "title": "Delete this meal and all related data",
+                        "method": "DELETE"
+                    }
+                },
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    Meal does not exists with given ID.
+
+    + Body
+    
+            {
+                "resource_url": "/meals/soup/",
+                "@error": {
+                    "@message": "meal not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+### Edit meal information [PUT]
+
+Replace meal with according to given JSON.
+Location header only returned if the location was changed due to ID change!
+
++ Relation: edit
++ Request (application/json)
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "name":"Salmon soup",
+                "servings":3,
+                "id":"salmon-soup"
+            }
+        
++ Response 204
+
+    + Headers
+
+            Location: /meals/salmon-soup/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/meals/soup/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "meal name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "servings": {
+                                    "description": "number of servings in this meal",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the meal",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "mealId, usually meal name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "servings", "id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    meal already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/meals/soup/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "meal with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/meal/soup/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Delete meal [DELETE]
+
+Delete meal and all related data
+
++ Relation: delete
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    meal with given ID not found
+
+    + Body
+    
+            {
+                "resource_url": "/meal/soup/",
+                "@error": {
+                    "@message": "meal not found with given ID!",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+## MealPortions of Meal [/meals/{meal}/portions/]
+
+Portions in a Meal
+
+### List MealPortions of a Meal [GET]
+
++ Relation: portions-of
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "meal": "soup",
+                    "portion": "potato",
+                    "qty": "200",
+                    "id": "potato-soup-200",
+                    "@controls": {
+                        "self": {
+                            "href": "/meals/potato-soup/mealportions/potato-soup-200/"
+                        },
+                        "edit": {
+                            "href": "/meals/potato-soup/mealportions/potato-soup-200/"
+                            "method": "PUT"
+                        },
+                        "cameta:meal": {
+                            "href": "/meals/soup/"
+                        },
+                        "cameta:delete": {
+                            "href": "/meals/potato-soup/mealportions/potato-soup-200/"
+                            "method": "DELETE"
+                        },
+                        "cameta:portions-of": {
+                            "href": "/meals/soup/mealportions/"
+                        },
+                        "cameta:portion": {
+                            "href": "/portion/potato/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/meals/potato-soup/mealportions/"
+                    },
+                    "cameta:meal": {
+                        "href": "/meals/soup"
+                    },
+                    "cameta:portion": {
+                        "href": "/portions/potato"
+                    },
+                    "cameta:add-mealportion": {
+                        "href": "meals/soup/mealportions/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "qty": {
+                                    "description": "quantity of portion in grams or ml",
+                                    "type": "integer",
+                                },
+                                "meal": {
+                                    "description": "meal id, meal MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                                "portion": {
+                                    "description": "poriton id, portion MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["meal", "qty", "portion"]
+                        }
+                    }
+                }
+            }
+
+### Add a new MealPortion into Meal [POST]
+
+Adds a MealPortion into Meal based on given JSON.
+
++ Relation: add-mealportion
++ Request (application/json)
+
+
+        {
+            "meal": "soup",
+            "portion": "potato",
+            "qty": "200",
+            "id": "potato-soup-200",
+        }
+
++ Response 201 (application/vnd.mason+json)
+
+    + Headers
+
+            Location: /meals/salmon-soup/mealportions/salmon-soup-potato/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/meals/salmon-soup/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "qty": {
+                                    "description": "quantity of portion in grams or ml",
+                                    "type": "integer",
+                                },
+                                "meal": {
+                                    "description": "meal id, meal MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                                "portion": {
+                                    "description": "poriton id, portion MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    MealPortion already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/meals/salmon-soup/mealportions/salmon-soup-potato/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Portion with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/meals/salmon-soup/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+# Group Portion
+
+## Portion Collection [/portions/]
+
+### List All portions [GET]
+
++ Relation: portions-all
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "name": "potato",
+                    "description": "potato",
+                    "calories": 200,
+                    "carbs": 25,
+                    "protein": 2,
+                    "fat": 2,
+                    "id": "potato",
+                    "@controls": {
+                        "self": {
+                            "href": "/portions/potato/"
+                        },
+                        "edit": {
+                            "href": "/portions/potato/"
+                            "method": "PUT"
+                        },
+                        "cameta:delete": {
+                            "href": "/portions/potato/"
+                            "method": "DELETE"
+                        },
+                        "collection": {
+                            "href": "/portions/"
+                        },
+                        "cameta:meals-of": {
+                            "href": "/meals/?portionFilter=potato",
+                            "title": "All Meals consisting this Portion"
+                        },
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/portions/"
+                    },
+                    "cameta:portions-all": {
+                        "href": "/portions/"
+                    },
+                    "cameta:add-portion": {
+                        "href": "/portions/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "portion name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "calories": {
+                                    "description": "calories of portion (kcal per 100g)",
+                                    "type": "integer"
+                                },
+                                "carbs": {
+                                    "description": "grams of carbs per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "protein": {
+                                    "description": "grams of protein per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "fat": {
+                                    "description": "grams of fat per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the portion",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "portionId, usually portion name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "calories", "id"]
+                        }
+                    }
+                }
+            }
+
+
+### Create a New portion [POST]
+
+Creates a new portion based on given JSON.
+https://www.jsonschemavalidator.net/s/0TjEzLr2
+
++ Relation: add-portion
++ Request (application/json)
+
+        {
+            "name":"potato",
+            "calories":200,
+            "id":"potato"
+        }
+
++ Response 201 (application/vnd.mason+json)
+
+    + Headers
+
+            Location: /portions/potato/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/portions/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "portion name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "calories": {
+                                    "description": "calories of portion (kcal per 100g)",
+                                    "type": "integer"
+                                },
+                                "carbs": {
+                                    "description": "grams of carbs per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "protein": {
+                                    "description": "grams of protein per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "fat": {
+                                    "description": "grams of fat per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the portion",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "portionId, usually portion name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "calories", "id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    portion already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/portions/potato/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Portion with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/portions/potato/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+
+## Portion [/portions/{portion}]
+
+Single portion
+
++ Parameters
+    + portion: "potato" - portion id (unique)
+
+### Portion information [GET]
+
+Get portion presentation
+
++ Relation: self
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/cameta/link-relations#"
+                    }
+                },
+                "id": "potato",
+                "@controls": {
+                    "self": {
+                        "href": "/portions/potato/"
+                    },
+                    "profile": {
+                        "href": "/profiles/portion/"
+                    },
+                    "collection": {
+                        "href": "/portions/"
+                    },
+                    "cameta:portions-all": {
+                        "href": "/portions/",
+                        "title": "All portions"
+                    },
+                    "cameta:meals-of": {
+                        "href": "/meals/?portionFilter=potato",
+                        "title": "All Meals consisting this Portion"
+                    },
+                    "edit": {
+                        "href": "/portions/potato/"
+                        "method": "PUT",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "portion name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "calories": {
+                                    "description": "calories of portion (kcal per 100g)",
+                                    "type": "integer"
+                                },
+                                "carbs": {
+                                    "description": "grams of carbs per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "protein": {
+                                    "description": "grams of protein per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "fat": {
+                                    "description": "grams of fat per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the portion",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "portionId, usually portion name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "calories", "id"]
+                        }
+                    },
+                    "cameta:delete": {
+                        "href": "/portion/potato/"
+                        "title": "Delete this portion and all related data",
+                        "method": "DELETE"
+                    }
+                },
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    portion does not exists with given ID.
+
+    + Body
+    
+            {
+                "resource_url": "/portions/potato/",
+                "@error": {
+                    "@message": "portion not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+### Edit portion information [PUT]
+
+Replace portion with according to given JSON.
+Location header only returned if the location was changed due to ID change!
+
++ Relation: edit
++ Request (application/json)
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "name":"New potato",
+                "calories":340,
+                "id":"new-potato"
+            }
+        
++ Response 204
+
+    + Headers
+
+            Location: /portions/new-potato/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/portions/potato/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "portion name",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "calories": {
+                                    "description": "calories of portion (kcal per 100g)",
+                                    "type": "integer"
+                                },
+                                "carbs": {
+                                    "description": "grams of carbs per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "protein": {
+                                    "description": "grams of protein per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "fat": {
+                                    "description": "grams of fat per 100g of portion",
+                                    "type": "integer"
+                                },
+                                "description": {
+                                    "description": "Description of the portion",
+                                    "type": "string",
+                                    "maxLenght": 8192
+                                },
+                                "id": {
+                                    "description": "portionId, usually portion name in small letters and white spaces replaced with dashes",
+                                    "type": "string",
+                                    "maxLenght": 128,
+                                    "pattern": "^[a-z,0-9]+(-[a-z,0-9]+)*$"
+                                }
+                            },
+                            "required": ["name", "calories", "id"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    portion already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/portion/potato/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "portion with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/portion/potato/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Delete portion [DELETE]
+
+Delete portion and all related data
+
++ Relation: delete
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    portion with given ID not found
+
+    + Body
+    
+            {
+                "resource_url": "/portion/potato/",
+                "@error": {
+                    "@message": "portion not found with given ID!",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+# Group ActivityRecord
+
+## ActivityRecord Collection [/activityrecords/]
++ Relation: activityrecords-all
+
+### List All ActivityRecords [GET]
+
++ Relation: activities-by
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "activity": "running",
+                    "duration": 45,
+                    "datetime": "2019-01-09T14:40:30Z",
+                    "id": "123-running-20190109T144030z",
+                    "person": "123"
+                    "@controls": {
+                        "self": {
+                            "href": "/activityrecords/123-running-20190109T144030z/"
+                        },
+                        "edit": {
+                            "href": "/activityrecords/123-running-20190109T144030z/"
+                            "method": "PUT"
+                        },
+                        "cameta:activity": {
+                            "href": "/activities/running/"
+                        },
+                        "cameta:delete": {
+                            "href": "/activityrecords/123-running-20190109T144030z/"
+                            "method": "DELETE"
+                        },
+                        "cameta:activityrecords-all": {
+                            "href": "/activityrecords/"
+                        }
+                        "cameta:activityrecords-by": {
+                            "href": "/person/123/activyrecords/"
+                        },
+                        "cameta:person": {
+                            "href": "/person/123/"
+                        }
+                    }
+                },
+                {
+                    "activity": "running",
+                    "duration": 30,
+                    "datetime": "2019-03-09T00:40:30Z",
+                    "id": "456-running-20190309T004030z",
+                    "person": "456"
+                    "@controls": {
+                        "self": {
+                            "href": "/activityrecords/456-running-20190109T144030z/"
+                        },
+                        "edit": {
+                            "href": "/activityrecords/456-running-20190109T144030z/"
+                            "method": "PUT"
+                        },
+                        "cameta:activity": {
+                            "href": "/activities/running/"
+                        },
+                        "cameta:delete": {
+                            "href": "/activityrecords/456-running-20190109T144030z/"
+                            "method": "DELETE"
+                        },
+                        "cameta:activityrecords-all": {
+                            "href": "/activityrecords/"
+                        }
+                        "cameta:activityrecords-by": {
+                            "href": "/person/456/activyrecords/"
+                        },
+                        "cameta:person": {
+                            "href": "/person/123/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/activityrecords/"
+                    },
+                    "cameta:activityrecords-all": {
+                        "href": "/activityrecords/"
+                    }
+                }
+            }
+
+
+## List of ActivityRecords for Person [/person/{person}/activityrecords/]
++ Relation: activityrecords-by
+
++ Parameters
+    + person: "123" - person id (unique)
+
+### List All ActivityRecords for Person [GET]
+
++ Relation: activities-by
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "activity": "running",
+                    "duration": 45,
+                    "datetime": "2019-01-09T14:40:30Z",
+                    "id": "123-running-20190109T144030z",
+                    "person": "123",
+                    "@controls": {
+                        "self": {
+                            "href": "/activityrecords/123-running-20190109T144030z/"
+                        },
+                        "edit": {
+                            "href": "/activityrecords/123-running-20190109T144030z/"
+                            "method": "PUT"
+                        },
+                        "cameta:activity": {
+                            "href": "/activities/running/"
+                        },
+                        "cameta:delete": {
+                            "href": "/activityrecords/123-running-20190109T144030z/"
+                            "method": "DELETE"
+                        },
+                        "cameta:activityrecords-all": {
+                            "href": "/activityrecords/"
+                        }
+                        "cameta:activityrecords-by": {
+                            "href": "/person/123/activyrecords/"
+                        },
+                        "cameta:person": {
+                            "href": "/person/123/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/activities/"
+                    },
+                    "cameta:activities-all": {
+                        "href": "/activities/"
+                    },
+                    "cameta:person": {
+                        "href": "/persons/123"
+                    },
+                    "cameta:add-activityrecord": {
+                        "href": "/person/123/activyrecords/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "activity": {
+                                    "description": "activity Id. Activity MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "duration": {
+                                    "description": "Duration of the activity in minutes/",
+                                    "type": "integer"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["activity", "duration", "datetime", "person"]
+                        }
+                    }
+                }
+            }
+
+### Create a New ActivityRecord for Person [POST]
+
+Creates a new ActivityRecord based on given JSON.
+
++ Relation: add-activityrecord
++ Request (application/json)
+
+        {
+            "activity":"running",
+            "duration":45,
+            "datetime":"2019-01-09T14:40:30Z"
+            "person":"123"
+        }
+
++ Response 201 (application/vnd.mason+json)
+
+    + Headers
+
+            Location: /activityrecords/123-running-20190109T144030z/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/person/123/activityrecords/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                            "type": "object",
+                            "properties": {
+                                "activity": {
+                                    "description": "activity Id. Activity MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "duration": {
+                                    "description": "Duration of the activity in minutes/",
+                                    "type": "integer"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["activity", "duration", "datetime", "person"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    Activity or Person not found with given IDs!
+
+    + Body
+    
+            {
+                "resource_url": "/person/123/activityrecords/",
+                "@error": {
+                    "@message": "Activity or Person with given IDs not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    ActivityRecord already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/person/123/activityrecords/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "ACtivityRecord with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/person/123/activityrecords/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+## ActivityRecord [/activityrecords/{activityrecord}/]
+
+Single ActivityRecord
+
++ Parameters
+    + activityrecord: "123-running-20190109T144030z" - activity record id (unique)
+
+### ActivityRecord information [GET]
+
+Get ActivityRecord presentation
+
++ Relation: self
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/cameta/link-relations#"
+                    }
+                },
+                "activity":"running",
+                "duration":45,
+                "datetime":"2019-01-09T14:40:30Z"
+                "id": "123-running-20190109T144030z",
+                "person":"123",
+                "@controls": {
+                    "self": {
+                        "href": "/activityrecords/123-running-20190109T144030z"
+                    },
+                    "profile": {
+                        "href": "/profiles/activityrecord/"
+                    },
+                    "cameta:activityrecords-all": {
+                        "href": "/activityrecords/",
+                        "title": "All activityrecords"
+                    },
+                    "cameta:activityrecords-by": {
+                        "href": "/person/123/activityrecords/",
+                        "title": "All activityrecords by Person"
+                    },
+                    "cameta:person": {
+                        "href": "/person/123/"
+                    },
+                    "cameta:activity": {
+                        "href": "/activities/running/"
+                    },
+                    "edit": {
+                        "href": "/activityrecords/123-running-20190109T144030z"
+                        "method": "PUT",
+                        "schema": {
+                                "activity": {
+                                    "description": "activity Id. Activity MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "duration": {
+                                    "description": "Duration of the activity in minutes/",
+                                    "type": "integer"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["activity", "duration", "datetime", "person"]
+                        }
+                    },
+                    "cameta:delete": {
+                        "href": "/person/123/activityrecords/",
+                        "title": "Delete this activityrecord",
+                        "method": "DELETE"
+                    }
+                },
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    Actitivy does not exists with given ID.
+
+    + Body
+    
+            {
+                "resource_url": "/activityrecords/123-running-20190109T144030z/",
+                "@error": {
+                    "@message": "ActivityRecord not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Edit ActivityRecord information [PUT]
+
+Replace ActivityRecord with according to given JSON.
+Location header only returned if the location was changed due to ID change!
+
++ Relation: edit
++ Request (application/json)
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "activity":"very-slow-running",
+                "duration":60,
+                "datetime":"2019-01-09T14:40:30Z"
+                "person":"123"
+            }
+        
++ Response 204
+
+    + Headers
+
+            Location: /activityrecords/123-very-slow-running-20190109T144030z/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/activityrecords/123-running-20190109T144030z/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "activity": {
+                                    "description": "activity Id. Activity MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "duration": {
+                                    "description": "Duration of the activity in minutes/",
+                                    "type": "integer"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["activity", "duration", "datetime", "person"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
++ Response 404 (application/vnd.mason+json)
+
+    Activity or Person not found with given IDs!
+
+    + Body
+    
+            {
+                "resource_url": "/activityrecords/123-running-20190109T144030z/",
+                "@error": {
+                    "@message": "Activity or Person with given IDs not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    Activity already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/activityrecords/123-running-20190109T144030z/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "Activity with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/activityrecords/123-running-20190109T144030z/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Delete ActivityRecord [DELETE]
+
+Delete activity and all related data
+
++ Relation: delete
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    ActivityRecord with given ID not found
+
+    + Body
+    
+            {
+                "resource_url": "/activityrecords/123-running-20190109T144030z/",
+                "@error": {
+                    "@message": "ActivityRecord not found with given ID!",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+# Group MealRecord
+
+## MealRecord Collection [/mealrecords/]
++ Relation: mealrecords-all
+
+### List All mealRecords [GET]
+
++ Relation: mealrecords-all
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "meal": "soup",
+                    "amount": 1,
+                    "datetime": "2019-01-09T14:40:30Z",
+                    "id": "123-soup-20190109T144030z",
+                    "person": "123"
+                    "@controls": {
+                        "self": {
+                            "href": "/mealrecords/123-soup-20190109T144030z/"
+                        },
+                        "edit": {
+                            "href": "/mealrecords/123-soup-20190109T144030z/",
+                            "method": "PUT",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "qty": {
+                                        "description": "quantity of portion in grams or ml",
+                                        "type": "integer",
+                                    },
+                                    "meal": {
+                                        "description": "meal id, meal MUST exist."
+                                        "type": "string",
+                                        "maxLenght": 128
+                                    }
+                                    "portion": {
+                                        "description": "poriton id, portion MUST exist."
+                                        "type": "string",
+                                        "maxLenght": 128
+                                    }
+                                },
+                                "required": ["meal", "qty", "portion"]
+                            }
+                        },
+                        "cameta:meal": {
+                            "href": "/meals/soup/"
+                        },
+                        "cameta:delete": {
+                            "href": "/mealrecords/123-soup-20190109T144030z/"
+                            "method": "DELETE"
+                        },
+                        "cameta:mealrecords-all": {
+                            "href": "/mealrecords/"
+                        }
+                        "cameta:mealrecords-by": {
+                            "href": "/person/123/mealrecords/"
+                        },
+                        "cameta:person": {
+                            "href": "/person/123/"
+                        }
+                    }
+                },
+                {
+                    "meal": "soup",
+                    "amount": 1,
+                    "datetime": "2019-03-09T00:40:30Z",
+                    "id": "456-soup-20190309T004030z",
+                    "person": "456"
+                    "@controls": {
+                        "self": {
+                            "href": "/mealrecords/456-soup-20190109T144030z/"
+                        },
+                        "edit": {
+                            "href": "/mealrecords/456-soup-20190109T144030z/",
+                            "method": "PUT",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "qty": {
+                                        "description": "quantity of portion in grams or ml",
+                                        "type": "integer",
+                                    },
+                                    "meal": {
+                                        "description": "meal id, meal MUST exist."
+                                        "type": "string",
+                                        "maxLenght": 128
+                                    }
+                                    "portion": {
+                                        "description": "poriton id, portion MUST exist."
+                                        "type": "string",
+                                        "maxLenght": 128
+                                    }
+                                },
+                                "required": ["meal", "qty", "portion"]
+                            }
+                        },
+                        "cameta:meal": {
+                            "href": "/meals/soup/"
+                        },
+                        "cameta:delete": {
+                            "href": "/mealrecords/456-soup-20190109T144030z/"
+                            "method": "DELETE"
+                        },
+                        "cameta:mealrecords-all": {
+                            "href": "/mealrecords/"
+                        }
+                        "cameta:mealrecords-by": {
+                            "href": "/person/456/mealrecords/"
+                        },
+                        "cameta:person": {
+                            "href": "/person/123/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/mealrecords/"
+                    },
+                    "cameta:mealrecords-all": {
+                        "href": "/mealrecords/"
+                    }
+                }
+            }
+
+
+## List of MealRecords for Person [/person/{person}/mealrecords/]
++ Relation: mealrecords-by
+
++ Parameters
+    + person: "123" - person id of the meal records (unique)
+
+### List All MealRecords for Person [GET]
+
++ Relation: mealrecords-by
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "meal": "soup",
+                    "amount": 1.5,
+                    "datetime": "2019-01-09T14:40:30Z",
+                    "id": "123-soup-20190109T144030z",
+                    "person": "123",
+                    "@controls": {
+                        "self": {
+                            "href": "/mealrecords/123-soup-20190109T144030z/"
+                        },
+                        "edit": {
+                            "href": "/mealrecords/123-soup-20190109T144030z/",
+                            "method": "PUT",
+                            "schema": {
+                                "meal": {
+                                    "description": "meal Id. meal MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "amount": {
+                                    "description": "amount of the meal in servings/",
+                                    "type": "float"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "required": ["meal", "amount", "datetime", "person"]
+                            }
+                        },
+                        "cameta:meal": {
+                            "href": "/meals/soup/"
+                        },
+                        "cameta:delete": {
+                            "href": "/mealrecords/123-soup-20190109T144030z/"
+                            "method": "DELETE"
+                        },
+                        "cameta:mealrecords-all": {
+                            "href": "/mealrecords/"
+                        }
+                        "cameta:mealrecords-by": {
+                            "href": "/person/123/mealrecords/"
+                        },
+                        "cameta:person": {
+                            "href": "/person/123/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/meals/"
+                    },
+                    "cameta:meals-all": {
+                        "href": "/meals/"
+                    },
+                    "cameta:person": {
+                        "href": "/persons/123"
+                    },
+                    "cameta:add-mealrecord": {
+                        "href": "/person/123/mealrecords/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "meal": {
+                                    "description": "meal Id. meal MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "amount": {
+                                    "description": "amount of the meal in servings",
+                                    "type": "float"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["meal", "amount", "datetime", "person"]
+                        }
+                    },
+                }
+            }
+
+### Create a New MealRecord for Person [POST]
+
+Creates a new MealRecord based on given JSON.
+
++ Relation: add-mealrecord
++ Request (application/json)
+
+        {
+            "meal":"soup",
+            "amount":1.5,
+            "datetime":"2019-01-09T14:40:30Z"
+            "person":"123"
+        }
+
++ Response 201 (application/vnd.mason+json)
+
+    + Headers
+
+            Location: /mealrecords/123-soup-20190109T144030z/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/person/123/mealrecords/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                            "type": "object",
+                            "properties": {
+                                "meal": {
+                                    "description": "meal Id. meal MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "amount": {
+                                    "description": "amount of the meal in servings/",
+                                    "type": "float"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["meal", "amount", "datetime", "person"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 404 (application/vnd.mason+json)
+
+    meal or Person not found with given IDs!
+
+    + Body
+    
+            {
+                "resource_url": "/person/123/mealrecords/",
+                "@error": {
+                    "@message": "meal or Person with given IDs not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    mealRecord already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/person/123/mealrecords/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "mealRecord with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/person/123/mealrecords/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+## MealRecord [/mealrecords/{mealrecord}/]
+
+Single MealRecord
+
++ Parameters
+    + mealrecord: "123-soup-20190109T144030z" - meal record id (unique)
+
+### MealRecord information [GET]
+
+Get MealRecord presentation
+
++ Relation: self
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/cameta/link-relations#"
+                    }
+                },
+                "meal":"soup",
+                "amount":1.5,
+                "datetime":"2019-01-09T14:40:30Z"
+                "id": "123-soup-20190109T144030z",
+                "person":"123",
+                "@controls": {
+                    "self": {
+                        "href": "/mealrecords/123-soup-20190109T144030z"
+                    },
+                    "profile": {
+                        "href": "/profiles/mealrecord/"
+                    },
+                    "cameta:mealrecords-all": {
+                        "href": "/mealrecords/",
+                        "title": "All mealrecords"
+                    },
+                    "cameta:mealrecords-by": {
+                        "href": "/person/123/mealrecords/",
+                        "title": "All mealrecords by Person"
+                    },
+                    "cameta:person": {
+                        "href": "/person/123/"
+                    },
+                    "cameta:meal": {
+                        "href": "/meals/soup/"
+                    },
+                    "edit": {
+                        "href": "/mealrecords/123-soup-20190109T144030z"
+                        "method": "PUT",
+                        "schema": {
+                                "meal": {
+                                    "description": "meal Id. meal MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "amount": {
+                                    "description": "amount of the meal in servings/",
+                                    "type": "float"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["meal", "amount", "datetime", "person"]
+                        }
+                    },
+                    "cameta:delete": {
+                        "href": "/person/123/mealrecords/",
+                        "title": "Delete this mealrecord",
+                        "method": "DELETE"
+                    }
+                },
+            }
+
+
++ Response 404 (application/vnd.mason+json)
+
+    Meal does not exists with given ID.
+
+    + Body
+    
+            {
+                "resource_url": "/mealrecords/123-soup-20190109T144030z/",
+                "@error": {
+                    "@message": "mealRecord not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Edit MealRecord information [PUT]
+
+Replace MealRecord with according to given JSON.
+Location header only returned if the location was changed due to ID change!
+
++ Relation: edit
++ Request (application/json)
+
+    + Headers
+        
+            Accept: application/vnd.mason+json
+        
+    + Body
+    
+            {
+                "meal":"salmon-soup",
+                "amount":1.5,
+                "datetime":"2019-01-09T14:40:30Z"
+                "person":"123"
+            }
+        
++ Response 204
+
+    + Headers
+
+            Location: /mealrecords/123-salmon-soup-20190109T144030z/
+
++ Response 400 (application/vnd.mason+json)
+
+    Given JSON does not validate against required schema.
+
+    + Body
+    
+            {
+                "resource_url": "/mealrecords/123-soup-20190109T144030z/",
+                "@error": {
+                    "@message": "JSON does not follow the schema!",
+                    "@messages": [                    
+                        "JSON did not validate. Required fields:
+                        {
+                            "type": "object",
+                            "properties": {
+                                "meal": {
+                                    "description": "meal Id. meal MUST exist.",
+                                    "type": "string",
+                                    "maxLenght": 128
+                                },
+                                "amount": {
+                                    "description": "amount of the meal in servings/",
+                                    "type": "float"
+                                },
+                                "datetime": {
+                                    "description": "UTC Datetime YYYY-MM-DDThh:mm:ssZ",
+                                    "type": "datetime"
+                                },
+                                "person": {
+                                    "description": "person id, Person MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["meal", "amount", "datetime", "person"]
+                        }
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
++ Response 404 (application/vnd.mason+json)
+
+    meal or Person not found with given IDs!
+
+    + Body
+    
+            {
+                "resource_url": "/mealrecords/123-soup-20190109T144030z/",
+                "@error": {
+                    "@message": "meal or Person with given IDs not found",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 409 (application/vnd.mason+json)
+
+    meal already exists with given ID!
+
+    + Body
+    
+            {
+                "resource_url": "/mealrecords/123-soup-20190109T144030z/",
+                "@error": {
+                    "@message": "Already exists",
+                    "@messages": [
+                        "meal with given ID already exists"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
++ Response 415 (application/vnd.mason+json)
+
+    Incorrect content type or message body not a valid JSON document.
+
+    + Body
+        
+            {
+                "resource_url": "/mealrecords/123-soup-20190109T144030z/",
+                "@error": {
+                    "@message": "Unsupported media type",
+                    "@messages": [
+                        "Body must be a valid JSON document with correct media type specified"
+                    ]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+### Delete MealRecord [DELETE]
+
+Delete meal and all related data
+
++ Relation: delete
++ Request
+
+    + Headers
+
+            Accept: application/vnd.mason+json
+
++ Response 204
+
++ Response 404 (application/vnd.mason+json)
+
+    MealRecord with given ID not found
+
+    + Body
+    
+            {
+                "resource_url": "/mealrecords/123-soup-20190109T144030z/",
+                "@error": {
+                    "@message": "mealRecord not found with given ID!",
+                    "@messages": [null]
+                },
+                "@controls": {
+                    "profile": {
+                        "href": "/profiles/error/"
+                    }
+                }
+            }
+
+
+# Group MealPortion
+
+## MealPortion (portion of a Meal) [/meals/{meal}/mealportions/{mealportion}/]
+
++ Parameters
+    + meal: "meal id of the meal" (unique)
+    + mealportion: "id of mealportion" (unique)
+
+### List All portions of Meal [GET]
++ Relation: portions-of
++ Response 200 (application/vnd.mason+json)
+
+    + Body
+    
+            {
+                "@namespaces": {
+                    "cameta": {
+                        "name": "/calmeta/link-relations#"
+                    }
+                },
+                "items": [
+                {
+                    "meal": "soup",
+                    "portion": "potato",
+                    "qty": "200",
+                    "id": "potato-soup-200",
+                    "@controls": {
+                        "self": {
+                            "href": "/meals/soup/mealportions/potato-soup-200/"
+                        },
+                        "edit": {
+                            "href": "/meals/soup/mealportions/potato-soup-200/"
+                            "method": "PUT"
+                        },
+                        "cameta:meal": {
+                            "href": "/meals/soup/"
+                        },
+                        "cameta:delete": {
+                            "href": "/meals/soup/mealportions/potato-soup-200/"
+                            "method": "DELETE"
+                        },
+                        "cameta:portions-of": {
+                            "href": "/meals/soup/mealportions/"
+                        },
+                        "cameta:portion": {
+                            "href": "/portion/potato/"
+                        }
+                    }
+                }
+                ],
+                "@controls": {
+                    "self": {
+                        "href": "/mealportions/"
+                    },
+                    "cameta:meal": {
+                        "href": "/meals/soup"
+                    },
+                    "cameta:add-mealportion": {
+                        "href": "meals/soup/mealportions/"
+                        "encoding": "json",
+                        "method": "POST",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "qty": {
+                                    "description": "quantity of portion in grams or ml",
+                                    "type": "integer",
+                                },
+                                "meal": {
+                                    "description": "meal id, meal MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                                "portion": {
+                                    "description": "poriton id, portion MUST exist."
+                                    "type": "string",
+                                    "maxLenght": 128
+                                }
+                            },
+                            "required": ["meal", "qty", "portion"]
+                        }
+                    }
+                }
+            }
