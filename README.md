@@ -1,5 +1,5 @@
 # PWP SPRING 2021
-# PROJECT NAME
+# PROJECT NAME: Calorie tracker
 # Group information
 * Student 1. Oana Stoicescu oana.stoicescu@oulu.fi
 * Student 2. jjuutine20@student.oulu.fi
