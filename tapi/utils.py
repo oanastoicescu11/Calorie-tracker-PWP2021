@@ -1,5 +1,7 @@
+import json
 from werkzeug.datastructures import Headers
 from tapi.constants import *
+from flask import request, Response
 
 
 # MasonBuilder was given during the exercises. Here with no modifications.
@@ -88,10 +90,14 @@ class CalorieBuilder(MasonBuilder):
         )
 
 
+def add_calorie_namespace(resp):
+    resp.add_namespace(NS, URL_LINK_RELATIONS)
+
+
 def add_mason_request_header(headers=None):
     if headers is None:
         headers = Headers()
-    headers.add('Content-Type', CONTENT_TYPE_MASON)
+    headers.add('Content-Type', MASON)
     return headers
 
 

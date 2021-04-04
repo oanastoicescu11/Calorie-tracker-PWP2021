@@ -50,13 +50,17 @@ def add_person_to_db(person_id):
 
 # from Juha's course exercise content, just a bit modified BEGIN
 def assert_content_type(resp):
-    assert resp.headers['Content-Type'] == CONTENT_TYPE_MASON
+    assert resp.headers['Content-Type'] == MASON
 
 def assert_control_collection(resp, expected_href):
     body = json.loads(resp.data)
     print(body)
     assert CONTROL_COLLECTION in body['@controls']
     assert body['@controls'][CONTROL_COLLECTION]['href'] == expected_href
+
+def assert_namespace(resp):
+    body = json.loads(resp.data)
+    assert 'cameta' in body['@namespaces']
 
 # from Juha's course exercise content, just a bit modified END
 
@@ -73,6 +77,7 @@ def test_person_collection(app):
         assert_content_type(r)
         body = json.loads(r.data)
         assert body['items'][0]['id'] == person_id
+        assert_namespace(r)
 
 
 def test_get_person(app):
@@ -91,3 +96,4 @@ def test_get_person(app):
         body = json.loads(r.data)
         print(body)
         assert body['id'] == person_id
+        assert_namespace(r)

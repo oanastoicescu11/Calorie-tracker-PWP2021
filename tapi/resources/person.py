@@ -7,6 +7,7 @@ from tapi.utils import add_mason_request_header
 from tapi.utils import CalorieBuilder
 from tapi.utils import person_to_api_person
 from tapi.utils import error_404
+from tapi.utils import add_calorie_namespace
 from tapi.constants import ROUTE_PERSON_COLLECTION
 
 
@@ -26,4 +27,5 @@ class PersonItem(Resource):
             resp = person_to_api_person(person)
             resp.add_control_collection(ROUTE_PERSON_COLLECTION)
 
+        add_calorie_namespace(resp)
         return Response(json.dumps(resp), 200, headers=add_mason_request_header())
