@@ -7,18 +7,10 @@
 
 from flask import Blueprint
 from flask_restful import Api
-from flask_restful import Resource
-from tapi.resources.person import PersonCollection
+from tapi.resources.person import PersonItem
 from tapi.constants import *
 
-api_blueprint = Blueprint('tapi', __name__, url_prefix=API_PREFIX)
+api_blueprint = Blueprint('tapi', __name__, url_prefix=ROUTE_ENTRYPOINT)
 api = Api(api_blueprint)
 
-
-class Hello(Resource):
-    def get(self):
-        return "OK"
-
-
-api.add_resource(Hello, "/hello/")
-api.add_resource(PersonCollection, ROUTE_PERSON_COLLECTION)
+api.add_resource(PersonItem, ROUTE_PERSON, ROUTE_PERSON_COLLECTION)

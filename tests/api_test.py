@@ -2,7 +2,7 @@ import json
 
 import pytest
 from tapi import db, create_app
-from tapi.constants import CONTENT_TYPE_MASON
+from tapi.constants import *
 from tapi.models import Person
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
 
@@ -11,6 +11,7 @@ import tempfile
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
 
+CONTROL_COLLECTION = "collection"
 
 @pytest.fixture
 def app():
@@ -51,23 +52,42 @@ def add_person_to_db(person_id):
 def assert_content_type(resp):
     assert resp.headers['Content-Type'] == CONTENT_TYPE_MASON
 
+def assert_control_collection(resp, expected_href):
+    body = json.loads(resp.data)
+    print(body)
+    assert CONTROL_COLLECTION in body['@controls']
+    assert body['@controls'][CONTROL_COLLECTION]['href'] == expected_href
 
 # from Juha's course exercise content, just a bit modified END
 
 def test_person_collection(app):
     with app.app_context():
-        add_person_to_db("123")
+        # create person for testing and put it into the db
+        person_id = "123"
+        add_person_to_db(person_id)
+        # obtain test client and make request
         client = app.test_client()
-        r = client.get("/api/persons/", method="GET")
-        persons = json.loads(r.data)
-        print(persons)
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION, method="GET")
+        # assert correct response code and data
         assert r.status_code == 200
         assert_content_type(r)
-        # assert persons[0]['id'] == "123"
+        body = json.loads(r.data)
+        assert body['items'][0]['id'] == person_id
 
 
-def test_hello(app):
+def test_get_person(app):
     with app.app_context():
+        # create person for testing and put it into the db
+        person_id = "123"
+        add_person_to_db(person_id)
+        # obtain test client and make request
         client = app.test_client()
-        r = client.get("/api/hello/", method="GET")
+        print(ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + person_id + '/')
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + person_id + '/', method="GET")
+        # assert correct response code and data
         assert r.status_code == 200
+        assert_content_type(r)
+        assert_control_collection(r, ROUTE_PERSON_COLLECTION)
+        body = json.loads(r.data)
+        print(body)
+        assert body['id'] == person_id
