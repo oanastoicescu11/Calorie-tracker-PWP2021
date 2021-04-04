@@ -14,6 +14,7 @@ from sqlalchemy import event
 CONTROL_COLLECTION = "collection"
 APPLICATION_JSON = "application/json"
 
+
 @pytest.fixture
 def app():
     db_fd, db_fname = tempfile.mkstemp()
@@ -120,6 +121,14 @@ def test_get_person_404(app):
 
 
 VALID_PERSON = {'id': '123'}
+INVALID_PERSON_DATA = [
+    {'name': 'this person does not have id field defined'},
+    {
+        'id': "too long id as it can be at most of 127 characters long and this is at least longer than that is in fact this is just about long enough to go over with 161 chars"},
+    {'id': "special charcters like #$%^^"},
+    {'id': None},
+    {'id': ""}]
+
 
 def test_post_person_201(app):
     with app.app_context():
@@ -149,3 +158,41 @@ def test_post_person_409(app):
         assert r.status_code == 409
         assert_content_type(r)
         assert_control_profile_error(r)
+
+
+def test_post_person_400(app):
+    with app.app_context():
+        client = app.test_client()
+        for d in INVALID_PERSON_DATA:
+            r = client.post(
+                ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION,
+                data=json.dumps(d),
+                content_type=APPLICATION_JSON,
+                method='POST')
+            if r.status_code == 201:
+                print(d)
+            assert r.status_code == 400
+            assert_content_type(r)
+            assert_control_profile_error(r)
+
+def test_delete_person_204(app):
+    with app.app_context():
+        client = app.test_client()
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION,
+            data=json.dumps(VALID_PERSON),
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 201
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + VALID_PERSON['id'] + '/', method="DELETE")
+        assert r.status_code == 204
+
+
+def test_delete_person_404(app):
+    with app.app_context():
+        client = app.test_client()
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + VALID_PERSON['id'] + '/', method="DELETE")
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
+

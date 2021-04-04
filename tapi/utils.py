@@ -121,3 +121,7 @@ def error_415():
 def error_409():
     return create_error_response(
         409, "Already exists!", "Entity with given handle already exists.")
+
+def error_400():
+    return create_error_response(
+        400, "Invalid JSON", "Request JSON does not follow the jsonschema.")
