@@ -2,6 +2,7 @@ import json
 
 import pytest
 from tapi import db, create_app
+from tapi.constants import CONTENT_TYPE_MASON
 from tapi.models import Person
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
 
@@ -37,22 +38,33 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
 
+
 # END of the Exercise example origin code
-def add_person_to_db(app, id):
+def add_person_to_db(person_id):
     p = Person()
-    p.id = id
+    p.id = person_id
     db.session.add(p)
     db.session.commit()
 
+
+# from Juha's course exercise content, just a bit modified BEGIN
+def assert_content_type(resp):
+    assert resp.headers['Content-Type'] == CONTENT_TYPE_MASON
+
+
+# from Juha's course exercise content, just a bit modified END
+
 def test_person_collection(app):
     with app.app_context():
-        add_person_to_db(app, "123")
+        add_person_to_db("123")
         client = app.test_client()
         r = client.get("/api/persons/", method="GET")
         persons = json.loads(r.data)
         print(persons)
         assert r.status_code == 200
-        assert persons[0]['id'] == "123"
+        assert_content_type(r)
+        # assert persons[0]['id'] == "123"
+
 
 def test_hello(app):
     with app.app_context():

@@ -1,6 +1,9 @@
-from flask import jsonify
+import json
+
+from flask import Response
 from flask_restful import Resource
 from tapi.models import Person
+from tapi.utils import add_mason_request_header
 
 
 class PersonItem(Resource):
@@ -15,4 +18,8 @@ class PersonCollection(Resource):
             collection.append({
                 'id': person.id
             })
-        return jsonify(collection)
+        return Response(
+            response=json.dumps(collection),
+            status=200,
+            headers=add_mason_request_header()
+        )
