@@ -8,7 +8,7 @@ db = SQLAlchemy()
 
 
 # create_app with test_config adopted from the course example
-def create_app(test_config):
+def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
