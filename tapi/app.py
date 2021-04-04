@@ -5,18 +5,12 @@ An example from the exercise taken as a base and then modified (Measurement exam
 """
 
 # BEGIN of the content taken from the exercise example
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
-
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
-
 # END of the content taken from the exercise example
 # now group's own content from here on.
+
+from tapi import db
 
 
 class Person(db.Model):

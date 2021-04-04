@@ -4,10 +4,9 @@ import pytest
 from sqlalchemy.exc import IntegrityError, StatementError
 
 
-from tapi.app import app, ActivityRecord
-from tapi.app import db
-from tapi.app import Person, Activity
-from tapi.app import Meal, MealRecord
+from tapi import db
+from tapi import app
+from tapi.app import Person, Activity, Meal, MealRecord, ActivityRecord
 
 
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
