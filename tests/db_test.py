@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError, StatementError
 
 from tapi import db
 from tapi import app
-from tapi.app import Person, Activity, Meal, MealRecord, ActivityRecord
+from tapi.models import Person, Activity, Meal, MealRecord, ActivityRecord
 
 
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
