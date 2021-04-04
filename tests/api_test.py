@@ -1,7 +1,8 @@
+import json
 
 import pytest
 from tapi import db, create_app
-
+from tapi.models import Person
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
 
 import os
@@ -37,7 +38,21 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor.close()
 
 # END of the Exercise example origin code
+def add_person_to_db(app, id):
+    p = Person()
+    p.id = id
+    db.session.add(p)
+    db.session.commit()
 
+def test_person_collection(app):
+    with app.app_context():
+        add_person_to_db(app, "123")
+        client = app.test_client()
+        r = client.get("/api/persons/", method="GET")
+        persons = json.loads(r.data)
+        print(persons)
+        assert r.status_code == 200
+        assert persons[0]['id'] == "123"
 
 def test_hello(app):
     with app.app_context():
