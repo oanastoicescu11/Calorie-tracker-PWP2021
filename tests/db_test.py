@@ -74,7 +74,6 @@ def test_person_combo(app):
 def test_person_unique(app):
     with app.app_context():
         same_id = "414"
-        print("hello")
         p1 = Person(id=same_id)
         p2 = Person(id=same_id)
         db.session.add(p1)
