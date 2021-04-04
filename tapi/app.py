@@ -20,7 +20,7 @@ class Person(db.Model):
 
 class Activity(db.Model):
     """ Activity- id, name and intensity required """
-    id = db.Column(db.String(128), primary_key=True, nullable=False)
+    id = db.Column(db.String(128), primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     intensity = db.Column(db.Integer, nullable=False)
     # Description max size 8K for simplicity reasons
@@ -57,14 +57,3 @@ class MealRecord(db.Model):
     meal = relationship(Meal, backref=backref("mealrecords"))
     qty = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, primary_key=True)
-
-# Simple sanity check for Person (ipython)
-# In [1]: from app import db
-# In [2]: db.create_all()
-# In [3]: from app import Person
-# In [4]: person = Person()
-# In [5]: person.id = "123"
-# In [9]: db.session.add(oatmeal)
-# In [10]: db.session.commit()
-# In [11]: print(person)
-# <Person 123>
