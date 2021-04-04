@@ -112,4 +112,12 @@ def create_error_response(status_code, title, message=None):
 
 def error_404():
     return create_error_response(
-        404, "Not found!", "Product not found with given handle.")
+        404, "Not found!", "Entity not found with given handle.")
+
+def error_415():
+    return create_error_response(
+        415, "Invalid Content-Type", "Request content type must be JSON")
+
+def error_409():
+    return create_error_response(
+        409, "Already exists!", "Entity with given handle already exists.")
