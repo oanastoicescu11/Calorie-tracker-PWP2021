@@ -78,7 +78,23 @@ def person_to_api_person(person):
     return p
 
 
+def meal_to_api_meal(meal):
+    m = CalorieBuilder({
+        'id': meal.id,
+        'name': meal.name,
+        'description': meal.description,
+        'servings': meal.servings
+    })
+    return m
+
+
 class CalorieBuilder(MasonBuilder):
+    def add_control_profile(self):
+        self.add_control(
+            "profile",
+            # TODO: entity specific url
+            href=URL_PROFILE
+        )
     def add_control_collection(self, href):
         self.add_control(
             "collection",
@@ -101,7 +117,7 @@ def add_calorie_namespace(resp):
     resp.add_namespace(NS, URL_LINK_RELATIONS)
 
 
-def add_mason_request_header(headers=None):
+def add_mason_response_header(headers=None):
     if headers is None:
         headers = Headers()
     headers.add('Content-Type', MASON)

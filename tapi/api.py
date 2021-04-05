@@ -12,5 +12,7 @@ api_blueprint = Blueprint('tapi', __name__, url_prefix=ROUTE_ENTRYPOINT)
 api = Api(api_blueprint)
 
 from tapi.resources.person import PersonItem
+from tapi.resources.meal import MealItem
 
 api.add_resource(PersonItem, ROUTE_PERSON, ROUTE_PERSON_COLLECTION)
+api.add_resource(MealItem, ROUTE_MEAL, ROUTE_MEAL_COLLECTION)

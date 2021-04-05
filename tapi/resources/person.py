@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import BadRequest
 
 from tapi.models import Person
-from tapi.utils import add_mason_request_header, add_calorie_namespace, person_to_api_person
+from tapi.utils import add_mason_response_header, add_calorie_namespace, person_to_api_person
 from tapi.utils import CalorieBuilder
 from tapi.utils import error_400, error_404, error_409, error_415
 from tapi.constants import MASON, NS
@@ -66,7 +66,7 @@ class PersonItem(Resource):
         resp.add_control_self(api.url_for(PersonItem, handle=handle))
         resp.add_control(NS+':persons-all', api.url_for(PersonItem, handle=None))
         add_calorie_namespace(resp)
-        return Response(json.dumps(resp), 200, headers=add_mason_request_header())
+        return Response(json.dumps(resp), 200, headers=add_mason_response_header())
 
     @classmethod
     def post(cls):
@@ -90,7 +90,7 @@ class PersonItem(Resource):
             db.session.rollback()
             return error_409()
 
-        h = add_mason_request_header()
+        h = add_mason_response_header()
         h.add('Location', api.url_for(PersonItem, handle=person.id))
 
         return Response(
