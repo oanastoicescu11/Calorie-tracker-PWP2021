@@ -10,11 +10,12 @@ from tapi.models import Person
 from tapi.utils import add_mason_request_header, add_calorie_namespace, person_to_api_person
 from tapi.utils import CalorieBuilder
 from tapi.utils import error_400, error_404, error_409, error_415
-from tapi.constants import ROUTE_PERSON_COLLECTION, MASON
+from tapi.constants import MASON, NS
 from tapi import db
 from tapi.api import api
 
 
+# PersonItem type specific helper functions
 def person_schema():
     schema = {
         "type": "object",
@@ -30,22 +31,40 @@ def person_schema():
     return schema
 
 
+def add_control_add_person(resp):
+    resp.add_control(
+        NS + ":add-person",
+        href=api.url_for(PersonItem, handle=None),
+        method="POST",
+        encoding="json",
+        title="Creates a new Person",
+        schema=person_schema()
+    )
+
+
 class PersonItem(Resource):
     @classmethod
     def get(cls, handle=None):
         if handle is None:
+            # Person collection
             resp = CalorieBuilder(items=[])
             for person in Person.query.all():
                 p = person_to_api_person(person)
-                p.add_control_collection(ROUTE_PERSON_COLLECTION)
+                p.add_control_collection(api.url_for(PersonItem, handle=None))
                 resp['items'].append(p)
+            add_control_add_person(resp)
         else:
+            # Person item
             person = Person.query.filter(Person.id == handle).first()
             if person is None:
                 return error_404()
             resp = person_to_api_person(person)
-            resp.add_control_collection(ROUTE_PERSON_COLLECTION)
+            resp.add_control_collection(api.url_for(PersonItem, handle=None))
+            resp.add_control_delete(api.url_for(PersonItem, handle=handle))
 
+        # Common fields for person item and person collection
+        resp.add_control_self(api.url_for(PersonItem, handle=handle))
+        resp.add_control(NS+':persons-all', api.url_for(PersonItem, handle=None))
         add_calorie_namespace(resp)
         return Response(json.dumps(resp), 200, headers=add_mason_request_header())
 
@@ -87,4 +106,3 @@ class PersonItem(Resource):
         db.session.delete(person)
         db.session.commit()
         return Response("DELETED", 204, mimetype=MASON)
-

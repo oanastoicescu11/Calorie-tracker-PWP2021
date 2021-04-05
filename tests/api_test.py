@@ -55,11 +55,8 @@ def assert_content_type(resp):
     assert resp.headers['Content-Type'] == MASON
 
 
-def assert_control_collection(resp, expected_href):
-    body = json.loads(resp.data)
-    print(body)
-    assert CONTROL_COLLECTION in body['@controls']
-    assert body['@controls'][CONTROL_COLLECTION]['href'] == expected_href
+def assert_control_collection(resp, href):
+    assert_control(resp, CONTROL_COLLECTION, href)
 
 
 def assert_namespace(resp):
@@ -71,7 +68,34 @@ def assert_control_profile_error(resp):
     body = json.loads(resp.data)
     assert body["@error"] is not None
     assert body['resource_url'] is not None
-    assert body["@controls"]['profile']['href'] == ERROR_PROFILE
+    assert_control(resp, 'profile', ERROR_PROFILE)
+
+
+def assert_self_url(resp, href):
+    assert_control(resp, "self", href)
+
+
+def assert_control(resp, control, href):
+    body = json.loads(resp.data)
+    assert body['@controls'][control]['href'] == href
+
+
+def assert_post_control_properties(resp, control):
+    body = json.loads(resp.data)
+    assert body['@controls'][control]['schema']
+    assert body['@controls'][control]['schema']['type']
+    assert body['@controls'][control]['schema']['properties']
+    assert body['@controls'][control]['schema']['required']
+    assert body['@controls'][control]['method']
+    assert body['@controls'][control]['encoding']
+    assert body['@controls'][control]['href']
+
+
+def assert_control_delete(resp, href):
+    body = json.loads(resp.data)
+    delete = NS + ":delete"
+    assert_control(resp, delete, href)
+    assert body['@controls'][delete]['method'] == "DELETE"
 
 
 # from Juha's course exercise content, just a bit modified END
@@ -90,6 +114,10 @@ def test_person_collection_200(app):
         body = json.loads(r.data)
         assert body['items'][0]['id'] == person_id
         assert_namespace(r)
+        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION)
+        assert_control(r, NS + ":persons-all", ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION)
+        assert_control(r, NS + ":add-person", ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION)
+        assert_post_control_properties(r, NS + ":add-person")
 
 
 def test_get_person_200(app):
@@ -103,10 +131,11 @@ def test_get_person_200(app):
         # assert correct response code and data
         assert r.status_code == 200
         assert_content_type(r)
-        assert_control_collection(r, ROUTE_PERSON_COLLECTION)
+        assert_control_collection(r, ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION)
         body = json.loads(r.data)
         assert body['id'] == person_id
         assert_namespace(r)
+        assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + person_id + '/')
 
 
 def test_get_person_404(app):
@@ -124,8 +153,11 @@ VALID_PERSON = {'id': '123'}
 INVALID_PERSON_DATA = [
     {'name': 'this person does not have id field defined'},
     {
-        'id': "too long id as it can be at most of 127 characters long and this is at least longer than that is in fact this is just about long enough to go over with 161 chars"},
-    {'id': "special charcters like #$%^^"},
+        'id': "too long id as it can be at most of 127 \
+        characters long and this is at least longer than \
+        that, in fact this is just about long enough to \
+        go over with 159 chars"},
+    {'id': "special characters like #$%^^"},
     {'id': None},
     {'id': ""}]
 
@@ -175,6 +207,7 @@ def test_post_person_400(app):
             assert_content_type(r)
             assert_control_profile_error(r)
 
+
 def test_delete_person_204(app):
     with app.app_context():
         client = app.test_client()
@@ -195,4 +228,3 @@ def test_delete_person_404(app):
         assert r.status_code == 404
         assert_content_type(r)
         assert_control_profile_error(r)
-

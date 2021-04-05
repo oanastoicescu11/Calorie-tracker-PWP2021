@@ -375,7 +375,6 @@ def test_meal_creation(app):
 def test_meal_unique(app):
     with app.app_context():
         same_id = "414"
-        print("hello")
         meal = Meal()
         meal.id = "123"
         meal.name = "Oatmeal"

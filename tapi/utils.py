@@ -88,6 +88,17 @@ class CalorieBuilder(MasonBuilder):
             "collection",
             href=href
         )
+    def add_control_self(self, href):
+        self.add_control(
+            "self",
+            href=href
+        )
+    def add_control_delete(self, href):
+        self.add_control(
+            NS + ':delete',
+            method="DELETE",
+            href=href
+        )
 
 
 def add_calorie_namespace(resp):
