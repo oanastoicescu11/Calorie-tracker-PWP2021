@@ -45,7 +45,7 @@ class Meal(db.Model):
     servings = db.Column(db.Float, nullable=False)
     # Description max size 8K for simplicity reasons
     description = db.Column(db.String(8*1024), nullable=True)
-    persons = relationship("MealRecord", cascade="all, delete-orphan")
+    meal_records = relationship("MealRecord", cascade="all, delete-orphan")
     #portions = relationship("MealPortion", cascade="all, delete-orphan")
 
 
