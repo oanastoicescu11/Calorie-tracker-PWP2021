@@ -70,15 +70,11 @@ class MasonBuilder(dict):
         self["@controls"][ctrl_name]["href"] = href
 
 
-# Helper for creating products with metadata
+# Helper for creating person with metadata
 def person_to_api_person(person):
     p = CalorieBuilder({
         'id': person.id,
     })
-    # p.add_control_delete_product(product.handle)
-    # p.add_control_edit_product(product.handle)
-    # p.add_control_collection()
-    # p.add_control_self_product_item(product.handle)
     return p
 
 
