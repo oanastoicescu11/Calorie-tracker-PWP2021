@@ -70,6 +70,9 @@ def add_control_edit_meal(resp, handle):
 
 
 class MealItem(Resource):
+    """ MealItem servers both: Individual MealItem and Meal Collection
+    If given handle is missing, the Meal Collection is returned. If handle is
+    given, the corresponding MealItem is returned (if found from the DB) """
     @classmethod
     def get(cls, handle=None):
         if handle is None:
@@ -154,6 +157,7 @@ class MealItem(Resource):
         if meal is None:
             return error_404()
 
+        # We don't support a change of ID, so ID field from the request is ignored
         meal.name = request.json['name']
         meal.description = request.json['description']
         meal.servings = request.json['servings']
@@ -170,7 +174,6 @@ class MealItem(Resource):
             status=204,
             headers=add_mason_response_header()
         )
-
 
     @classmethod
     def delete(cls, handle=None):

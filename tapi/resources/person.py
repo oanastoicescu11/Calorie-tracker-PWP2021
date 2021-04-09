@@ -43,6 +43,9 @@ def add_control_add_person(resp):
 
 
 class PersonItem(Resource):
+    """ PersonItem servers both: Individual PersonItem and Person Collection
+    If given handle is missing, the Person Collection is returned. If handle is
+    given, the corresponding PersonItem is returned (if found from the DB) """
     @classmethod
     def get(cls, handle=None):
         if handle is None:
