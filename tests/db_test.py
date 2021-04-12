@@ -510,6 +510,7 @@ def test_meal_record_cascade_on_person(app):
         fetched = MealRecord.query.filter(MealRecord.person_id == person.id).first()
         assert (fetched is None)
 
+
 def test_meal_record_cascade_on_meal(app):
     with app.app_context():
         soup = Meal()
@@ -599,6 +600,7 @@ def test_meal_record_cascade_many(app):
         for i in entities:
             db.session.delete(i)
         db.session.commit()
+
 
 # ignore warning for SQLAlchemy missing primary key as missing the primary
 # key is part of the test

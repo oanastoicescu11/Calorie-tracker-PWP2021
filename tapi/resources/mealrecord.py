@@ -76,18 +76,14 @@ def add_control_edit_mealrecord(resp, handle):
 
 class MealRecordItem(Resource):
     """ MealRecordItem serves: Individual MealRecordItem,MealRecord Collection ans MealRecord by person.
-    If handle is missing, the MealRecord Collection is returned. If handle is missing but person is given,
-     MealRecords by person are returned. If handle is
-    given, the corresponding MealRecord is returned (if found from the DB) """
+    If handle is missing, the MealRecord Collection is returned. If handle is
+    given, the corresponding MealRecord is returned (if found from the DB)
+    TODO: If handle is missing but person is given, MealRecords by person are returned. """
+
     @classmethod
-    def get(cls, person=None, meal=None, timestamp=None):
+    def get(cls, handle=None):
 
-        if person is not None and meal is not None and timestamp is not None:
-            handle = make_mealrecord_handle(person, meal, timestamp)
-        else:
-            handle = None
-
-        if handle is None and person is None:
+        if handle is None:
             # MealRecord collection
             resp = CalorieBuilder(items=[])
             for mealrecord in MealRecord.query.all():
@@ -95,19 +91,21 @@ class MealRecordItem(Resource):
                 m.add_control_collection(api.url_for(MealRecordItem, handle=None))
                 resp['items'].append(m)
             add_control_add_mealrecord(resp)
-        elif handle is None and person is not None:
-            # MealRecords by person
-            resp = CalorieBuilder(items=[])
-            for mealrecord in MealRecord.query.filter(MealRecord.person_id == person).all():
-                m = mealrecord_to_api_mealrecord(mealrecord)
-                m.add_control_collection(api.url_for(MealRecordItem, handle=None))
-                resp['items'].append(m)
-            add_control_add_mealrecord(resp)
+        # TODO:
+        # elif handle is None and person is not None:
+        #     # MealRecords by person
+        #     resp = CalorieBuilder(items=[])
+        #     for mealrecord in MealRecord.query.filter(MealRecord.person_id == person).all():
+        #         m = mealrecord_to_api_mealrecord(mealrecord)
+        #         m.add_control_collection(api.url_for(MealRecordItem, handle=None))
+        #         resp['items'].append(m)
+        #     add_control_add_mealrecord(resp)
         else:
             # MealRecord item
-            mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
-                                                 MealRecord.meal_id == meal,
-                                                 MealRecord.timestamp == timestamp).first()
+            splithandle = handle.split("-")
+            mealrecord = MealRecord.query.filter(MealRecord.person_id == splithandle[0],
+                                                 MealRecord.meal_id == splithandle[1],
+                                                 MealRecord.timestamp == splithandle[2]).first()
             if mealrecord is None:
                 return error_404()
             resp = mealrecord_to_api_mealrecord(mealrecord)
@@ -166,7 +164,7 @@ class MealRecordItem(Resource):
         )
 
     @classmethod
-    def put(cls, person, meal, timestamp):
+    def put(cls, handle):
         try:
             if request.json is None:
                 return error_415()
@@ -178,6 +176,10 @@ class MealRecordItem(Resource):
         except (SchemaError, ValidationError):
             return error_400()
 
+        splithandle = handle.split("-")
+        person = splithandle[0]
+        meal = splithandle[1]
+        timestamp = splithandle[2]
         mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
                                              MealRecord.meal_id == meal,
                                              MealRecord.timestamp == timestamp).first()
@@ -203,7 +205,11 @@ class MealRecordItem(Resource):
         )
 
     @classmethod
-    def delete(cls, person=None, meal=None, timestamp=None):
+    def delete(cls, handle=None):
+        splithandle = handle.split("-")
+        person = splithandle[0]
+        meal = splithandle[1]
+        timestamp = splithandle[2]
         mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
                                  MealRecord.meal_id == meal,
                                  MealRecord.timestamp == timestamp).first()

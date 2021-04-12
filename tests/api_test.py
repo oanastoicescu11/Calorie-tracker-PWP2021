@@ -1,9 +1,10 @@
 import json
-
+import datetime
 import pytest
 from tapi import db, create_app
 from tapi.constants import *
-from tapi.models import Person, Meal
+from tapi.models import Person, Meal, MealRecord
+from tapi.resources.mealrecord import make_mealrecord_handle
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
 
 import os
@@ -56,6 +57,16 @@ def add_meal_to_db(meal_id):
     m.name = "Oatmeal"
     m.servings = 4
     m.description = "Simple breakfast Oatmeal cooked in water"
+    db.session.add(m)
+    db.session.commit()
+
+
+def add_mealrecord_to_db(person_id, meal_id, timestamp):
+    m = MealRecord()
+    m.person_id = person_id
+    m.meal_id = meal_id
+    m.timestamp = timestamp
+    m.amount = 4
     db.session.add(m)
     db.session.commit()
 
@@ -532,3 +543,34 @@ def test_put_meal_415(app):
         assert r.status_code == 415
         assert_content_type(r)
         assert_control_profile_error(r)
+
+
+def test_get_mealrecord_200(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+        meal_id = "oatmeal"
+        person_id = "123"
+        timestamp = datetime.now()
+        add_mealrecord_to_db(person_id, meal_id, timestamp)
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+                       make_mealrecord_handle(person_id, meal_id, timestamp) + '/', method="GET")
+        # assert correct response code and data
+        assert r.status_code == 200
+        assert_content_type(r)
+        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+                        make_mealrecord_handle(person_id, meal_id, timestamp) + '/')
+        assert_control_collection(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
+        assert_control(r, 'profile', URL_PROFILE)
+        body = json.loads(r.data)
+        assert body['person_id'] == person_id
+        assert body['meal_id'] == meal_id
+        assert body['timestamp'] == timestamp
+
+        assert_namespace(r)
+        assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+                              make_mealrecord_handle(person_id, meal_id, timestamp) + '/')
+        assert_control(r, NS + ":meals-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
+        assert_edit_control_properties(r, NS + ":edit-meal")
+
