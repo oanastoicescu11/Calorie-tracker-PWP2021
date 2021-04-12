@@ -55,5 +55,5 @@ class MealRecord(db.Model):
     meal_id = db.Column(db.String(128), ForeignKey('meal.id'), primary_key=True)
     person = relationship(Person, backref=backref("meals", cascade="all, delete-orphan"))
     meal = relationship(Meal, backref=backref("mealrecords"))
-    qty = db.Column(db.Float, nullable=False)
+    amount = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, primary_key=True)

@@ -404,7 +404,7 @@ def test_meal_record_creation(app):
         mc = MealRecord()
         mc.meal = soup
         mc.person = person
-        mc.qty = 1
+        mc.amount = 1
         mc.timestamp = datetime.datetime.now()
 
         db.session.add(mc)
@@ -433,28 +433,28 @@ def test_meal_record_creation_many(app):
         p1m1 = MealRecord()
         p1m1.person = p1
         p1m1.meal = m1
-        p1m1.qty = 1
+        p1m1.amount = 1
         p1m1.timestamp = datetime.datetime.now()
         entities.append(p1m1)
 
         p1m2 = MealRecord()
         p1m2.person = p1
         p1m2.meal = m2
-        p1m2.qty = 1
+        p1m2.amount = 1
         p1m2.timestamp = datetime.datetime.now()
         entities.append(p1m2)
 
         p2m1 = MealRecord()
         p2m1.person = p2
         p2m1.meal = m1
-        p2m1.qty = 1
+        p2m1.amount = 1
         p2m1.timestamp = datetime.datetime.now()
         entities.append(p2m1)
 
         p2m2 = MealRecord()
         p2m2.person = p2
         p2m2.meal = m2
-        p2m2.qty = 1.5
+        p2m2.amount = 1.5
         p2m2.timestamp = datetime.datetime.now()
         entities.append(p2m2)
 
@@ -498,7 +498,7 @@ def test_meal_record_cascade_on_person(app):
         mc = MealRecord()
         mc.meal = soup
         mc.person = person
-        mc.qty = 1.5
+        mc.amount = 1.5
         mc.timestamp = datetime.datetime.now()
 
         db.session.add(mc)
@@ -527,7 +527,7 @@ def test_meal_record_cascade_on_meal(app):
         mc = MealRecord()
         mc.meal = soup
         mc.person = person
-        mc.qty = 1.5
+        mc.amount = 1.5
         mc.timestamp = datetime.datetime.now()
 
 
@@ -556,28 +556,28 @@ def test_meal_record_cascade_many(app):
         p1m1 = MealRecord()
         p1m1.person = p1
         p1m1.meal = m1
-        p1m1.qty = 1.5
+        p1m1.amount = 1.5
         p1m1.timestamp = datetime.datetime.now()
         entities.append(p1m1)
 
         p1m2 = MealRecord()
         p1m2.person = p1
         p1m2.meal = m2
-        p1m2.qty = 1
+        p1m2.amount = 1
         p1m2.timestamp = datetime.datetime.now()
         entities.append(p1m2)
 
         p2m1 = MealRecord()
         p2m1.person = p2
         p2m1.meal = m1
-        p2m1.qty = 1
+        p2m1.amount = 1
         p2m1.timestamp = datetime.datetime.now()
         entities.append(p2m1)
 
         p2m2 = MealRecord()
         p2m2.person = p2
         p2m2.meal = m2
-        p2m2.qty = 1
+        p2m2.amount = 1
         p2m2.timestamp = datetime.datetime.now()
         entities.append(p2m2)
 

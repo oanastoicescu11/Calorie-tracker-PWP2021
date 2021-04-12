@@ -90,6 +90,16 @@ def meal_to_api_meal(meal):
     return m
 
 
+def mealrecord_to_api_mealrecord(mealrecord):
+    # convert a MealRecord db item to a corresponding MealRecordItem API schema JSON presentation
+    m = CalorieBuilder({
+        'person_id': mealrecord.person_id,
+        'meal_id': mealrecord.meal_id,
+        'qty': mealrecord.qty,
+        'timestamp': mealrecord.timestamp
+    })
+    return m
+
 class CalorieBuilder(MasonBuilder):
     """ CalorieBuilder is a neat utility class for building the MASON response """
     def add_control_profile(self):
