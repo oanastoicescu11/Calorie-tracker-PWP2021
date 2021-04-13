@@ -13,6 +13,8 @@ api = Api(api_blueprint)
 
 from tapi.resources.person import PersonItem
 from tapi.resources.meal import MealItem
+from tapi.resources.mealrecord import MealRecordItem
 
 api.add_resource(PersonItem, ROUTE_PERSON, ROUTE_PERSON_COLLECTION)
 api.add_resource(MealItem, ROUTE_MEAL, ROUTE_MEAL_COLLECTION)
+api.add_resource(MealRecordItem, ROUTE_MEALRECORD, ROUTE_MEALRECORD_COLLECTION)

@@ -5,7 +5,7 @@ from tapi import db, create_app
 from tapi.constants import *
 from tapi.models import Person, Meal, MealRecord
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
-from tapi.utils import make_mealrecord_handle
+from tapi.utils import make_mealrecord_handle, myconverter
 
 import os
 import tempfile
@@ -81,12 +81,12 @@ def assert_control_collection(resp, href):
 
 
 def assert_namespace(resp):
-    body = json.loads(resp.data)
+    body = json.loads(resp.data, object_hook=date_hook)
     assert 'cameta' in body['@namespaces']
 
 
 def assert_control_profile_error(resp):
-    body = json.loads(resp.data)
+    body = json.loads(resp.data, object_hook=date_hook)
     assert body["@error"] is not None
     assert body['resource_url'] is not None
     assert_control(resp, 'profile', ERROR_PROFILE)
@@ -102,7 +102,7 @@ def assert_control(resp, control, href):
 
 
 def assert_post_control_properties(resp, control):
-    body = json.loads(resp.data)
+    body = json.loads(resp.data, object_hook=date_hook)
     assert body['@controls'][control]['schema']
     assert body['@controls'][control]['schema']['type']
     assert body['@controls'][control]['schema']['properties']
@@ -117,13 +117,23 @@ def assert_edit_control_properties(resp, control):
 
 
 def assert_control_delete(resp, href):
-    body = json.loads(resp.data)
+    body = json.loads(resp.data, object_hook=date_hook)
     delete = NS + ":delete"
     assert_control(resp, delete, href)
     assert body['@controls'][delete]['method'] == "DELETE"
 
-
 # from Juha's course exercise content, just a bit modified END
+
+
+def date_hook(json_dict):
+    # for json to load date object
+    for (key, value) in json_dict.items():
+        try:
+            json_dict[key] = datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+        except:
+            pass
+    return json_dict
+
 
 def test_person_collection_200(app):
     with app.app_context():
@@ -567,10 +577,10 @@ def test_get_mealrecord_200(app):
                         make_mealrecord_handle(person_id, meal_id, timestamp) + '/')
         assert_control_collection(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
         assert_control(r, 'profile', URL_PROFILE)
-        body = json.loads(r.data)
+        body = json.loads(r.data, object_hook=date_hook)
         assert body['person_id'] == person_id
         assert body['meal_id'] == meal_id
-        assert body['timestamp'] == str(timestamp)
+        assert body['timestamp'] == timestamp
 
         assert_namespace(r)
         assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
@@ -578,3 +588,100 @@ def test_get_mealrecord_200(app):
         assert_control(r, NS + ":mealrecords-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
         assert_edit_control_properties(r, NS + ":edit-mealrecord")
 
+
+def test_mealrecord_collection_200(app):
+    with app.app_context():
+        # create meal and person for testing and put it into the db
+        person_id = "123"
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+
+        timestamp = datetime.datetime.now()
+        add_mealrecord_to_db(person_id, meal_id, timestamp)
+
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION, method="GET")
+        # assert correct response code and data
+        assert r.status_code == 200
+        assert_content_type(r)
+        body = json.loads(r.data, object_hook=date_hook)
+        assert body['items'][0]['meal_id'] == meal_id
+        assert body['items'][0]['person_id'] == person_id
+        assert body['items'][0]['timestamp'] == timestamp
+
+        assert_namespace(r)
+        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
+        assert_control(r, NS + ":mealrecords-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
+        assert_control(r, NS + ":add-mealrecord", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
+        assert_post_control_properties(r, NS + ":add-mealrecord")
+
+
+def test_post_mealrecord_415(app):
+    with app.app_context():
+        client = app.test_client()
+        invalid_content_type = 'text/plain'
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION,
+            data=json.dumps(VALID_PERSON),
+            content_type=invalid_content_type,
+            method='POST')
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_get_mealrecord_404(app):
+    with app.app_context():
+        # create meal and person for testing and put it into the db
+        person_id = "123"
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+        # do not put mealrecord into db
+        timestamp = datetime.datetime.now()
+
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+                              make_mealrecord_handle(person_id, meal_id, timestamp) + '/', method="GET")
+        # assert correct response code and data
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_mealrecord_201(app):
+    with app.app_context():
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+        person_id = "123"
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+
+        timestamp = datetime.datetime.now()
+
+        MEALRECORD = {
+            'meal_id': meal_id,
+            'person_id': person_id,
+            'amount': 3.5,
+            'timestamp': timestamp
+        }
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION,
+            data=json.dumps(MEALRECORD, default=myconverter),
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 201
+        # Location URL is absolute
+        assert (r.headers['Location']).startswith("http://")
+        assert (r.headers['Location']).endswith(ROUTE_ENTRYPOINT +
+                                                ROUTE_MEALRECORD_COLLECTION +
+                                                make_mealrecord_handle(MEALRECORD['person_id'],
+                                                                       MEALRECORD['meal_id'],
+                                                                       MEALRECORD['timestamp']) + '/')
