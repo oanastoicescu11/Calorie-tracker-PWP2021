@@ -4,8 +4,8 @@ import pytest
 from tapi import db, create_app
 from tapi.constants import *
 from tapi.models import Person, Meal, MealRecord
-from tapi.resources.mealrecord import make_mealrecord_handle
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
+from tapi.utils import make_mealrecord_handle
 
 import os
 import tempfile
@@ -548,9 +548,13 @@ def test_put_meal_415(app):
 def test_get_mealrecord_200(app):
     with app.app_context():
         # create meal for testing and put it into the db
-        meal_id = "oatmeal"
         person_id = "123"
-        timestamp = datetime.now()
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+
+        timestamp = datetime.datetime.now()
         add_mealrecord_to_db(person_id, meal_id, timestamp)
         # obtain test client and make request
         client = app.test_client()
@@ -566,11 +570,11 @@ def test_get_mealrecord_200(app):
         body = json.loads(r.data)
         assert body['person_id'] == person_id
         assert body['meal_id'] == meal_id
-        assert body['timestamp'] == timestamp
+        assert body['timestamp'] == str(timestamp)
 
         assert_namespace(r)
         assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
                               make_mealrecord_handle(person_id, meal_id, timestamp) + '/')
-        assert_control(r, NS + ":meals-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
-        assert_edit_control_properties(r, NS + ":edit-meal")
+        assert_control(r, NS + ":mealrecords-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
+        assert_edit_control_properties(r, NS + ":edit-mealrecord")
 

@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from flask import Response, request
 from flask_restful import Resource
@@ -7,8 +8,8 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import BadRequest
 
 from tapi.models import MealRecord
-from tapi.utils import add_mason_response_header, add_calorie_namespace, mealrecord_to_api_mealrecord
-from tapi.utils import CalorieBuilder
+from tapi.utils import add_mason_response_header, add_calorie_namespace, mealrecord_to_api_mealrecord, myconverter
+from tapi.utils import CalorieBuilder, make_mealrecord_handle
 from tapi.utils import error_400, error_404, error_409, error_415
 from tapi.constants import MASON, NS
 from tapi import db
@@ -44,10 +45,16 @@ def mealrecord_schema():
     }
     return schema
 
-
-def make_mealrecord_handle(person, meal, timestamp):
-    handle = person + '-' + meal + '-' + timestamp
-    return handle
+def split_mealrecord_handle(handle):
+    # deparse handle to make parameters
+    splithandle = handle.split("-")
+    person = splithandle[0]
+    meal = splithandle[1]
+    timestamp = datetime.datetime.strptime((splithandle[2] + '-'
+                                            + splithandle[3] + '-'
+                                            + splithandle[4]).replace("_", " "),
+                                           '%Y-%m-%d %H:%M:%S.%f')
+    return person, meal, timestamp
 
 
 def add_control_add_mealrecord(resp):
@@ -102,10 +109,11 @@ class MealRecordItem(Resource):
         #     add_control_add_mealrecord(resp)
         else:
             # MealRecord item
-            splithandle = handle.split("-")
-            mealrecord = MealRecord.query.filter(MealRecord.person_id == splithandle[0],
-                                                 MealRecord.meal_id == splithandle[1],
-                                                 MealRecord.timestamp == splithandle[2]).first()
+            person, meal, timestamp = split_mealrecord_handle(handle)
+
+            mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
+                                                 MealRecord.meal_id == meal,
+                                                 MealRecord.timestamp == timestamp).first()
             if mealrecord is None:
                 return error_404()
             resp = mealrecord_to_api_mealrecord(mealrecord)
@@ -118,7 +126,7 @@ class MealRecordItem(Resource):
         resp.add_control_self(api.url_for(MealRecordItem, handle=handle))
         resp.add_control(NS+':mealrecords-all', api.url_for(MealRecordItem, handle=None))
         add_calorie_namespace(resp)
-        return Response(json.dumps(resp), 200, headers=add_mason_response_header())
+        return Response(json.dumps(resp, default=myconverter), 200, headers=add_mason_response_header())
 
     @classmethod
     def post(cls):
@@ -176,10 +184,8 @@ class MealRecordItem(Resource):
         except (SchemaError, ValidationError):
             return error_400()
 
-        splithandle = handle.split("-")
-        person = splithandle[0]
-        meal = splithandle[1]
-        timestamp = splithandle[2]
+        person, meal, timestamp = split_mealrecord_handle(handle)
+
         mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
                                              MealRecord.meal_id == meal,
                                              MealRecord.timestamp == timestamp).first()
@@ -206,13 +212,11 @@ class MealRecordItem(Resource):
 
     @classmethod
     def delete(cls, handle=None):
-        splithandle = handle.split("-")
-        person = splithandle[0]
-        meal = splithandle[1]
-        timestamp = splithandle[2]
+        person, meal, timestamp = split_mealrecord_handle(handle)
+
         mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
-                                 MealRecord.meal_id == meal,
-                                 MealRecord.timestamp == timestamp).first()
+                                             MealRecord.meal_id == meal,
+                                             MealRecord.timestamp == timestamp).first()
         if mealrecord is None:
             return error_404()
         db.session.delete(mealrecord)

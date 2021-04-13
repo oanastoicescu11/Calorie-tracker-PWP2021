@@ -1,4 +1,6 @@
 import json
+import datetime
+
 from werkzeug.datastructures import Headers
 from tapi.constants import *
 from flask import request, Response
@@ -95,10 +97,23 @@ def mealrecord_to_api_mealrecord(mealrecord):
     m = CalorieBuilder({
         'person_id': mealrecord.person_id,
         'meal_id': mealrecord.meal_id,
-        'qty': mealrecord.qty,
+        'amount': mealrecord.amount,
         'timestamp': mealrecord.timestamp
     })
     return m
+
+
+def myconverter(o):
+    # converter for datetime object to json representation
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
+
+
+def make_mealrecord_handle(person, meal, timestamp):
+    # parse parameters to make unique handle
+    handle = person + '-' + meal + '-' + str(timestamp).replace(" ", "_")
+    return handle
+
 
 class CalorieBuilder(MasonBuilder):
     """ CalorieBuilder is a neat utility class for building the MASON response """
