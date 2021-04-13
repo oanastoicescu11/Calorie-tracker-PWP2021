@@ -37,11 +37,12 @@ def mealrecord_schema():
     }
     props['amount'] = {
         "description": "number of servings of meal OR quantity of portion",
-        "type": "float"
+        "type": "number"
     }
     props['timestamp'] = {
         "description": "time of recording",
-        "type": "datetime"
+        "type": "string",
+        "format": "date-time"
     }
     return schema
 
