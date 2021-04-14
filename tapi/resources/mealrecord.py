@@ -89,7 +89,10 @@ class MealRecordItem(Resource):
     TODO: If handle is missing but person is given, MealRecords by person are returned. """
 
     @classmethod
-    def get(cls, handle=None):
+    def get(cls, handle=None, person_id=None):
+
+        if handle is None and person_id is not None:
+            return Response("records for personid:{}".format(person_id), 200)
 
         if handle is None:
             # MealRecord collection
@@ -128,6 +131,10 @@ class MealRecordItem(Resource):
         resp.add_control(NS+':mealrecords-all', api.url_for(MealRecordItem, handle=None))
         add_calorie_namespace(resp)
         return Response(json.dumps(resp, default=myconverter), 200, headers=add_mason_response_header())
+
+    @classmethod
+    def get_records_for_person(cls, person_id):
+        return MealRecordItem.get(None, person_id)
 
     @classmethod
     def post(cls):
