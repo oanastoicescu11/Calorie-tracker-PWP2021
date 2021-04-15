@@ -47,7 +47,7 @@ class Meal(db.Model):
     # Description max size 8K for simplicity reasons
     description = db.Column(db.String(8*1024), nullable=True)
     meal_records = relationship("MealRecord", cascade="all, delete-orphan")
-    #portions = relationship("MealPortion", cascade="all, delete-orphan")
+    portions = relationship("MealPortion", cascade="all, delete-orphan")
 
 
 class MealRecord(db.Model):
@@ -72,3 +72,9 @@ class Portion(db.Model):
     @hybrid_property
     def calories(self):
         return 4 * (self.carbohydrate + self.protein) + 9 * self.fat + 7 * self.alcohol
+
+
+class MealPortion(db.Model):
+    meal_id = db.Column(db.String(128), ForeignKey('meal.id'), primary_key=True)
+    portion_id = db.Column(db.String(128), ForeignKey('portion.id'), primary_key=True)
+    weight_per_serving = db.Column(db.Float, nullable=False)

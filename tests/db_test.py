@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from tapi import db, create_app
-from tapi.models import Person, Activity, Meal, MealRecord, ActivityRecord, Portion
+from tapi.models import Person, Activity, Meal, MealRecord, ActivityRecord, Portion, MealPortion
 
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
 
@@ -666,7 +666,7 @@ def test_meal_columns(app):
             db.session.commit()
 
 
-def test_portion_columns(app):
+def test_portion_with_valid_values(app):
     with app.app_context():
         """
         Test Portion with valid columns
@@ -767,7 +767,7 @@ def test_portion_calories_attribute(app):
 def test_portion_columns(app):
     with app.app_context():
         """
-        Tests for required columns meal
+        Tests for required columns Portion
         """
         portion = Portion()
         portion.id = "123"
@@ -783,3 +783,90 @@ def test_portion_columns(app):
         db.session.add(portion)
         with pytest.raises(IntegrityError):
             db.session.commit()
+
+
+def test_meal_portion(app):
+    with app.app_context():
+        """
+        Test for MealPortion
+        """
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+        mp = MealPortion(meal_id=mid, portion_id=pid, weight_per_serving=10)
+
+        db.session.add(mp)
+        db.session.commit()
+
+        soup = Meal.query.filter(Meal.id == mid).first()
+        assert len(soup.portions) == 1
+        assert soup.portions[0].portion_id == pid
+
+
+def test_meal_portion_cascade_meal(app):
+    with app.app_context():
+        """
+        Test for MealPortion cascade delete when meal is deleted
+        """
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+        mp = MealPortion(meal_id=mid, portion_id=pid, weight_per_serving=10)
+
+        db.session.add(mp)
+        db.session.commit()
+
+        soup = Meal.query.filter(Meal.id == mid).first()
+        assert len(soup.portions) == 1
+        assert soup.portions[0].portion_id == pid
+
+        assert MealPortion.query.filter(MealPortion.meal_id == mid).first() is not None
+
+        db.session.delete(soup)
+        db.session.commit()
+
+        assert MealPortion.query.filter(MealPortion.meal_id == mid).first() is None
+
+# TODO: test for do not permit delete for Portion if there is Meals mapped to the portion
