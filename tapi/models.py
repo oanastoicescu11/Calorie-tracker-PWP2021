@@ -9,6 +9,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 # END of the content taken from the exercise example
 # now group's own content from here on.
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from tapi import db
 
@@ -57,3 +58,17 @@ class MealRecord(db.Model):
     meal = relationship(Meal, backref=backref("mealrecords"))
     amount = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, primary_key=True)
+
+
+class Portion(db.Model):
+    id = db.Column(db.String(128), primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    density = db.Column(db.Float, nullable=True)
+    alcohol = db.Column(db.Float, nullable=False, default=0)
+    carbohydrate = db.Column(db.Float, nullable=False, default=0)
+    protein = db.Column(db.Float, nullable=False, default=0)
+    fat = db.Column(db.Float, nullable=False, default=0)
+
+    @hybrid_property
+    def calories(self):
+        return 4 * (self.carbohydrate + self.protein) + 9 * self.fat + 7 * self.alcohol

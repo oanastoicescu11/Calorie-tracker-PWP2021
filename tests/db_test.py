@@ -1,11 +1,10 @@
 import datetime
 
 import pytest
-from sqlalchemy.exc import IntegrityError, StatementError
+from sqlalchemy.exc import IntegrityError
 
 from tapi import db, create_app
-from tapi.models import Person, Activity, Meal, MealRecord, ActivityRecord
-
+from tapi.models import Person, Activity, Meal, MealRecord, ActivityRecord, Portion
 
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
 
@@ -13,6 +12,7 @@ import os
 import tempfile
 from sqlalchemy.engine import Engine
 from sqlalchemy import event, and_
+
 
 @pytest.fixture
 def app():
@@ -112,7 +112,6 @@ def test_activity_creation(app):
         db.session.add(activity)
         db.session.commit()
         # And with optional fields
-        a = Activity()
         a = Activity(id="345", name="Running-hard", intensity=800)
         a.description = "A harder exercise containing a continuous high heart beat running training"
         db.session.add(a)
@@ -531,7 +530,6 @@ def test_meal_record_cascade_on_meal(app):
         mc.amount = 1.5
         mc.timestamp = datetime.datetime.now()
 
-
         db.session.add(mc)
         db.session.commit()
 
@@ -613,7 +611,7 @@ def test_activity_columns(app):
         running = Activity()
         running.id = "1234"
         running.name = "running"
-        running.intensity = "abs" # 600kcal per hour
+        running.intensity = "abs"  # 600kcal per hour
 
         running.name = None
         db.session.add(running)
@@ -664,5 +662,124 @@ def test_meal_columns(app):
 
         meal.servings = None
         db.session.add(meal)
+        with pytest.raises(IntegrityError):
+            db.session.commit()
+
+
+def test_portion_columns(app):
+    with app.app_context():
+        """
+        Test Portion with valid columns
+        """
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        o = Portion.query.filter(Portion.id == pid).first()
+        assert (o.name == name)
+        assert (o.id == pid)
+        assert (o.density == density)
+        assert (o.fat == fat)
+        assert (o.calories == 9 * o.fat)
+
+
+def test_portion_defaults(app):
+    with app.app_context():
+        """
+        Test Portion default values
+        """
+        pid = 'dummy-defaults'
+        name = 'Dummy default'
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+
+        db.session.add(portion)
+        db.session.commit()
+
+        p = Portion.query.filter(Portion.id == pid).first()
+        assert (p.density is None)
+        assert (p.alcohol == 0)
+        assert (p.protein == 0)
+        assert (p.carbohydrate == 0)
+        assert (p.fat == 0)
+        assert (p.id == pid)
+        assert (p.name == name)
+
+
+def test_portion_calories_attribute(app):
+    with app.app_context():
+        """
+        Test Portion's aggregate column calories
+        """
+        pid = 'dummy'
+        name = 'Dummy'
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+
+        portion.fat = 1
+        portion.carbohydrate = 2
+        portion.protein = 3
+        portion.alcohol = 0
+
+        db.session.add(portion)
+        db.session.commit()
+
+        p = Portion.query.filter(Portion.id == pid).first()
+        assert (p.density is None)
+        assert (p.alcohol == 0)
+        assert (p.protein == 3)
+        assert (p.carbohydrate == 2)
+        assert (p.fat == 1)
+        assert (p.id == pid)
+        assert (p.name == name)
+        assert (portion.calories == 9*1 + 4*2 + 4*3 + 0)
+
+        p.alcohol = 20
+        db.session.add(p)
+        db.session.commit()
+
+        p = Portion.query.filter(Portion.id == pid).first()
+        assert (p.density is None)
+        assert (p.alcohol == 20)
+        assert (p.protein == 3)
+        assert (p.carbohydrate == 2)
+        assert (p.fat == 1)
+        assert (p.id == pid)
+        assert (p.name == name)
+        assert (portion.calories == 9 * 1 + 4 * 2 + 4 * 3 + 20 * 7)
+
+
+# ignore warning for SQLAlchemy missing primary key as missing the primary
+# key is part of the test
+@pytest.mark.filterwarnings("ignore")
+def test_portion_columns(app):
+    with app.app_context():
+        """
+        Tests for required columns meal
+        """
+        portion = Portion()
+        portion.id = "123"
+
+        portion.name = None
+        db.session.add(portion)
+        with pytest.raises(IntegrityError):
+            db.session.commit()
+
+        db.session.rollback()
+
+        portion.id = None
+        db.session.add(portion)
         with pytest.raises(IntegrityError):
             db.session.commit()
