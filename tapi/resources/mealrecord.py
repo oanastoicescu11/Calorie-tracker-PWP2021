@@ -102,15 +102,6 @@ class MealRecordItem(Resource):
                 m.add_control_collection(api.url_for(MealRecordItem, handle=None))
                 resp['items'].append(m)
             add_control_add_mealrecord(resp)
-        # TODO:
-        # elif handle is None and person is not None:
-        #     # MealRecords by person
-        #     resp = CalorieBuilder(items=[])
-        #     for mealrecord in MealRecord.query.filter(MealRecord.person_id == person).all():
-        #         m = mealrecord_to_api_mealrecord(mealrecord)
-        #         m.add_control_collection(api.url_for(MealRecordItem, handle=None))
-        #         resp['items'].append(m)
-        #     add_control_add_mealrecord(resp)
         else:
             # MealRecord item
             person, meal, timestamp = split_mealrecord_handle(handle)
@@ -158,7 +149,8 @@ class MealRecordItem(Resource):
             person_id=mealrecord_person,
             meal_id=mealrecord_meal,
             amount=mealrecord_amount,
-            timestamp=mealrecord_timestamp
+            timestamp=datetime.datetime.strptime(mealrecord_timestamp,
+                                        '%Y-%m-%d %H:%M:%S.%f')
         )
 
         db.session.add(mealrecord)
