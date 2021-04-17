@@ -103,10 +103,24 @@ def mealrecord_to_api_mealrecord(mealrecord):
     return m
 
 
+def mealportion_to_api_mealportion(mealportion):
+    # convert a MealRecord db item to a corresponding MealRecordItem API schema JSON presentation
+    m = CalorieBuilder({
+        'portion_id': mealportion.portion_id,
+        'meal_id': mealportion.meal_id,
+        'weight_per_serving': mealportion.weight_per_serving
+    })
+    return m
+
+
 def myconverter(o):
     # converter for datetime object to json representation
     if isinstance(o, datetime.datetime):
         return o.__str__()
+
+
+def make_mealportion_handle(meal, portion):
+    return "{}-{}".format(meal, portion)
 
 
 def make_mealrecord_handle(person, meal, timestamp):

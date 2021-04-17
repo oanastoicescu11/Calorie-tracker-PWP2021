@@ -14,12 +14,21 @@ api = Api(api_blueprint)
 from tapi.resources.person import PersonItem
 from tapi.resources.meal import MealItem
 from tapi.resources.mealrecord import MealRecordItem
+from tapi.resources.mealportion import MealPortionItem
 
 api.add_resource(PersonItem, ROUTE_PERSON, ROUTE_PERSON_COLLECTION)
 api.add_resource(MealItem, ROUTE_MEAL, ROUTE_MEAL_COLLECTION)
 api.add_resource(MealRecordItem, ROUTE_MEALRECORD, ROUTE_MEALRECORD_COLLECTION)
+api.add_resource(MealPortionItem, ROUTE_MEALPORTION)
+
 
 # Route for MealRecords for person
 @api_blueprint.route('/persons/<handle>/mealrecords/')
 def meals_for_person(handle):
     return MealRecordItem.get_records_for_person(handle)
+
+
+# Route for MealPortion POST
+@api_blueprint.route('/meals/<handle>/mealportions/', methods=['POST'])
+def mealportions_for_meal(handle):
+    return MealPortionItem.post(handle)

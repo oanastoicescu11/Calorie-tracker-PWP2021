@@ -3,9 +3,9 @@ import datetime
 import pytest
 from tapi import db, create_app
 from tapi.constants import *
-from tapi.models import Person, Meal, MealRecord
+from tapi.models import Person, Meal, MealRecord, MealPortion, Portion
 # BEGIN Original fixture setup taken from the Exercise example and then modified further
-from tapi.utils import make_mealrecord_handle, myconverter
+from tapi.utils import make_mealrecord_handle, myconverter, make_mealportion_handle
 
 import os
 import tempfile
@@ -121,6 +121,7 @@ def assert_control_delete(resp, href):
     delete = NS + ":delete"
     assert_control(resp, delete, href)
     assert body['@controls'][delete]['method'] == "DELETE"
+
 
 # from Juha's course exercise content, just a bit modified END
 
@@ -647,7 +648,7 @@ def test_get_mealrecord_404(app):
         # obtain test client and make request
         client = app.test_client()
         r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
-                              make_mealrecord_handle(person_id, meal_id, timestamp) + '/', method="GET")
+                       make_mealrecord_handle(person_id, meal_id, timestamp) + '/', method="GET")
         # assert correct response code and data
         assert r.status_code == 404
         assert_content_type(r)
@@ -685,3 +686,250 @@ def test_post_mealrecord_201(app):
                                                 make_mealrecord_handle(MEALRECORD['person_id'],
                                                                        MEALRECORD['meal_id'],
                                                                        MEALRECORD['timestamp']) + '/')
+
+
+def test_post_mealportion_201(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        client = app.test_client()
+
+        MEALPORTION = {
+            'meal_id': mid,
+            'portion_id': pid,
+            'weight_per_serving': 10,
+        }
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
+        print(endpoint)
+        r = client.post(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="POST")
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+
+        assert r.status_code == 201
+        # Location URL is absolute
+        assert r.headers['Location'].startswith("http://")
+        assert r.headers['Location'].endswith(
+            ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+            make_mealportion_handle(MEALPORTION['meal_id'], MEALPORTION['portion_id']) + '/')
+
+
+def test_get_mealportion_200(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+        mp = MealPortion(meal_id=mid, portion_id=pid, weight_per_serving=10)
+
+        db.session.add(mp)
+        db.session.commit()
+
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+                       make_mealportion_handle(mid, pid) + '/', method="GET")
+        # assert correct response code and data
+        assert r.status_code == 200
+        assert_content_type(r)
+        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+                        make_mealportion_handle(mid, pid) + '/')
+        assert_control_collection(r, ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/")
+        assert_control(r, 'profile', URL_PROFILE)
+        body = json.loads(r.data, object_hook=date_hook)
+        assert body['meal_id'] == mid
+        assert body['portion_id'] == pid
+        assert body['weight_per_serving'] == 10
+        assert_namespace(r)
+        assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+                              make_mealportion_handle(mid, pid) + '/')
+        # assert_control(r, NS + ":mealrecords-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
+        assert_edit_control_properties(r, NS + ":edit-mealportion")
+
+
+def test_delete_mealportion_204(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+        mp = MealPortion(meal_id=mid, portion_id=pid, weight_per_serving=10)
+
+        db.session.add(mp)
+        db.session.commit()
+
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+                          make_mealportion_handle(mid, pid) + '/', method="DELETE")
+
+        assert r.status_code == 204
+        mp = MealPortion.query.filter(MealPortion.meal_id == mid, MealPortion.portion_id == pid).first()
+        assert mp is None
+
+
+def test_deleted_mealportion_404(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+        mp = MealPortion(meal_id=mid, portion_id=pid, weight_per_serving=10)
+
+        db.session.add(mp)
+        db.session.commit()
+
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+                          make_mealportion_handle(mid, pid) + '/', method="DELETE")
+
+        assert r.status_code == 204
+
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+                          make_mealportion_handle(mid, pid) + '/', method="DELETE")
+        assert r.status_code == 404
+
+
+def test_put_mealportion_415(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+        mp = MealPortion(meal_id=mid, portion_id=pid, weight_per_serving=10)
+
+        db.session.add(mp)
+        db.session.commit()
+
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+        MEALPORTION = {
+            'meal_id': mid,
+            'portion_id': pid,
+            'weight_per_serving': 25,
+        }
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" \
+                   + make_mealportion_handle(mid, pid) + '/'
+
+        r = client.put(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="PUT")
+        # assert correct response code and data
+        assert r.status_code == 204
+        mp = MealPortion.query.filter(
+            MealPortion.meal_id == mid,
+            MealPortion.portion_id == pid
+        ).first()
+        assert mp is not None
+        assert mp.weight_per_serving == 25

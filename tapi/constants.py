@@ -5,6 +5,8 @@ ROUTE_MEAL_COLLECTION = '/meals/'
 ROUTE_MEAL = '/meals/<handle>/'
 ROUTE_MEALRECORD_COLLECTION = '/mealrecords/'
 ROUTE_MEALRECORD = '/mealrecords/<handle>/'
+ROUTE_MEALPORTION = '/meals/<meal>/mealportions/<handle>/'
+
 MASON = 'application/vnd.mason+json'
 NS = 'cameta'
 # TODO
