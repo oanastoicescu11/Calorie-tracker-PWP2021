@@ -78,7 +78,6 @@ class MealPortionItem(Resource):
         add_control_edit_mealportion(resp, meal, handle)
 
         resp.add_control_self(api.url_for(MealPortionItem, meal=meal, handle=handle))
-        # resp.add_control(NS+':meals-all', api.url_for(MealItem, handle=None))
         add_calorie_namespace(resp)
         return Response(json.dumps(resp), 200, headers=add_mason_response_header())
 
@@ -96,16 +95,7 @@ class MealPortionItem(Resource):
             return error_400()
 
         meal_id = handle
-
-        meal_db_item = Meal.query.filter(Meal.id == meal_id)
-        if meal_db_item is None:
-            return error_404()
-
         portion_id = request.json['portion_id']
-        portion_db_item = Portion.query.filter(Portion.id == portion_id)
-        if portion_db_item is None:
-            return error_404()
-
         mealportion = MealPortion(
             meal_id=meal_id,
             portion_id=portion_id,

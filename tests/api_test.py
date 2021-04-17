@@ -735,6 +735,113 @@ def test_post_mealportion_201(app):
             make_mealportion_handle(MEALPORTION['meal_id'], MEALPORTION['portion_id']) + '/')
 
 
+def test_post_mealportion_415_bad_response(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
+        r = client.post(endpoint, data=data, content_type=APPLICATION_JSON, method="POST")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_mealportion_415_not_json(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
+        r = client.post(endpoint, data=data, content_type="application/xml", method="POST")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+INVALID_MEALPORTION_DATA = [
+    {"portion_id": "meal-id-missing", "weight_per_serving": 20},
+    {"meal_id": "portion-id-missing", "weight_per_serving": 20},
+    {"meal_id": "weight-per-serving-missing", "portion_id": "my-portion"},
+    {}
+]
+
+def test_post_mealportion_400(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
+        for d in INVALID_MEALPORTION_DATA:
+            print(d)
+            r = client.post(endpoint, data=json.dumps(d), content_type=APPLICATION_JSON, method="POST")
+            assert r.status_code == 400
+            assert_content_type(r)
+            assert_control_profile_error(r)
+
+
+def test_post_mealportion_409(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        # db.session.add(soup)
+        # db.session.commit()
+
+        client = app.test_client()
+
+        MEALPORTION = {
+            'meal_id': mid,
+            'portion_id': pid,
+            'weight_per_serving': 10,
+        }
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
+        print(endpoint)
+
+        # Meal not in the DB yet
+        r = client.post(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="POST")
+
+        assert r.status_code == 409
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+        # Add the Meal into the db and delete the Portion
+        db.session.add(soup)
+        db.session.commit()
+        db.session.delete(portion)
+
+        r = client.post(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="POST")
+
+        assert r.status_code == 409
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
 def test_get_mealportion_200(app):
     with app.app_context():
         # create meal for testing and put it into the db
@@ -790,6 +897,24 @@ def test_get_mealportion_200(app):
         # assert_control(r, NS + ":mealrecords-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
         assert_edit_control_properties(r, NS + ":edit-mealportion")
 
+
+def test_get_mealportion_404(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-portion-which-does-not-exist-in-the-db'
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" +
+                       make_mealportion_handle(mid, pid) + '/', method="GET")
+        # assert correct response code and data
+        # assert correct response code and data
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
 
 def test_delete_mealportion_204(app):
     with app.app_context():
@@ -933,3 +1058,123 @@ def test_put_mealportion_415(app):
         ).first()
         assert mp is not None
         assert mp.weight_per_serving == 25
+
+
+def test_put_mealportion_415_not_json(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-portion-which-does-not-exist-in-the-db'
+
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" \
+                   + make_mealportion_handle(mid, pid) + '/'
+
+        r = client.put(endpoint, data=data, content_type=APPLICATION_JSON, method="PUT")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+def test_put_mealportion_415_wrong_content_type(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-portion-which-does-not-exist-in-the-db'
+
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" \
+                   + make_mealportion_handle(mid, pid) + '/'
+
+        # Let's send application/xml
+        r = client.put(endpoint, data=None, content_type="application/xml", method="PUT")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_put_mealportion_400(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-portion-which-does-not-exist-in-the-db'
+
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" \
+                   + make_mealportion_handle(mid, pid) + '/'
+
+        for d in INVALID_MEALPORTION_DATA:
+            r = client.put(endpoint, data=json.dumps(d), content_type=APPLICATION_JSON, method="PUT")
+            assert r.status_code == 400
+            assert_content_type(r)
+            assert_control_profile_error(r)
+
+def test_put_mealportion_204(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        pid = "olive-oil"
+        name = "Olive oil"
+        density = 0.89
+        fat = 100
+
+        portion = Portion()
+        portion.id = pid
+        portion.name = name
+        portion.density = density
+        portion.fat = fat
+
+        db.session.add(portion)
+        db.session.commit()
+
+        soup = Meal()
+        mid = "olive-oil-soup"
+        soup.id = mid
+        soup.name = "Olive oil Soup"
+        soup.servings = 2.5
+
+        db.session.add(soup)
+        db.session.commit()
+
+        mp = MealPortion(
+            meal_id=mid,
+            portion_id=pid,
+            weight_per_serving=40
+        )
+        db.session.add(mp)
+        db.session.commit()
+
+        client = app.test_client()
+
+        MEALPORTION = {
+            'meal_id': mid,
+            'portion_id': pid,
+            'weight_per_serving': 10,
+        }
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" + make_mealportion_handle(mid, pid) + '/'
+        print(endpoint)
+        r = client.put(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="PUT")
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+
+        assert r.status_code == 204
+
+def test_put_mealportion_404(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-portion-which-does-not-exist-in-the-db'
+        client = app.test_client()
+
+        MEALPORTION = {
+            'meal_id': mid,
+            'portion_id': pid,
+            'weight_per_serving': 10,
+        }
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" + make_mealportion_handle(mid, pid) + '/'
+        r = client.put(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="PUT")
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
