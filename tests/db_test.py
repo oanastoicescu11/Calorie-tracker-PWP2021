@@ -675,9 +675,11 @@ def test_portion_with_valid_values(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 700
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -690,7 +692,7 @@ def test_portion_with_valid_values(app):
         assert (o.id == pid)
         assert (o.density == density)
         assert (o.fat == fat)
-        assert (o.calories == 9 * o.fat)
+        assert (o.calories == calories)
 
 
 def test_portion_defaults(app):
@@ -702,6 +704,7 @@ def test_portion_defaults(app):
         name = 'Dummy default'
         portion = Portion()
         portion.id = pid
+        portion.calories = 320
         portion.name = name
 
         db.session.add(portion)
@@ -717,48 +720,48 @@ def test_portion_defaults(app):
         assert (p.name == name)
 
 
-def test_portion_calories_attribute(app):
-    with app.app_context():
-        """
-        Test Portion's aggregate column calories
-        """
-        pid = 'dummy'
-        name = 'Dummy'
-        portion = Portion()
-        portion.id = pid
-        portion.name = name
-
-        portion.fat = 1
-        portion.carbohydrate = 2
-        portion.protein = 3
-        portion.alcohol = 0
-
-        db.session.add(portion)
-        db.session.commit()
-
-        p = Portion.query.filter(Portion.id == pid).first()
-        assert (p.density is None)
-        assert (p.alcohol == 0)
-        assert (p.protein == 3)
-        assert (p.carbohydrate == 2)
-        assert (p.fat == 1)
-        assert (p.id == pid)
-        assert (p.name == name)
-        assert (portion.calories == 9*1 + 4*2 + 4*3 + 0)
-
-        p.alcohol = 20
-        db.session.add(p)
-        db.session.commit()
-
-        p = Portion.query.filter(Portion.id == pid).first()
-        assert (p.density is None)
-        assert (p.alcohol == 20)
-        assert (p.protein == 3)
-        assert (p.carbohydrate == 2)
-        assert (p.fat == 1)
-        assert (p.id == pid)
-        assert (p.name == name)
-        assert (portion.calories == 9 * 1 + 4 * 2 + 4 * 3 + 20 * 7)
+# def test_portion_calories_attribute(app):
+#     with app.app_context():
+#         """
+#         Test Portion's aggregate column calories
+#         """
+#         pid = 'dummy'
+#         name = 'Dummy'
+#         portion = Portion()
+#         portion.id = pid
+#         portion.name = name
+#
+#         portion.fat = 1
+#         portion.carbohydrate = 2
+#         portion.protein = 3
+#         portion.alcohol = 0
+#
+#         db.session.add(portion)
+#         db.session.commit()
+#
+#         p = Portion.query.filter(Portion.id == pid).first()
+#         assert (p.density is None)
+#         assert (p.alcohol == 0)
+#         assert (p.protein == 3)
+#         assert (p.carbohydrate == 2)
+#         assert (p.fat == 1)
+#         assert (p.id == pid)
+#         assert (p.name == name)
+#         assert (portion.calories == 9*1 + 4*2 + 4*3 + 0)
+#
+#         p.alcohol = 20
+#         db.session.add(p)
+#         db.session.commit()
+#
+#         p = Portion.query.filter(Portion.id == pid).first()
+#         assert (p.density is None)
+#         assert (p.alcohol == 20)
+#         assert (p.protein == 3)
+#         assert (p.carbohydrate == 2)
+#         assert (p.fat == 1)
+#         assert (p.id == pid)
+#         assert (p.name == name)
+#         assert (portion.calories == 9 * 1 + 4 * 2 + 4 * 3 + 20 * 7)
 
 
 # ignore warning for SQLAlchemy missing primary key as missing the primary
@@ -771,6 +774,7 @@ def test_portion_columns(app):
         """
         portion = Portion()
         portion.id = "123"
+        portion.calories = 325.5
 
         portion.name = None
         db.session.add(portion)
@@ -794,9 +798,11 @@ def test_meal_portion(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -833,9 +839,11 @@ def test_meal_portion_cascade_meal(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat

@@ -63,15 +63,12 @@ class MealRecord(db.Model):
 class Portion(db.Model):
     id = db.Column(db.String(128), primary_key=True)
     name = db.Column(db.String(128), nullable=False)
+    calories = db.Column(db.Float, nullable=False)
     density = db.Column(db.Float, nullable=True)
-    alcohol = db.Column(db.Float, nullable=False, default=0)
-    carbohydrate = db.Column(db.Float, nullable=False, default=0)
-    protein = db.Column(db.Float, nullable=False, default=0)
-    fat = db.Column(db.Float, nullable=False, default=0)
-
-    @hybrid_property
-    def calories(self):
-        return 4 * (self.carbohydrate + self.protein) + 9 * self.fat + 7 * self.alcohol
+    alcohol = db.Column(db.Float, nullable=True, default=0)
+    carbohydrate = db.Column(db.Float, nullable=True, default=0)
+    protein = db.Column(db.Float, nullable=True, default=0)
+    fat = db.Column(db.Float, nullable=True, default=0)
 
 
 class MealPortion(db.Model):
