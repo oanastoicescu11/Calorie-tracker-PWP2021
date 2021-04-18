@@ -569,12 +569,12 @@ def test_get_mealrecord_200(app):
         add_mealrecord_to_db(person_id, meal_id, timestamp)
         # obtain test client and make request
         client = app.test_client()
-        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION + 
                        make_mealrecord_handle(person_id, meal_id, timestamp) + '/', method="GET")
         # assert correct response code and data
         assert r.status_code == 200
         assert_content_type(r)
-        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION + 
                         make_mealrecord_handle(person_id, meal_id, timestamp) + '/')
         assert_control_collection(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
         assert_control(r, 'profile', URL_PROFILE)
@@ -584,7 +584,7 @@ def test_get_mealrecord_200(app):
         assert body['timestamp'] == timestamp
 
         assert_namespace(r)
-        assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+        assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION +
                               make_mealrecord_handle(person_id, meal_id, timestamp) + '/')
         assert_control(r, NS + ":mealrecords-all", ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION)
         assert_edit_control_properties(r, NS + ":edit-mealrecord")
@@ -634,6 +634,55 @@ def test_post_mealrecord_415(app):
         assert_control_profile_error(r)
 
 
+INVALID_MEALRECORD_DATA = [
+    {"person_id": "meal-id-missing", "timestamp": datetime.datetime.now()},
+    {"meal_id": "person-id-missing", "timestamp": datetime.datetime.now()},
+    {"meal_id": "timestamp-missing", "person_id": "my-person"},
+    {}
+]
+
+
+def test_post_mealrecord_415_bad_response(app):
+    with app.app_context():
+        client = app.test_client()
+
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION
+        r = client.post(endpoint, data=data, content_type=APPLICATION_JSON, method="POST")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_mealrecord_415_not_json(app):
+    with app.app_context():
+        client = app.test_client()
+
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION
+        r = client.post(endpoint, data=data, content_type="application/xml", method="POST")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_mealrecord_400(app):
+    with app.app_context():
+        client = app.test_client()
+
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION
+        for d in INVALID_MEALRECORD_DATA:
+            print(d)
+            r = client.post(endpoint, data=json.dumps(d, default=myconverter), content_type=APPLICATION_JSON, method="POST")
+            assert r.status_code == 400
+            assert_content_type(r)
+            assert_control_profile_error(r)
+
+
 def test_get_mealrecord_404(app):
     with app.app_context():
         # create meal and person for testing and put it into the db
@@ -647,7 +696,7 @@ def test_get_mealrecord_404(app):
 
         # obtain test client and make request
         client = app.test_client()
-        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION +
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION +
                        make_mealrecord_handle(person_id, meal_id, timestamp) + '/', method="GET")
         # assert correct response code and data
         assert r.status_code == 404
@@ -681,11 +730,208 @@ def test_post_mealrecord_201(app):
         assert r.status_code == 201
         # Location URL is absolute
         assert (r.headers['Location']).startswith("http://")
-        assert (r.headers['Location']).endswith(ROUTE_ENTRYPOINT +
+        assert (r.headers['Location']).endswith(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id +
                                                 ROUTE_MEALRECORD_COLLECTION +
                                                 make_mealrecord_handle(MEALRECORD['person_id'],
                                                                        MEALRECORD['meal_id'],
                                                                        MEALRECORD['timestamp']) + '/')
+
+
+def test_delete_mealrecord_204(app):
+    with app.app_context():
+        # create mealrecord for testing and put it into the db
+
+        person_id = "123"
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+
+        timestamp = datetime.datetime.now()
+        add_mealrecord_to_db(person_id, meal_id, timestamp)
+
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION +
+                          make_mealrecord_handle(person_id, meal_id, timestamp) + '/',
+                          method="DELETE")
+
+        assert r.status_code == 204
+        mr = MealRecord.query.filter(MealRecord.meal_id == meal_id, MealRecord.person_id == person_id).first()
+        assert mr is None
+
+
+def test_deleted_mealrecord_404(app):
+    with app.app_context():
+        # create mealrecord for testing and put it into the db
+
+        person_id = "123"
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+
+        timestamp = datetime.datetime.now()
+        add_mealrecord_to_db(person_id, meal_id, timestamp)
+
+        client = app.test_client()
+        # create meal and person for testing and put it into the db
+
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION +
+                          make_mealrecord_handle(person_id, meal_id, timestamp) + '/',
+                          method="DELETE")
+
+        assert r.status_code == 204
+
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION +
+                          make_mealrecord_handle(person_id, meal_id, timestamp) + '/',
+                          method="DELETE")
+        assert r.status_code == 404
+
+
+def test_put_mealrecord_415(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        person_id = "123"
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+
+        timestamp = datetime.datetime.now()
+        add_mealrecord_to_db(person_id, meal_id, timestamp)
+        client = app.test_client()
+
+        MEALRECORD = {
+            'meal_id': meal_id,
+            'person_id': person_id,
+            'amount': 3.5,
+            'timestamp': timestamp
+        }
+
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION + \
+                   make_mealrecord_handle(person_id, meal_id, timestamp) + '/'
+
+        r = client.put(endpoint, data=json.dumps(MEALRECORD, default=myconverter), content_type=APPLICATION_JSON, method="PUT")
+        # assert correct response code and data
+        assert r.status_code == 204
+        mr = MealRecord.query.filter(
+            MealRecord.person_id == person_id,
+            MealRecord.meal_id == meal_id,
+            MealRecord.timestamp == timestamp
+        ).first()
+        assert mr is not None
+        assert mr.amount == 3.5
+
+
+def test_put_mealrecord_415_not_json(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-person-which-does-not-exist-in-the-db'
+        timestamp = datetime.datetime.now()
+
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + ROUTE_MEALRECORD_COLLECTION + \
+                   make_mealrecord_handle(pid, mid, timestamp) + '/'
+
+        r = client.put(endpoint, data=data, content_type=APPLICATION_JSON, method="PUT")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_put_mealrecord_415_wrong_content_type(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-person-which-does-not-exist-in-the-db'
+        timestamp = datetime.datetime.now()
+
+        data = None
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + ROUTE_MEALRECORD_COLLECTION + \
+                   make_mealrecord_handle(pid, mid, timestamp) + '/'
+        # Let's send application/xml
+        r = client.put(endpoint, data=None, content_type="application/xml", method="PUT")
+
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_put_mealrecord_400(app):
+    with app.app_context():
+        client = app.test_client()
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-person-which-does-not-exist-in-the-db'
+        timestamp = datetime.datetime.now()
+
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + ROUTE_MEALRECORD_COLLECTION +\
+                   make_mealrecord_handle(pid, mid, timestamp) + '/'
+
+        for d in INVALID_MEALRECORD_DATA:
+            r = client.put(endpoint, data=json.dumps(d, default=myconverter), content_type=APPLICATION_JSON, method="PUT")
+            assert r.status_code == 400
+            assert_content_type(r)
+            assert_control_profile_error(r)
+
+
+def test_put_mealrecord_204(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+
+        person_id = "123"
+        add_person_to_db(person_id)
+
+        meal_id = 'oatmeal'
+        add_meal_to_db(meal_id)
+
+        timestamp = datetime.datetime.now()
+        add_mealrecord_to_db(person_id, meal_id, timestamp)
+        client = app.test_client()
+
+        MEALRECORD = {
+            'meal_id': meal_id,
+            'person_id': person_id,
+            'amount': 3.5,
+            'timestamp': timestamp
+        }
+
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION +\
+                   make_mealrecord_handle(person_id, meal_id, timestamp) + '/'
+        print(endpoint)
+        r = client.put(endpoint, data=json.dumps(MEALRECORD, default=myconverter), content_type=APPLICATION_JSON, method="PUT")
+
+        assert r.status_code == 204
+
+
+def test_put_mealrecord_404(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+        mid = 'imaginary-meal-which-does-not-exist-in-the-db'
+        pid = 'imaginary-person-which-does-not-exist-in-the-db'
+        timestamp = datetime.datetime.now()
+
+        client = app.test_client()
+
+        MEALRECORD = {
+            'meal_id': mid,
+            'person_id': pid,
+            'amount': 3.5,
+            'timestamp': timestamp
+        }
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + ROUTE_MEALRECORD_COLLECTION +\
+                   make_mealrecord_handle(pid, mid, timestamp) + '/'
+        r = client.put(endpoint, data=json.dumps(MEALRECORD, default=myconverter), content_type=APPLICATION_JSON, method="PUT")
+        # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
+
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
 
 
 def test_post_mealportion_201(app):

@@ -46,22 +46,21 @@ def mealrecord_schema():
     }
     return schema
 
-def split_mealrecord_handle(handle):
+
+def split_mealrecord_handle(meal, handle):
     # deparse handle to make parameters
-    splithandle = handle.split("-")
-    person = splithandle[0]
-    meal = splithandle[1]
-    timestamp = datetime.datetime.strptime((splithandle[2] + '-'
-                                            + splithandle[3] + '-'
-                                            + splithandle[4]).replace("_", " "),
+    meal = meal
+    timestring = handle[-26:]
+    person = handle[len(meal)+1:-len(timestring)-1]
+    timestamp = datetime.datetime.strptime(timestring.replace("_", " "),
                                            '%Y-%m-%d %H:%M:%S.%f')
-    return person, meal, timestamp
+    return meal, person, timestamp
 
 
 def add_control_add_mealrecord(resp):
     resp.add_control(
         NS + ":add-mealrecord",
-        href=api.url_for(MealRecordItem, handle=None),
+        href=api.url_for(MealRecordItem, meal=None, handle=None),
         method="POST",
         # TODO: json or should it be application/json?
         encoding="json",
@@ -70,10 +69,10 @@ def add_control_add_mealrecord(resp):
     )
 
 
-def add_control_edit_mealrecord(resp, handle):
+def add_control_edit_mealrecord(resp, meal, handle):
     resp.add_control(
         NS + ":edit-mealrecord",
-        href=api.url_for(MealRecordItem) + handle + '/',
+        href=api.url_for(MealRecordItem, meal=meal, handle=handle),
         method="PUT",
         # TODO: json or should it be application/json?
         encoding="json",
@@ -89,7 +88,7 @@ class MealRecordItem(Resource):
     TODO: If handle is missing but person is given, MealRecords by person are returned. """
 
     @classmethod
-    def get(cls, handle=None, person_id=None):
+    def get(cls, meal=None, handle=None, person_id=None):
 
         if handle is None and person_id is not None:
             return Response("records for personid:{}".format(person_id), 200)
@@ -99,27 +98,27 @@ class MealRecordItem(Resource):
             resp = CalorieBuilder(items=[])
             for mealrecord in MealRecord.query.all():
                 m = mealrecord_to_api_mealrecord(mealrecord)
-                m.add_control_collection(api.url_for(MealRecordItem, handle=None))
+                m.add_control_collection(api.url_for(MealRecordItem, meal=None, handle=None))
                 resp['items'].append(m)
             add_control_add_mealrecord(resp)
         else:
             # MealRecord item
-            person, meal, timestamp = split_mealrecord_handle(handle)
+            person, meal_id, timestamp = split_mealrecord_handle(meal, handle)
 
             mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
-                                                 MealRecord.meal_id == meal,
+                                                 MealRecord.meal_id == meal_id,
                                                  MealRecord.timestamp == timestamp).first()
             if mealrecord is None:
                 return error_404()
             resp = mealrecord_to_api_mealrecord(mealrecord)
-            resp.add_control_collection(api.url_for(MealRecordItem, handle=None))
-            resp.add_control_delete(api.url_for(MealRecordItem, handle=handle))
+            resp.add_control_collection(api.url_for(MealRecordItem, meal=None, handle=None))
+            resp.add_control_delete(api.url_for(MealRecordItem, meal=meal, handle=handle))
             resp.add_control_profile()
-            add_control_edit_mealrecord(resp, handle)
+            add_control_edit_mealrecord(resp, meal, handle)
 
         # Common fields for mealrecord item and mealrecord collection
-        resp.add_control_self(api.url_for(MealRecordItem, handle=handle))
-        resp.add_control(NS+':mealrecords-all', api.url_for(MealRecordItem, handle=None))
+        resp.add_control_self(api.url_for(MealRecordItem, meal=meal, handle=handle))
+        resp.add_control(NS+':mealrecords-all', api.url_for(MealRecordItem, meal=None, handle=None))
         add_calorie_namespace(resp)
         return Response(json.dumps(resp, default=myconverter), 200, headers=add_mason_response_header())
 
@@ -161,7 +160,7 @@ class MealRecordItem(Resource):
             return error_409()
 
         h = add_mason_response_header()
-        h.add('Location', api.url_for(MealRecordItem,
+        h.add('Location', api.url_for(MealRecordItem, meal=mealrecord.meal_id,
                                       handle=make_mealrecord_handle(mealrecord.person_id,
                                                                     mealrecord.meal_id,
                                                                     mealrecord.timestamp)))
@@ -172,7 +171,7 @@ class MealRecordItem(Resource):
         )
 
     @classmethod
-    def put(cls, handle):
+    def put(cls, meal, handle):
         try:
             if request.json is None:
                 return error_415()
@@ -184,10 +183,10 @@ class MealRecordItem(Resource):
         except (SchemaError, ValidationError):
             return error_400()
 
-        person, meal, timestamp = split_mealrecord_handle(handle)
+        person, meal_id, timestamp = split_mealrecord_handle(meal, handle)
 
         mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
-                                             MealRecord.meal_id == meal,
+                                             MealRecord.meal_id == meal_id,
                                              MealRecord.timestamp == timestamp).first()
         if meal is None:
             return error_404()
@@ -195,7 +194,8 @@ class MealRecordItem(Resource):
         mealrecord.person_id = request.json['person_id']
         mealrecord.meal_id = request.json['meal_id']
         mealrecord.amount = request.json['amount']
-        mealrecord.timestamp = request.json['timestamp']
+        mealrecord.timestamp = datetime.datetime.strptime(request.json['timestamp'],
+                                        '%Y-%m-%d %H:%M:%S.%f')
 
         db.session.add(mealrecord)
         try:
@@ -211,11 +211,11 @@ class MealRecordItem(Resource):
         )
 
     @classmethod
-    def delete(cls, handle=None):
-        person, meal, timestamp = split_mealrecord_handle(handle)
+    def delete(cls, meal, handle=None):
+        person, meal_id, timestamp = split_mealrecord_handle(meal, handle)
 
         mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
-                                             MealRecord.meal_id == meal,
+                                             MealRecord.meal_id == meal_id,
                                              MealRecord.timestamp == timestamp).first()
         if mealrecord is None:
             return error_404()
