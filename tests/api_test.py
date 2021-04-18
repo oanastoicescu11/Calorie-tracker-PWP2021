@@ -696,9 +696,11 @@ def test_post_mealportion_201(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -772,6 +774,7 @@ INVALID_MEALPORTION_DATA = [
     {}
 ]
 
+
 def test_post_mealportion_400(app):
     with app.app_context():
         client = app.test_client()
@@ -794,9 +797,11 @@ def test_post_mealportion_409(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -850,9 +855,11 @@ def test_get_mealportion_200(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -902,7 +909,6 @@ def test_get_mealportion_404(app):
     with app.app_context():
         # create meal for testing and put it into the db
 
-
         mid = 'imaginary-meal-which-does-not-exist-in-the-db'
         pid = 'imaginary-portion-which-does-not-exist-in-the-db'
         client = app.test_client()
@@ -916,6 +922,7 @@ def test_get_mealportion_404(app):
         assert_content_type(r)
         assert_control_profile_error(r)
 
+
 def test_delete_mealportion_204(app):
     with app.app_context():
         # create meal for testing and put it into the db
@@ -924,9 +931,11 @@ def test_delete_mealportion_204(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -968,9 +977,11 @@ def test_deleted_mealportion_404(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -1014,9 +1025,11 @@ def test_put_mealportion_415(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -1077,6 +1090,7 @@ def test_put_mealportion_415_not_json(app):
         assert_content_type(r)
         assert_control_profile_error(r)
 
+
 def test_put_mealportion_415_wrong_content_type(app):
     with app.app_context():
         client = app.test_client()
@@ -1110,6 +1124,7 @@ def test_put_mealportion_400(app):
             assert_content_type(r)
             assert_control_profile_error(r)
 
+
 def test_put_mealportion_204(app):
     with app.app_context():
         # create meal for testing and put it into the db
@@ -1118,9 +1133,11 @@ def test_put_mealportion_204(app):
         name = "Olive oil"
         density = 0.89
         fat = 100
+        calories = 720
 
         portion = Portion()
         portion.id = pid
+        portion.calories = calories
         portion.name = name
         portion.density = density
         portion.fat = fat
@@ -1152,12 +1169,14 @@ def test_put_mealportion_204(app):
             'portion_id': pid,
             'weight_per_serving': 10,
         }
-        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" + make_mealportion_handle(mid, pid) + '/'
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" + make_mealportion_handle(mid,
+                                                                                                               pid) + '/'
         print(endpoint)
         r = client.put(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="PUT")
         # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
 
         assert r.status_code == 204
+
 
 def test_put_mealportion_404(app):
     with app.app_context():
@@ -1171,7 +1190,8 @@ def test_put_mealportion_404(app):
             'portion_id': pid,
             'weight_per_serving': 10,
         }
-        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" + make_mealportion_handle(mid, pid) + '/'
+        endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" + make_mealportion_handle(mid,
+                                                                                                               pid) + '/'
         r = client.put(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="PUT")
         # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
 
