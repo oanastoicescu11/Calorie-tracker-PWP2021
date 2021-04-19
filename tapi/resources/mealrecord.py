@@ -51,10 +51,10 @@ def split_mealrecord_handle(meal, handle):
     # deparse handle to make parameters
     meal = meal
     timestring = handle[-26:]
-    person = handle[len(meal)+1:-len(timestring)-1]
+    person = handle[:-len(timestring)-1-len(meal)-1]
     timestamp = datetime.datetime.strptime(timestring.replace("_", " "),
                                            '%Y-%m-%d %H:%M:%S.%f')
-    return meal, person, timestamp
+    return person, meal, timestamp
 
 
 def add_control_add_mealrecord(resp):

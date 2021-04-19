@@ -125,7 +125,8 @@ def make_mealportion_handle(meal, portion):
 
 def make_mealrecord_handle(person, meal, timestamp):
     # parse parameters to make unique handle
-    handle = person + '-' + meal + '-' + str(timestamp).replace(" ", "_")
+    handle = person + '-' + meal + '-' + \
+             datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M:%S.%f').replace(" ", "_")
     return handle
 
 
