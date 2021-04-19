@@ -348,6 +348,28 @@ VALID_MEAL = {
 }
 
 
+def test_delete_meal_204(app):
+    with app.app_context():
+        client = app.test_client()
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION,
+            data=json.dumps(VALID_MEAL),
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 201
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + VALID_MEAL['id'] + '/', method="DELETE")
+        assert r.status_code == 204
+
+
+def test_delete_meal_404(app):
+    with app.app_context():
+        client = app.test_client()
+        meal_id = "imaginary-id-not-existing-in-the-db"
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + '/', method="DELETE")
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
 def test_post_meal_201(app):
     with app.app_context():
         client = app.test_client()
@@ -379,6 +401,35 @@ def test_post_meal_409(app):
             content_type=APPLICATION_JSON,
             method='POST')
         assert r.status_code == 409
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_meal_415_bad_response(app):
+    with app.app_context():
+        client = app.test_client()
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION,
+            data=data,
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_meal_415_invalid_content_type(app):
+    with app.app_context():
+        client = app.test_client()
+        # Let's send application/xml as content type
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION,
+            data=json.dumps(VALID_MEAL),
+            content_type="application/xml",
+            method='POST')
+        assert r.status_code == 415
         assert_content_type(r)
         assert_control_profile_error(r)
 
@@ -524,7 +575,21 @@ def test_put_meal_400(app):
             assert_content_type(r)
 
 
-def test_put_meal_415(app):
+def test_put_meal_415_bad_request(app):
+    with app.app_context():
+        client = app.test_client()
+        # Let's put None as data
+        r = client.put(
+            ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + "123" + '/',
+            data=None,
+            content_type=APPLICATION_JSON,
+            method='put')
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_put_meal_415_invalid_content_type(app):
     with app.app_context():
         client = app.test_client()
         meal_id = 'oatmeal'
@@ -545,7 +610,7 @@ def test_put_meal_415(app):
             'description': desc
         }
         invalid_content_type = 'text/plain'
-
+        # Set content type to text/plain
         r = client.put(
             ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + '/',
             data=json.dumps(meal),
