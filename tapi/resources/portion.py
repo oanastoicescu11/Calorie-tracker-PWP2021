@@ -89,6 +89,15 @@ def add_control_edit_portion(resp, handle):
     )
 
 
+def extract_optional_fields(json_data):
+    optional_keys = ['density', 'alcohol', 'carbohydrate', 'protein', 'fat']
+    fields = {}
+    for k in optional_keys:
+        if k in json_data.keys():
+            fields[k] = json_data[k]
+    return fields
+
+
 class PortionItem(Resource):
     """ PortionItem servers both: Individual PortionItem and Portion Collection
     If given handle is missing, the Portion Collection is returned. If handle is
@@ -137,22 +146,17 @@ class PortionItem(Resource):
         portion_id = request.json['id']
         portion_name = request.json['name']
         portion_calories = request.json['calories']
-        portion_density = request.json['density']
-        portion_alcohol = request.json['alcohol']
-        portion_carbohydrate = request.json['carbohydrate']
-        portion_protein = request.json['protein']
-        portion_fat = request.json['fat']
+        optional_fields = extract_optional_fields(request.json)
 
+        # First set required fields
         portion = Portion(
             id=portion_id,
             name=portion_name,
-            calories=portion_calories,
-            density=portion_density,
-            alcohol=portion_alcohol,
-            carbohydrate=portion_carbohydrate,
-            protein=portion_protein,
-            fat=portion_fat
+            calories=portion_calories
         )
+        # Then optional, which are stored in 'found' dict
+        for k in optional_fields.keys():
+            setattr(portion, k, optional_fields[k])
 
         db.session.add(portion)
         try:
@@ -189,11 +193,10 @@ class PortionItem(Resource):
         # We don't support a change of ID, so ID field from the request is ignored
         portion.name = request.json['name']
         portion.calories = request.json['calories']
-        portion.density = request.json['density']
-        portion.alcohol = request.json['alcohol']
-        portion.carbohydrate = request.json['carbohydrate']
-        portion.protein = request.json['protein']
-        portion.fat = request.json['fat']
+        optional_fields = extract_optional_fields(request.json)
+
+        for k in optional_fields.keys():
+            setattr(portion, k, optional_fields[k])
 
         db.session.add(portion)
         try:
