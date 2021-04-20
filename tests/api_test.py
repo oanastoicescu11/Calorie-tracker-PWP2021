@@ -356,7 +356,6 @@ def test_get_meal_404(app):
 VALID_MEAL = {
     'id': 'myoatmeal',
     'name': 'My Oatmeal',
-    'description': 'normal oatmeal',
     'servings': 3
 }
 
