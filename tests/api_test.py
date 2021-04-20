@@ -1772,3 +1772,69 @@ def test_put_portion_415(app):
         assert r.status_code == 415
         assert_content_type(r)
         assert_control_profile_error
+
+
+def test_delete_portion_204(app):
+    with app.app_context():
+        client = app.test_client()
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION,
+            data=json.dumps(VALID_PORTION),
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 201
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + VALID_PORTION['id'] + '/', method="DELETE")
+        assert r.status_code == 204
+
+
+def test_delete_portion_404(app):
+    with app.app_context():
+        client = app.test_client()
+        portion_id = "imaginary-id-not-existing-in-the-db"
+        r = client.delete(ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/', method="DELETE")
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_portion_415_bad_response(app):
+    with app.app_context():
+        client = app.test_client()
+        # Let's send an empty data for as JSON content, (BadResponse)
+        data = None
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION,
+            data=data,
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_post_portion_415_invalid_content_type(app):
+    with app.app_context():
+        client = app.test_client()
+        # Let's send application/xml as content type
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION,
+            data=json.dumps(VALID_PORTION),
+            content_type="application/xml",
+            method='POST')
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+def test_put_portion_415_bad_request(app):
+    with app.app_context():
+        client = app.test_client()
+        # Let's put None as data
+        r = client.put(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + "123" + '/',
+            data=None,
+            content_type=APPLICATION_JSON,
+            method='put')
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error(r)
