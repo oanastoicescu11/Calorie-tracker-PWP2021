@@ -383,6 +383,7 @@ def test_delete_meal_404(app):
         assert_content_type(r)
         assert_control_profile_error(r)
 
+
 def test_post_meal_201(app):
     with app.app_context():
         client = app.test_client()
