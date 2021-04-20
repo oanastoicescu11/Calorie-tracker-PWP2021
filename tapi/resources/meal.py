@@ -115,15 +115,16 @@ class MealItem(Resource):
 
         meal_id = request.json['id']
         meal_name = request.json['name']
-        meal_description = request.json['description']
         meal_servings = request.json['servings']
 
         meal = Meal(
             id=meal_id,
             name=meal_name,
-            description=meal_description,
             servings=meal_servings
         )
+
+        if 'description' in request.json.keys():
+            meal.description = request.json['description']
 
         db.session.add(meal)
         try:
@@ -159,8 +160,10 @@ class MealItem(Resource):
 
         # We don't support a change of ID, so ID field from the request is ignored
         meal.name = request.json['name']
-        meal.description = request.json['description']
         meal.servings = request.json['servings']
+
+        if 'description' in request.json.keys():
+            meal.description = request.json['description']
 
         db.session.add(meal)
         try:
