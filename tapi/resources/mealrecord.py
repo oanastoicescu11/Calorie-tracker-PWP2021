@@ -188,7 +188,7 @@ class MealRecordItem(Resource):
         mealrecord = MealRecord.query.filter(MealRecord.person_id == person,
                                              MealRecord.meal_id == meal_id,
                                              MealRecord.timestamp == timestamp).first()
-        if meal is None:
+        if mealrecord is None:
             return error_404()
 
         mealrecord.person_id = request.json['person_id']

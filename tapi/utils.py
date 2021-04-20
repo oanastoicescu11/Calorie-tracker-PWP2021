@@ -113,6 +113,22 @@ def mealportion_to_api_mealportion(mealportion):
     return m
 
 
+def portion_to_api_portion(portion):
+    # convert a Portion db item to a corresponding PortionItem API schema JSON presentation
+    p = CalorieBuilder({
+        'id': portion.id,
+        'name': portion.name,
+        'calories': portion.calories,
+        'density': portion.density,
+        'alcohol': portion.alcohol,
+        'carbohydrate': portion.carbohydrate,
+        'protein': portion.protein,
+        'fat': portion.fat
+
+    })
+    return p
+
+
 def myconverter(o):
     # converter for datetime object to json representation
     if isinstance(o, datetime.datetime):

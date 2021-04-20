@@ -61,6 +61,19 @@ def add_meal_to_db(meal_id):
     db.session.commit()
 
 
+def add_portion_to_db(portion_id):
+    p = Portion()
+    p.id = portion_id
+    p.name = "oat"
+    p.calories = 120
+    p.density = 0.4
+    p.alcohol = 0.5
+    p.carbohydrate = 24
+    p.protein = 10
+    p.fat = 1.5
+    db.session.add(p)
+    db.session.commit()
+
 def add_mealrecord_to_db(person_id, meal_id, timestamp):
     m = MealRecord()
     m.person_id = person_id
@@ -1444,3 +1457,253 @@ def test_put_mealportion_404(app):
         assert r.status_code == 404
         assert_content_type(r)
         assert_control_profile_error(r)
+
+
+def test_portion_collection_200(app):
+    with app.app_context():
+        # create portion for testing and put it into the db
+        portion_id = "oat"
+        add_portion_to_db(portion_id)
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION, method="GET")
+        # assert correct response code and data
+        assert r.status_code == 200
+        assert_content_type(r)
+        body = json.loads(r.data)
+        assert body['items'][0]['id'] == portion_id
+        assert_namespace(r)
+        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION)
+        assert_control(r, NS + ":portions-all", ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION)
+        assert_control(r, NS + ":add-portion", ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION)
+        assert_post_control_properties(r, NS + ":add-portion")
+
+
+def test_get_portion_200(app):
+    with app.app_context():
+        # create portion for testing and put it into the db
+        portion_id = "oat"
+        add_portion_to_db(portion_id)
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/', method="GET")
+        # assert correct response code and data
+        assert r.status_code == 200
+        assert_content_type(r)
+        assert_self_url(r, ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/')
+        assert_control_collection(r, ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION)
+        assert_control(r, 'profile', URL_PROFILE)
+        body = json.loads(r.data)
+        assert body['id'] == portion_id
+        assert_namespace(r)
+        assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/')
+        assert_control(r, NS + ":portions-all", ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION)
+        assert_edit_control_properties(r, NS + ":edit-portion")
+
+
+def test_get_portion_404(app):
+    with app.app_context():
+        # create portion for testing and put it into the db
+        portion_id = "this portion does not exists"
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/', method="GET")
+        # assert correct response code and data
+        assert r.status_code == 404
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+VALID_PORTION = {
+    'id': 'myoat',
+    'name': 'My Oat',
+    'calories': 352,
+}
+
+
+def test_post_portion_201(app):
+    with app.app_context():
+        client = app.test_client()
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION,
+            data=json.dumps(VALID_PORTION),
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 201
+        # Location URL is absolute
+        assert (r.headers['Location']).startswith("http://")
+        assert (r.headers['Location']).endswith(ROUTE_ENTRYPOINT +
+                                                ROUTE_PORTION_COLLECTION +
+                                                VALID_PORTION['id'] + '/')
+
+
+def test_post_portion_409(app):
+    with app.app_context():
+        client = app.test_client()
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION,
+            data=json.dumps(VALID_PORTION),
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 201
+        r = client.post(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION,
+            data=json.dumps(VALID_PORTION),
+            content_type=APPLICATION_JSON,
+            method='POST')
+        assert r.status_code == 409
+        assert_content_type(r)
+        assert_control_profile_error(r)
+
+
+INVALID_PORTION_DATA = [
+    {'id': '',
+     'name': 'emptyid',
+     'calories': 350},
+    {'name': 'missingid',
+     'calories': 350},
+    {'id': 'my oat',
+     'name': 'space in id',
+     'calories': 350},
+    {'id': 'foobar%$^&',
+     'name': 'illegal characters in id',
+     'calories': 350},
+    {'id': str().ljust(200, 'a'),
+     'name': 'too long id',
+     'calories': 350},
+    {'id': 'oat',
+     'name': 'too long name' + str().ljust(200, 'a'),
+     'calories': 350},
+    {'id': 'oatnamemissing',
+     'calories': 350},
+    {'id': 'oat',
+     'name': 'calories string',
+     'calories': '350'},
+    {'id': 'caloriesmissing',
+     'name': 'too long name'},
+]
+
+
+def test_post_portion_400(app):
+    with app.app_context():
+        client = app.test_client()
+        for d in INVALID_PORTION_DATA:
+            r = client.post(
+                ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION,
+                data=json.dumps(d),
+                content_type=APPLICATION_JSON,
+                method='POST')
+            assert r.status_code == 400
+            assert_content_type(r)
+            assert_control_profile_error(r)
+
+
+def test_put_portion_204(app):
+    with app.app_context():
+        client = app.test_client()
+        portion_id = 'oat'
+        m = Portion()
+        m.id = portion_id
+        m.name = "Oat"
+        m.calories = 415
+        db.session.add(m)
+        db.session.commit()
+
+        name = 'new name'
+        calories = 321
+        portion = {
+            'id': portion_id,
+            'name': name,
+            'calories': calories
+        }
+
+        r = client.put(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/',
+            data=json.dumps(portion),
+            content_type=APPLICATION_JSON,
+            method='put')
+        assert r.status_code == 204
+        assert_content_type(r)
+
+
+def test_put_portion_404(app):
+    with app.app_context():
+        client = app.test_client()
+        portion = {
+            'id': 'thisiddoesnotexist',
+            'name': 'some portion',
+            'calories': 415
+        }
+        r = client.put(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + 'thisiddoesnotexist' + '/',
+            data=json.dumps(portion),
+            content_type=APPLICATION_JSON,
+            method='put')
+        assert r.status_code == 404
+        assert_content_type(r)
+
+
+def test_put_portion_400(app):
+    with app.app_context():
+        client = app.test_client()
+        portion_id = 'oat'
+        m = Portion()
+        m.id = portion_id
+        m.name = "Oat"
+        m.calories = 415
+        db.session.add(m)
+        db.session.commit()
+
+        name = 'new name'
+        calories = 321
+        portion = {
+            'id': portion_id,
+            'name': name,
+            'calories': calories
+        }
+
+        r = client.put(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/',
+            data=json.dumps(portion),
+            content_type=APPLICATION_JSON,
+            method='put')
+        assert r.status_code == 204
+
+        for d in INVALID_PORTION_DATA:
+            r = client.put(
+                ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/',
+                data=json.dumps(d),
+                content_type=APPLICATION_JSON,
+                method='put')
+            assert r.status_code == 400
+            assert_content_type(r)
+
+
+def test_put_portion_415(app):
+    with app.app_context():
+        client = app.test_client()
+        portion_id = 'oat'
+        m = Portion()
+        m.id = portion_id
+        m.name = "Oat"
+        m.calories = 400
+        db.session.add(m)
+        db.session.commit()
+
+        name = 'new name'
+        calories = 312
+        portion = {
+            'id': portion_id,
+            'name': name,
+            'calories': calories
+        }
+        invalid_content_type = 'text/plain'
+
+        r = client.put(
+            ROUTE_ENTRYPOINT + ROUTE_PORTION_COLLECTION + portion_id + '/',
+            data=json.dumps(portion),
+            content_type=invalid_content_type,
+            method='put')
+        assert r.status_code == 415
+        assert_content_type(r)
+        assert_control_profile_error
