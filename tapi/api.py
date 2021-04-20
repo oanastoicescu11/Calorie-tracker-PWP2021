@@ -15,11 +15,13 @@ from tapi.resources.person import PersonItem
 from tapi.resources.meal import MealItem
 from tapi.resources.mealrecord import MealRecordItem
 from tapi.resources.mealportion import MealPortionItem
+from tapi.resources.portion import PortionItem
 
 api.add_resource(PersonItem, ROUTE_PERSON, ROUTE_PERSON_COLLECTION)
 api.add_resource(MealItem, ROUTE_MEAL, ROUTE_MEAL_COLLECTION)
 api.add_resource(MealRecordItem, ROUTE_MEALRECORD, ROUTE_MEALRECORD_COLLECTION)
 api.add_resource(MealPortionItem, ROUTE_MEALPORTION)
+api.add_resource(PortionItem, ROUTE_PORTION, ROUTE_PORTION_COLLECTION)
 
 
 # Route for MealRecords for person
