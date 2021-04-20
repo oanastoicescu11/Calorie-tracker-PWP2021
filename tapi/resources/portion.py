@@ -35,31 +35,31 @@ def portion_schema():
     }
     props['calories'] = {
         "description": "number of calories/100g in this portion",
-        "type": "float"
+        "type": "number"
     }
     props['density'] = {
         "description": "Density of the portion",
-        "type": "float",
+        "type": "number",
         "maxLength": 8192
     }
     props['alcohol'] = {
         "description": "alcohol/100g of the portion",
-        "type": "float",
+        "type": "number",
         "maxLength": 8192
     }
     props['carbohydrate'] = {
         "description": "Carbs/100g of the portion",
-        "type": "float",
+        "type": "number",
         "maxLength": 8192
     }
     props['protein'] = {
         "description": "Protein/100g of the portion",
-        "type": "float",
+        "type": "number",
         "maxLength": 8192
     }
     props['fat'] = {
         "description": "Fat/100g of the portion",
-        "type": "float",
+        "type": "number",
         "maxLength": 8192
     }
     return schema
