@@ -754,7 +754,6 @@ def test_post_mealrecord_400(app):
 
         endpoint = ROUTE_ENTRYPOINT + ROUTE_MEALRECORD_COLLECTION
         for d in INVALID_MEALRECORD_DATA:
-            print(d)
             r = client.post(endpoint, data=json.dumps(d, default=myconverter), content_type=APPLICATION_JSON, method="POST")
             assert r.status_code == 400
             assert_content_type(r)
@@ -981,7 +980,6 @@ def test_put_mealrecord_204(app):
 
         endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + meal_id + ROUTE_MEALRECORD_COLLECTION +\
                    make_mealrecord_handle(person_id, meal_id, timestamp) + '/'
-        print(endpoint)
         r = client.put(endpoint, data=json.dumps(MEALRECORD, default=myconverter), content_type=APPLICATION_JSON, method="PUT")
 
         assert r.status_code == 204
@@ -1049,7 +1047,6 @@ def test_post_mealportion_201(app):
             'weight_per_serving': 10,
         }
         endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
-        print(endpoint)
         r = client.post(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="POST")
         # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
 
@@ -1106,7 +1103,6 @@ def test_post_mealportion_400(app):
 
         endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
         for d in INVALID_MEALPORTION_DATA:
-            print(d)
             r = client.post(endpoint, data=json.dumps(d), content_type=APPLICATION_JSON, method="POST")
             assert r.status_code == 400
             assert_content_type(r)
@@ -1150,7 +1146,6 @@ def test_post_mealportion_409(app):
             'weight_per_serving': 10,
         }
         endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/"
-        print(endpoint)
 
         # Meal not in the DB yet
         r = client.post(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="POST")
@@ -1495,7 +1490,6 @@ def test_put_mealportion_204(app):
         }
         endpoint = ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + mid + "/mealportions/" + make_mealportion_handle(mid,
                                                                                                                pid) + '/'
-        print(endpoint)
         r = client.put(endpoint, data=json.dumps(MEALPORTION), content_type=APPLICATION_JSON, method="PUT")
         # Olive oil soup is total of 2.5 servings and has 10g of oil per serving
 
