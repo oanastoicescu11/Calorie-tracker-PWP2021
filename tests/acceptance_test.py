@@ -221,11 +221,10 @@ def create_basic_meal(app, meal_id):
     assert r.status_code == 200
     return json.loads(r.data)
 
-# def get_mealportions(app, meal_id):
-#     client = app.test_client()
-#     r =
-#     assert r.status_code == 200
-#     return json.loads(r.data)
+def get_mealjson(app, meal_id):
+    r = get_meal(app, meal_id)
+    assert r.status_code == 200
+    return json.loads(r.data)
 
 def create_meal_portion(app, mp):
     client = app.test_client()
@@ -300,6 +299,7 @@ def test_track_meals_of_the_day_and_count_calories(app):
         for m in meals:
             for p in get_mealjson(app, m[1]):
                 print (p)
+                # TODO: HOW do we get the MealPortions for calculating totals?
                 #['items']:
                 pass
 
