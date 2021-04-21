@@ -91,9 +91,14 @@ class MealRecordItem(Resource):
     def get(cls, meal=None, handle=None, person_id=None):
 
         if handle is None and person_id is not None:
-            return Response("records for personid:{}".format(person_id), 200)
+            resp = CalorieBuilder(items=[])
+            for mealrecord in MealRecord.query.filter(MealRecord.person_id == person_id):
+               m = mealrecord_to_api_mealrecord(mealrecord)
+               m.add_control_collection(api.url_for(MealRecordItem, meal=None, handle=None))
+               resp['items'].append(m)
+            add_control_add_mealrecord(resp)
 
-        if handle is None:
+        elif handle is None:
             # MealRecord collection
             resp = CalorieBuilder(items=[])
             for mealrecord in MealRecord.query.all():
@@ -124,7 +129,7 @@ class MealRecordItem(Resource):
 
     @classmethod
     def get_records_for_person(cls, person_id):
-        return MealRecordItem.get(None, person_id)
+        return MealRecordItem.get(person_id=person_id)
 
     @classmethod
     def post(cls):
