@@ -6,11 +6,9 @@
 
 from flask import Blueprint
 from flask_restful import Api
-from flask_cors import CORS
 from tapi.constants import *
 
 api_blueprint = Blueprint('tapi', __name__, url_prefix=ROUTE_ENTRYPOINT)
-CORS(api_blueprint)
 api = Api(api_blueprint)
 
 from tapi.resources.person import PersonItem

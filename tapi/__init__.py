@@ -1,6 +1,6 @@
 # BEGIN of the content taken from the exercise example
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 # END of the content taken from the exercise example
 
@@ -26,5 +26,18 @@ def create_app(test_config=None):
 
     from tapi import api
     app.register_blueprint(api.api_blueprint)
+
+# @app.after_request taken from Blog post: https://modernweb.com/unlimited-access-with-cors/
+    @app.after_request
+    def add_cors(resp):
+        """ Ensure all responses have the CORS headers. This ensures any failures are also accessible
+            by the client. """
+        resp.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+        resp.headers['Access-Control-Allow-Credentials'] = 'true'
+        resp.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET'
+        resp.headers['Access-Control-Expose-Headers'] = '*'
+        resp.headers['Access-Control-Allow-Headers'] = request.headers.get(
+            'Access-Control-Request-Headers', 'Authorization')
+        return resp
 
     return app
