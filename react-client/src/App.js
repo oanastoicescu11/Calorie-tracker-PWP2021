@@ -1,6 +1,7 @@
+
 import './App.css';
 import {Component} from "react";
-
+import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
 // Please, remove all the unused code
 // I'm just checking this code in to get things
 // moving forward.
@@ -85,39 +86,6 @@ class AddPersonButton extends Component {
     }
 }
 
-class PersonSelectionInputComponent extends Component {
-// I found an example and copy-pasted this component here
-    // and renamed it. https://reactjs.org/docs/forms.html
-    // see `NameForm` on the site linked.
-    constructor(props) {
-        super(props);
-        this.state = {value: ''};
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleChange(event) {
-        this.setState({value: event.target.value});
-    }
-
-    handleSubmit(event) {
-        this.props.cb(this.state.value)
-        event.preventDefault();
-    }
-
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    Login:
-                    <input type="text" value={this.state.value} onChange={this.handleChange}/>
-                </label>
-                <input type="submit" value="Login"/>
-            </form>
-        );
-    }
-}
 
 class App extends Component {
     constructor(props) {
@@ -176,7 +144,15 @@ class App extends Component {
     }
 
     handleChangeUserById = (userId) => {
-        this.handleChangeUserByUrl(ROUTE_PERSONS + userId + '/')
+        if (userId.length > 0) {
+            this.handleChangeUserByUrl(ROUTE_PERSONS + userId + '/');
+        } else {
+            alert("Logging out...");
+            this.setState({
+                loggedIn: false,
+                person: null
+            })
+        }
     }
 
     async handleChangeUserByUrl(userUrl) {
