@@ -1,0 +1,26 @@
+This is the baseline for the client,
+
+Made on top of the React project skeleton, please see the README.txt for further info.
+
+RUN:
+
+1. Install npm (nodejs) in your environment
+2. On the root folder of the client:
+
+2.1. npm install
+2.2. npm start
+
+TEST
+
+3. start the API
+3.1. On the root folder of the API
+3.2. activate the virtual env (the README.md)
+3.3. export FLASK_APP=tapi
+3.4. flask run
+
+4. FUNCTIONALITY
+ - click the Add Person
+expected: You should se the API url for the created person
+
+
+
