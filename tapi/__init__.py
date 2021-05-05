@@ -27,6 +27,11 @@ def create_app(test_config=None):
     from tapi import api
     app.register_blueprint(api.api_blueprint)
 
+    # Create all the tables if don't exist
+    with app.app_context():
+        db.create_all()
+
+
 # @app.after_request taken from Blog post: https://modernweb.com/unlimited-access-with-cors/
     @app.after_request
     def add_cors(resp):
