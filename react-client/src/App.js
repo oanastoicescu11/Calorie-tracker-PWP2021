@@ -3,7 +3,7 @@ import {Component, useState} from "react";
 import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
 import MealsTableComponent from "./components/MealsTableComponent";
 import CreatePortionDialog from "./components/PortionDialog";
-
+import MealDialog from "./components/MealDialog";
 import mealsJson from "./dummydata/data";
 // Please, remove all the unused code
 // I'm just checking this code in to get things
@@ -52,6 +52,7 @@ class SimpleStateComponent extends Component {
 const ROUTE_PERSONS = 'http://localhost:5000/api/persons/';
 const ROUTE_MEALS = 'http://localhost:5000/api/meals/';
 const ROUTE_PORTIONS = 'http://localhost:5000/api/portions/';
+const ROUTE_MEALPORTIONS = 'http://localhost:5000/api/mealportions/'
 
 class PostMealRecordButton extends Component {
     handleClick = () => {
@@ -89,6 +90,7 @@ class App extends Component {
         this.fetchMeals = this.fetchMeals.bind(this);
         this.fetchPortions = this.fetchPortions.bind(this);
         this.createPortion = this.createPortion.bind(this);
+        this.createMeal = this.createMeal.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -163,9 +165,62 @@ class App extends Component {
                     // this.handleChangeUserByUrl(location
                 }
             }).then((_ => {
-                this.fetchPortions()
+            this.fetchPortions()
         }))
     }
+
+    createMealPortion(meal, portion, weightPerServing) {
+        let postRequestOptions = {
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(
+                {
+                    meal_id: meal.toLowerCase(),
+                    portion_id: portion.toLowerCase(),
+                    weight_per_serving: parseInt(weightPerServing)
+                }),
+            method: 'POST'
+        }
+        fetch(ROUTE_MEALS + meal + '/', postRequestOptions)
+            .then((resp) => {
+                if (resp.status === 409) {
+                    console.log("409");
+                    console.log(resp.headers);
+                } else if (resp.status === 201) {
+                    console.log(resp.headers);
+                    let location = resp.headers.get('Location');
+                }
+            }).then((_ => {
+            this.fetchMeals()
+        }))
+    }
+
+    async createMeal(name, servings, portions) {
+        let postRequestOptions = {
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(
+                {
+                    id: name.toLowerCase(),
+                    name: name,
+                    servings: parseInt(servings)
+                }),
+            method: 'POST'
+        }
+        fetch(ROUTE_MEALS, postRequestOptions)
+            .then((resp) => {
+                if (resp.status === 409) {
+                    console.log("409");
+                    console.log(resp.headers);
+                } else if (resp.status === 201) {
+                    console.log(resp.headers);
+                    let location = resp.headers.get('Location');
+                }
+            }).then((_ => {
+            portions.forEach((it) => {
+                this.createMealPortion(name, it.portion, it.weightPerServing)
+            })
+        }))
+    }
+
     async actionPostUser() {
         let t = new Date();
         let userId = "react-user-" + t.getHours() + '-' + t.getMinutes() + '-' + t.getSeconds();
@@ -273,10 +328,13 @@ class App extends Component {
                     <MealsTableComponent data={mealsData}/>
                 </div>
                 <div>
-                    <MealsTableComponent data={portionsData} />
+                    <MealsTableComponent data={portionsData}/>
                 </div>
                 <div>
                     <CreatePortionDialog cb={this.createPortion}/>
+                </div>
+                <div>
+                    <MealDialog cb={this.createMeal}/>
                 </div>
             </div>
         )
