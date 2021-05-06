@@ -1,9 +1,9 @@
 import {Component} from "react";
 
 const RenderRow = (props) => {
-    return props.keys.map((key, index)=>{
+    return props.keys.map((key, index) => {
         return <td key={props.data[key]}>{props.data[key]}</td>
-     })
+    })
 }
 
 class MealsTableComponent extends Component {
@@ -28,20 +28,23 @@ class MealsTableComponent extends Component {
             return !it.startsWith("@")
         })
     }
+
     getHeader() {
         let keys = this.getKeysNotActions();
         return keys.map((key, index) => {
             return <th key={key}>{key.toUpperCase()}</th>
         })
     }
+
     getRows() {
         let items = this.props.data;
         let keys = this.getKeysNotActions();
 
-        return items.map((row, index)=>{
+        return items.map((row, index) => {
             return <tr key={index}><RenderRow key={index} data={row} keys={keys}/></tr>
         })
     }
+
     handleChange(event) {
         this.setState({value: event.target.value});
     }
@@ -52,18 +55,22 @@ class MealsTableComponent extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <table>
-                    <thead>
-                    <tr>{this.getHeader()}</tr>
-                    </thead>
-                    <tbody>
+        if (this.props.data.length > 0) {
+            return (
+                <div>
+                    <table>
+                        <thead>
+                        <tr>{this.getHeader()}</tr>
+                        </thead>
+                        <tbody>
                         {this.getRows()}
-                    </tbody>
-                </table>
-            </div>
-        );
+                        </tbody>
+                    </table>
+                </div>
+            );
+        } else {
+            return <div>No meals</div>
+        }
     }
 }
 

@@ -47,8 +47,9 @@ class SimpleStateComponent extends Component {
     }
 }
 
-
+// TODO: These should come from the entrypoint request
 const ROUTE_PERSONS = 'http://localhost:5000/api/persons/';
+const ROUTE_MEALS= 'http://localhost:5000/api/meals/';
 
 class AddPersonButton extends Component {
 // AddPersonButton is a react component which
@@ -71,8 +72,9 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.personSetter = this.personSetter.bind(this);
-        this.actionChangeUser = this.actionChangeUser.bind(this)
-        this.actionPostUser = this.actionPostUser.bind(this)
+        this.actionChangeUser = this.actionChangeUser.bind(this);
+        this.actionPostUser = this.actionPostUser.bind(this);
+        this.fetchMeals = this.fetchMeals.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -81,7 +83,8 @@ class App extends Component {
         data: {},
         // person will have API URL for created person
         person: null,
-        loggedIn: false
+        loggedIn: false,
+        mealsJson: null
     }
     personSetter = (person) => {
         // THIS is called when the Add Person button is clicked
@@ -123,6 +126,17 @@ class App extends Component {
             })
     }
 
+    async fetchMeals() {
+       let resp = await fetch(ROUTE_MEALS)
+        if (!resp.ok) {
+            console.log("UNABLE TO FETCH MEALS!")
+            return;
+        }
+        let mealsData = await resp.json()
+        this.setState({
+            mealsJson: mealsData
+        })
+    }
     handleChangeUserById = (userId) => {
         if (userId.length > 0) {
             this.handleChangeUserByUrl(ROUTE_PERSONS + userId + '/');
@@ -148,16 +162,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        // TODO: REMOVE THIS
-        // This is run when the page is opened or refreshed
-        // Fetch the persons and store the body of the response
-        // to the 'data'. The result is not yet used in any ways
-        fetch('http://127.0.0.1:5000/api/persons/')
-            .then(res => res.json())
-            .then((data) => {
-                this.setState({data: data})
-            })
-            .catch(console.log)
+        this.fetchMeals();
     }
 
 // render() 'populates' our site with <div></div> components
@@ -170,8 +175,10 @@ class App extends Component {
             p = <LoggedInUser id={this.state.person}/>
         }
 
-        // let's import the static data from the included file, see the imports
-        let dummyMeals = mealsJson
+        // TODO: Remove the check for static data from here before release
+        let mealsData = mealsJson
+        if (this.state.mealsJson && this.state.mealsJson.items.length > 0)
+            mealsData = this.state.mealsJson.items
 
         return (
             <div>
@@ -180,7 +187,7 @@ class App extends Component {
                 {p}
             </div>
             <div>
-                <MealsTableComponent data={dummyMeals} />
+                <MealsTableComponent data={mealsData} />
             </div>
             </div>
         )
