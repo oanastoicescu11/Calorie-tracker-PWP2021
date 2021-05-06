@@ -180,7 +180,7 @@ class App extends Component {
                 }),
             method: 'POST'
         }
-        fetch(ROUTE_MEALS + meal + '/', postRequestOptions)
+        fetch(ROUTE_MEALS + meal + '/mealportions/', postRequestOptions)
             .then((resp) => {
                 if (resp.status === 409) {
                     console.log("409");
