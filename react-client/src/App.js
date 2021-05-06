@@ -1,7 +1,8 @@
 import './App.css';
-import {Component} from "react";
+import {Component, useState} from "react";
 import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
 import MealsTableComponent from "./components/MealsTableComponent";
+import CreatePortionDialog from "./components/PortionDialog";
 
 import mealsJson from "./dummydata/data";
 // Please, remove all the unused code
@@ -49,7 +50,18 @@ class SimpleStateComponent extends Component {
 
 // TODO: These should come from the entrypoint request
 const ROUTE_PERSONS = 'http://localhost:5000/api/persons/';
-const ROUTE_MEALS= 'http://localhost:5000/api/meals/';
+const ROUTE_MEALS = 'http://localhost:5000/api/meals/';
+const ROUTE_PORTIONS = 'http://localhost:5000/api/portions/';
+
+class PostMealRecordButton extends Component {
+    handleClick = () => {
+        this.props.cb()
+    }
+
+    render() {
+        return <button onClick={this.handleClick}>Post Mealrecord</button>
+    }
+}
 
 class AddPersonButton extends Component {
 // AddPersonButton is a react component which
@@ -75,6 +87,8 @@ class App extends Component {
         this.actionChangeUser = this.actionChangeUser.bind(this);
         this.actionPostUser = this.actionPostUser.bind(this);
         this.fetchMeals = this.fetchMeals.bind(this);
+        this.fetchPortions = this.fetchPortions.bind(this);
+        this.createPortion = this.createPortion.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -84,7 +98,8 @@ class App extends Component {
         // person will have API URL for created person
         person: null,
         loggedIn: false,
-        mealsJson: null
+        mealsJson: null,
+        portionsJson: null
     }
     personSetter = (person) => {
         // THIS is called when the Add Person button is clicked
@@ -104,6 +119,53 @@ class App extends Component {
         });
     }
 
+    async actionPostMealrecord() {
+        let t = new Date();
+        let userId = "react-user-" + t.getHours() + '-' + t.getMinutes() + '-' + t.getSeconds();
+
+        let postRequestOptions = {
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({id: userId}),
+            method: 'POST'
+        }
+        fetch(ROUTE_PERSONS, postRequestOptions)
+            .then((resp) => {
+                if (resp.status === 409) {
+                    console.log("409");
+                    console.log(resp.headers);
+                } else if (resp.status === 201) {
+                    console.log(resp.headers);
+                    let location = resp.headers.get('Location');
+                    this.handleChangeUserByUrl(location)
+                }
+            })
+    }
+
+    async createPortion(name, calories) {
+        let postRequestOptions = {
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(
+                {
+                    id: name.toLowerCase(),
+                    name: name,
+                    calories: parseInt(calories)
+                }),
+            method: 'POST'
+        }
+        fetch(ROUTE_PORTIONS, postRequestOptions)
+            .then((resp) => {
+                if (resp.status === 409) {
+                    console.log("409");
+                    console.log(resp.headers);
+                } else if (resp.status === 201) {
+                    console.log(resp.headers);
+                    let location = resp.headers.get('Location');
+                    // this.handleChangeUserByUrl(location
+                }
+            }).then((_ => {
+                this.fetchPortions()
+        }))
+    }
     async actionPostUser() {
         let t = new Date();
         let userId = "react-user-" + t.getHours() + '-' + t.getMinutes() + '-' + t.getSeconds();
@@ -127,16 +189,31 @@ class App extends Component {
     }
 
     async fetchMeals() {
-       let resp = await fetch(ROUTE_MEALS)
+        let resp = await fetch(ROUTE_MEALS)
         if (!resp.ok) {
             console.log("UNABLE TO FETCH MEALS!")
             return;
         }
-        let mealsData = await resp.json()
+        let data = await resp.json()
         this.setState({
-            mealsJson: mealsData
+            mealsJson: data
         })
     }
+
+    async fetchPortions() {
+        let resp = await fetch(ROUTE_PORTIONS)
+        if (!resp.ok) {
+            console.log("UNABLE TO FETCH PORTIONS!")
+            return;
+        }
+        console.log("GOT PORTIONS...")
+        let data = await resp.json()
+        console.log(data)
+        this.setState({
+            portionsJson: data
+        })
+    }
+
     handleChangeUserById = (userId) => {
         if (userId.length > 0) {
             this.handleChangeUserByUrl(ROUTE_PERSONS + userId + '/');
@@ -163,32 +240,44 @@ class App extends Component {
 
     componentDidMount() {
         this.fetchMeals();
+        this.fetchPortions();
     }
 
 // render() 'populates' our site with <div></div> components
 // What's in here, appears on the screen.
     render() {
-        let p
+        let personElement
+        let recordsElement = null
         if (this.state.person === null) {
-            p = <AddPersonButton cb={this.actionPostUser}/>
+            personElement = <AddPersonButton cb={this.actionPostUser}/>
         } else {
-            p = <LoggedInUser id={this.state.person}/>
+            personElement = <LoggedInUser id={this.state.person}/>
         }
 
         // TODO: Remove the check for static data from here before release
         let mealsData = mealsJson
         if (this.state.mealsJson && this.state.mealsJson.items.length > 0)
             mealsData = this.state.mealsJson.items
+        let portionsData = []
+        if (this.state.portionsJson && this.state.portionsJson.items.length > 0)
+            portionsData = this.state.portionsJson.items
 
+        console.log(portionsData)
         return (
             <div>
-            <div>
-                <PersonSelectionInputComponent cb={this.handleChangeUserById}/>
-                {p}
-            </div>
-            <div>
-                <MealsTableComponent data={mealsData} />
-            </div>
+                <div>
+                    <PersonSelectionInputComponent cb={this.handleChangeUserById}/>
+                    {personElement}
+                </div>
+                <div>
+                    <MealsTableComponent data={mealsData}/>
+                </div>
+                <div>
+                    <MealsTableComponent data={portionsData} />
+                </div>
+                <div>
+                    <CreatePortionDialog cb={this.createPortion}/>
+                </div>
             </div>
         )
     }
