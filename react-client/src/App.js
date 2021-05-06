@@ -1,8 +1,9 @@
-"use strict";
-
 import './App.css';
 import {Component} from "react";
 import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
+import MealsTableComponent from "./components/MealsTableComponent";
+
+import mealsJson from "./dummydata/data";
 // Please, remove all the unused code
 // I'm just checking this code in to get things
 // moving forward.
@@ -168,10 +169,19 @@ class App extends Component {
         } else {
             p = <LoggedInUser id={this.state.person}/>
         }
+
+        // let's import the static data from the included file, see the imports
+        let dummyMeals = mealsJson
+
         return (
+            <div>
             <div>
                 <PersonSelectionInputComponent cb={this.handleChangeUserById}/>
                 {p}
+            </div>
+            <div>
+                <MealsTableComponent data={dummyMeals} />
+            </div>
             </div>
         )
     }
