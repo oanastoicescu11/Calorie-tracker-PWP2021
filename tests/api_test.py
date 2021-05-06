@@ -187,6 +187,17 @@ def test_get_person_200(app):
         assert_namespace(r)
         assert_control_delete(r, ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + person_id + '/')
 
+def test_control_mealrecords_by_exists_on_person(app):
+    with app.app_context():
+        # create person for testing and put it into the db
+        person_id = "123"
+        add_person_to_db(person_id)
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + person_id + '/', method="GET")
+        # assert correct response code and data
+        assert r.status_code == 200
+        assert_control(r, NS+':mealrecords-by', ROUTE_ENTRYPOINT + ROUTE_PERSON_COLLECTION + person_id + '/mealrecords/')
 
 def test_get_person_404(app):
     with app.app_context():

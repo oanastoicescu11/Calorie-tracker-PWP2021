@@ -10,7 +10,7 @@ from tapi.models import Person
 from tapi.utils import add_mason_response_header, add_calorie_namespace, person_to_api_person
 from tapi.utils import CalorieBuilder
 from tapi.utils import error_400, error_404, error_409, error_415
-from tapi.constants import MASON, NS
+from tapi.constants import MASON, NS, ROUTE_ENTRYPOINT, ROUTE_PERSON_COLLECTION
 from tapi import db
 from tapi.api import api
 
@@ -42,6 +42,13 @@ def add_control_add_person(resp):
     )
 
 
+def add_control_mealrecords(resp, handle):
+    resp.add_control(NS + ':mealrecords-by', "{}{}{}/mealrecords/".format(
+        ROUTE_ENTRYPOINT,
+        ROUTE_PERSON_COLLECTION,
+        handle))
+
+
 class PersonItem(Resource):
     """ PersonItem servers both: Individual PersonItem and Person Collection
     If given handle is missing, the Person Collection is returned. If handle is
@@ -64,6 +71,7 @@ class PersonItem(Resource):
             resp = person_to_api_person(person)
             resp.add_control_collection(api.url_for(PersonItem, handle=None))
             resp.add_control_delete(api.url_for(PersonItem, handle=handle))
+            add_control_mealrecords(resp, handle)
 
         # Common fields for person item and person collection
         resp.add_control_self(api.url_for(PersonItem, handle=handle))
