@@ -53,6 +53,7 @@ const ROUTE_PERSONS = 'http://localhost:5000/api/persons/';
 const ROUTE_MEALS = 'http://localhost:5000/api/meals/';
 const ROUTE_PORTIONS = 'http://localhost:5000/api/portions/';
 const ROUTE_MEALPORTIONS = 'http://localhost:5000/api/mealportions/'
+const SERVER_ROOT = 'http://localhost:5000'
 
 class PostMealRecordButton extends Component {
     handleClick = () => {
@@ -79,7 +80,21 @@ class AddPersonButton extends Component {
         return <button onClick={this.handleCreatePersonButtonClick}>Add Person</button>
     }
 }
+class FetchMealsForPersonButton extends Component {
+// AddPersonButton is a react component which
+    //  1. Appears on the screen as a button
+    //  2. When clicked prints a hello to the console
+    //  3. And makes a POST request to create a new Person
+    //  4. Saves returned 'Location' of the person to the application state
+    handleClick = () => {
+        console.log("FetchMealsForPerson clicked");
+        this.props.cb();
+    }
 
+    render() {
+        return <button onClick={this.handleClick}>Consumed Meals</button>
+    }
+}
 
 class App extends Component {
     constructor(props) {
@@ -91,6 +106,7 @@ class App extends Component {
         this.fetchPortions = this.fetchPortions.bind(this);
         this.createPortion = this.createPortion.bind(this);
         this.createMeal = this.createMeal.bind(this);
+        this.fetchMealsForPerson = this.fetchMealsForPerson.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -101,7 +117,8 @@ class App extends Component {
         person: null,
         loggedIn: false,
         mealsJson: null,
-        portionsJson: null
+        portionsJson: null,
+        personMealRecordsJson: null
     }
     personSetter = (person) => {
         // THIS is called when the Add Person button is clicked
@@ -117,10 +134,25 @@ class App extends Component {
         console.log(userJson);
         this.setState({
             loggedIn: true,
-            person: userJson['@controls']['self']['href']
+            person: userJson
         });
     }
 
+    async fetchMealsForPerson() {
+        let uri = SERVER_ROOT + this.state.person['@controls']['cameta:mealrecords-by']['href']
+        let resp = await fetch(uri)
+            .catch((err) => {
+                console.log(err)
+            })
+        if (!resp.ok) {
+            console.log("UNABLE TO FETCH MEALS FOR PERSON!")
+            return;
+        }
+        let data = await resp.json()
+        this.setState({
+            personMealRecordsJson: data
+        })
+    }
     async actionPostMealrecord() {
         let t = new Date();
         let userId = "react-user-" + t.getHours() + '-' + t.getMinutes() + '-' + t.getSeconds();
@@ -301,12 +333,13 @@ class App extends Component {
 // render() 'populates' our site with <div></div> components
 // What's in here, appears on the screen.
     render() {
-        let personElement
-        let recordsElement = null
+        let personElement = null
+        let fetchButton= <div></div>
         if (this.state.person === null) {
             personElement = <AddPersonButton cb={this.actionPostUser}/>
         } else {
-            personElement = <LoggedInUser id={this.state.person}/>
+            personElement = <LoggedInUser id={this.state.person.id}/>
+            fetchButton = <FetchMealsForPersonButton cb={this.fetchMealsForPerson} />
         }
 
         // TODO: Remove the check for static data from here before release
@@ -323,6 +356,9 @@ class App extends Component {
                 <div>
                     <PersonSelectionInputComponent cb={this.handleChangeUserById}/>
                     {personElement}
+                </div>
+                <div>
+                    {fetchButton}
                 </div>
                 <div>
                     <MealsTableComponent data={mealsData}/>
