@@ -1,3 +1,4 @@
+"use strict";
 
 import './App.css';
 import {Component} from "react";
@@ -54,35 +55,13 @@ class AddPersonButton extends Component {
     //  2. When clicked prints a hello to the console
     //  3. And makes a POST request to create a new Person
     //  4. Saves returned 'Location' of the person to the application state
-    hello = () => {
-        console.log("Hello from button");
+    handleCreatePersonButtonClick = () => {
+        console.log("AddPersonButton clicked");
         this.props.cb();
-
-        let t = new Date();
-        let id = "react-user-" + t.getHours() + '-' + t.getMinutes() + '-' + t.getSeconds();
-
-        this.props.cb(id);
-        return;
-
-        let postRequestOptions = {
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: id}),
-            method: 'POST'
-        }
-        fetch(ROUTE_PERSONS, postRequestOptions)
-            .then((resp) => {
-                if (resp.status === 409) {
-                    console.log("409");
-                    console.log(resp.headers);
-                } else if (resp.status === 201) {
-                    console.log(resp.headers);
-                    this.props.cb(resp.headers.get('Location'))
-                }
-            })
     }
 
     render() {
-        return <button onClick={this.hello}>Add Person</button>
+        return <button onClick={this.handleCreatePersonButtonClick}>Add Person</button>
     }
 }
 
