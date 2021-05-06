@@ -5,6 +5,7 @@ import MealsTableComponent from "./components/MealsTableComponent";
 import CreatePortionDialog from "./components/PortionDialog";
 import MealDialog from "./components/MealDialog";
 import mealsJson from "./dummydata/data";
+import MealRecordDialog from "./components/MealRecordDialog";
 // Please, remove all the unused code
 // I'm just checking this code in to get things
 // moving forward.
@@ -51,19 +52,9 @@ class SimpleStateComponent extends Component {
 // TODO: These should come from the entrypoint request
 const ROUTE_PERSONS = 'http://localhost:5000/api/persons/';
 const ROUTE_MEALS = 'http://localhost:5000/api/meals/';
+const ROUTE_MEALRECORDS = 'http://localhost:5000/api/mealrecords/';
 const ROUTE_PORTIONS = 'http://localhost:5000/api/portions/';
-const ROUTE_MEALPORTIONS = 'http://localhost:5000/api/mealportions/'
 const SERVER_ROOT = 'http://localhost:5000'
-
-class PostMealRecordButton extends Component {
-    handleClick = () => {
-        this.props.cb()
-    }
-
-    render() {
-        return <button onClick={this.handleClick}>Post Mealrecord</button>
-    }
-}
 
 class AddPersonButton extends Component {
 // AddPersonButton is a react component which
@@ -80,6 +71,7 @@ class AddPersonButton extends Component {
         return <button onClick={this.handleCreatePersonButtonClick}>Add Person</button>
     }
 }
+
 class FetchMealsForPersonButton extends Component {
 // AddPersonButton is a react component which
     //  1. Appears on the screen as a button
@@ -102,6 +94,7 @@ class App extends Component {
         this.personSetter = this.personSetter.bind(this);
         this.actionChangeUser = this.actionChangeUser.bind(this);
         this.actionPostUser = this.actionPostUser.bind(this);
+        this.actionPostMealrecord = this.actionPostMealrecord.bind(this);
         this.fetchMeals = this.fetchMeals.bind(this);
         this.fetchPortions = this.fetchPortions.bind(this);
         this.createPortion = this.createPortion.bind(this);
@@ -153,16 +146,26 @@ class App extends Component {
             personMealRecordsJson: data
         })
     }
-    async actionPostMealrecord() {
-        let t = new Date();
-        let userId = "react-user-" + t.getHours() + '-' + t.getMinutes() + '-' + t.getSeconds();
 
+    async actionPostMealrecord(name, amount, datetime) {
+        console.log("POST: " + name + ", " + amount + ", " + datetime)
+
+        let d = new Date(datetime).toISOString().replace('T', ' ').slice(0, -1);
+        // TODO: @control...
+        // let uri = SERVER_ROOT + this.state.person['@controls']['cameta:add-meal']['href']
         let postRequestOptions = {
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id: userId}),
+            body: JSON.stringify(
+                {
+                    person_id: this.state.person.id,
+                    meal_id: name,
+                    amount: parseFloat(amount),
+                    timestamp: d
+                }
+            ),
             method: 'POST'
         }
-        fetch(ROUTE_PERSONS, postRequestOptions)
+        fetch(ROUTE_MEALRECORDS, postRequestOptions)
             .then((resp) => {
                 if (resp.status === 409) {
                     console.log("409");
@@ -170,7 +173,7 @@ class App extends Component {
                 } else if (resp.status === 201) {
                     console.log(resp.headers);
                     let location = resp.headers.get('Location');
-                    this.handleChangeUserByUrl(location)
+                    this.fetchMealsForPerson()
                 }
             })
     }
@@ -334,12 +337,14 @@ class App extends Component {
 // What's in here, appears on the screen.
     render() {
         let personElement = null
-        let fetchButton= <div></div>
+        let fetchButton = <div></div>
+        let createMealRecordButton = <div></div>
         if (this.state.person === null) {
             personElement = <AddPersonButton cb={this.actionPostUser}/>
         } else {
             personElement = <LoggedInUser id={this.state.person.id}/>
-            fetchButton = <FetchMealsForPersonButton cb={this.fetchMealsForPerson} />
+            fetchButton = <FetchMealsForPersonButton cb={this.fetchMealsForPerson}/>
+            createMealRecordButton = <MealRecordDialog cb={this.actionPostMealrecord}/>
         }
 
         // TODO: Remove the check for static data from here before release
@@ -349,8 +354,10 @@ class App extends Component {
         let portionsData = []
         if (this.state.portionsJson && this.state.portionsJson.items.length > 0)
             portionsData = this.state.portionsJson.items
+        let mealRecordsData = []
+        if (this.state.personMealRecordsJson && this.state.personMealRecordsJson.items.length > 0)
+            mealRecordsData = this.state.personMealRecordsJson.items
 
-        console.log(portionsData)
         return (
             <div>
                 <div>
@@ -359,6 +366,12 @@ class App extends Component {
                 </div>
                 <div>
                     {fetchButton}
+                </div>
+                <div>
+                    <MealsTableComponent data={mealRecordsData}/>
+                </div>
+                <div>
+                    {createMealRecordButton}
                 </div>
                 <div>
                     <MealsTableComponent data={mealsData}/>
