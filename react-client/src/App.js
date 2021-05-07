@@ -72,19 +72,17 @@ class AddPersonButton extends Component {
     }
 }
 
-class FetchMealsForPersonButton extends Component {
-// AddPersonButton is a react component which
-    //  1. Appears on the screen as a button
-    //  2. When clicked prints a hello to the console
-    //  3. And makes a POST request to create a new Person
-    //  4. Saves returned 'Location' of the person to the application state
+class CalorieButton extends Component {
+    // 1. Appears on the screen as a button
+    // 2. When clicked invokes the given callback
+    // 3. Show Title as given title
+    // 4. Log the click into Console
     handleClick = () => {
-        console.log("FetchMealsForPerson clicked");
+        console.log(this.props.title + " button clicked");
         this.props.cb();
     }
-
     render() {
-        return <button onClick={this.handleClick}>Consumed Meals</button>
+        return <button onClick={this.handleClick}>{this.props.title}</button>
     }
 }
 
@@ -315,6 +313,8 @@ class App extends Component {
     }
 
     handleChangeUserById = (userId) => {
+        // Called when the Login button is clicked
+        // Empty userId logs the user out
         if (userId.length > 0) {
             this.handleChangeUserByUrl(ROUTE_PERSONS + userId + '/');
         } else {
@@ -327,12 +327,15 @@ class App extends Component {
     }
 
     async handleChangeUserByUrl(userUrl) {
+        // Called only from the App Component
+        // Fetch person by given Url and store in the State
         let resp = await fetch(userUrl)
         if (!resp.ok) {
             console.log("404 user not found");
             alert('User not found with given ID');
             return;
         }
+        // Success
         let userJson = await resp.json()
         alert('Logging in user: ' + userUrl.split(ROUTE_PERSONS)[1]);
         this.actionChangeUser(userJson);
@@ -346,11 +349,17 @@ class App extends Component {
 
     async fetchAPIControls() {
         // Fetch root of the API for @controls
+        // @controls are utilized further to fetch related data
         let resp = await fetch(SERVER_ROOT + API_ROOT)
         if (!resp.ok) {
             alert("Failed to fetch API controls: No API connection")
+            return
         }
+
+        // Success
         let data = await resp.json()
+
+        // Simple Map (control -> href)
         let controls = new Map()
         Object.keys(data['@controls']).forEach((it) => {
             controls.set(it, data['@controls'][it]['href'])
@@ -358,24 +367,27 @@ class App extends Component {
         this.setState({controls: controls})
     }
     componentDidMount() {
+        // Page building starts here, when the view is opened in the browser
         this.initApp()
-        // this.fetchAPIControls();
     }
 
 // render() 'populates' our site with <div></div> components
-// What's in here, appears on the screen.
+// What is returned from here, appears on the screen.
     render() {
-        let personElement
-        let fetchButton = <div></div>
+        let personElement // either show Create Person and Login -button or Logged in Person Id
+        let fetchMealRecordsForPersonButton = <div></div>
         let createMealRecordButton = <div></div>
         if (this.state.person === null) {
+            // Not logged in, show option to create a new Person
             personElement = <AddPersonButton cb={this.actionPostUser}/>
         } else {
+            // Logged in, show all Person related fields
             personElement = <LoggedInUser id={this.state.person.id}/>
-            fetchButton = <FetchMealsForPersonButton cb={this.fetchMealsForPerson}/>
+            fetchMealRecordsForPersonButton = <CalorieButton title="Fetch Consumed Meals" cb={this.fetchMealsForPerson}/>
             createMealRecordButton = <MealRecordDialog cb={this.actionPostMealrecord}/>
         }
 
+        // All tables are either empty or have real data if already fetched
         let mealsData = []
         if (this.state.mealsJson && this.state.mealsJson.items.length > 0)
             mealsData = this.state.mealsJson.items
@@ -386,6 +398,7 @@ class App extends Component {
         if (this.state.personMealRecordsJson && this.state.personMealRecordsJson.items.length > 0)
             mealRecordsData = this.state.personMealRecordsJson.items
 
+        // Here we place the Elements on the screen
         return (
             <div>
                 <Grid container spacing={3}>
@@ -400,7 +413,7 @@ class App extends Component {
                     <Grid item xs={9}>
                         {/* Meal Records Grid*/}
                         <div style={{backgroundColor: "blue"}}>
-                            {fetchButton}
+                            {fetchMealRecordsForPersonButton}
                         </div>
                         <div style={{backgroundColor: "blue"}}>
                             <CalorieTableComponent type="Consumed Meals" data={mealRecordsData}/>
