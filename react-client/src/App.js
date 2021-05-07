@@ -1,11 +1,10 @@
 import './App.css';
-import {Component, useState} from "react";
+import {Component} from "react";
 import Grid from '@material-ui/core/Grid';
 import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
 import MealsTableComponent from "./components/MealsTableComponent";
 import CreatePortionDialog from "./components/PortionDialog";
 import MealDialog from "./components/MealDialog";
-import mealsJson from "./dummydata/data";
 import MealRecordDialog from "./components/MealRecordDialog";
 // Please, remove all the unused code
 // I'm just checking this code in to get things
@@ -56,7 +55,7 @@ const ROUTE_MEALS = 'http://localhost:5000/api/meals/';
 const ROUTE_MEALRECORDS = 'http://localhost:5000/api/mealrecords/';
 const ROUTE_PORTIONS = 'http://localhost:5000/api/portions/';
 const SERVER_ROOT = 'http://localhost:5000'
-
+const API_ROOT = '/api/'
 class AddPersonButton extends Component {
 // AddPersonButton is a react component which
     //  1. Appears on the screen as a button
@@ -112,7 +111,8 @@ class App extends Component {
         loggedIn: false,
         mealsJson: null,
         portionsJson: null,
-        personMealRecordsJson: null
+        personMealRecordsJson: null,
+        controls: null
     }
     personSetter = (person) => {
         // THIS is called when the Add Person button is clicked
@@ -166,6 +166,7 @@ class App extends Component {
             ),
             method: 'POST'
         }
+        // TODO: @controls...
         fetch(ROUTE_MEALRECORDS, postRequestOptions)
             .then((resp) => {
                 if (resp.status === 409) {
@@ -173,6 +174,8 @@ class App extends Component {
                     console.log(resp.headers);
                 } else if (resp.status === 201) {
                     console.log(resp.headers);
+                    // TODO: (future imporovement) fetch and show a prompt of just created entity
+                    // eslint-disable-next-line no-unused-vars
                     let location = resp.headers.get('Location');
                     this.fetchMealsForPerson()
                 }
@@ -190,6 +193,7 @@ class App extends Component {
                 }),
             method: 'POST'
         }
+        // TODO: @controls
         fetch(ROUTE_PORTIONS, postRequestOptions)
             .then((resp) => {
                 if (resp.status === 409) {
@@ -216,6 +220,7 @@ class App extends Component {
                 }),
             method: 'POST'
         }
+        // TODO: @controls
         fetch(ROUTE_MEALS + meal + '/mealportions/', postRequestOptions)
             .then((resp) => {
                 if (resp.status === 409) {
@@ -241,6 +246,7 @@ class App extends Component {
                 }),
             method: 'POST'
         }
+        // TODO: @controls...
         fetch(ROUTE_MEALS, postRequestOptions)
             .then((resp) => {
                 if (resp.status === 409) {
@@ -280,7 +286,10 @@ class App extends Component {
     }
 
     async fetchMeals() {
-        let resp = await fetch(ROUTE_MEALS)
+        console.log(ROUTE_MEALS)
+        console.log(SERVER_ROOT + this.state.controls.get('cameta:meals-all'))
+        // let resp = await fetch(ROUTE_MEALS)
+        let resp = await fetch(SERVER_ROOT + this.state.controls.get('cameta:meals-all'))
         if (!resp.ok) {
             console.log("UNABLE TO FETCH MEALS!")
             return;
@@ -329,15 +338,34 @@ class App extends Component {
         this.actionChangeUser(userJson);
     }
 
+    async initApp() {
+        await this.fetchAPIControls()
+        await this.fetchMeals();
+        await this.fetchPortions();
+    }
+
+    async fetchAPIControls() {
+        // Fetch root of the API for @controls
+        let resp = await fetch(SERVER_ROOT + API_ROOT)
+        if (!resp.ok) {
+            alert("Failed to fetch API controls: No API connection")
+        }
+        let data = await resp.json()
+        let controls = new Map()
+        Object.keys(data['@controls']).forEach((it) => {
+            controls.set(it, data['@controls'][it]['href'])
+        })
+        this.setState({controls: controls})
+    }
     componentDidMount() {
-        this.fetchMeals();
-        this.fetchPortions();
+        this.initApp()
+        // this.fetchAPIControls();
     }
 
 // render() 'populates' our site with <div></div> components
 // What's in here, appears on the screen.
     render() {
-        let personElement = null
+        let personElement
         let fetchButton = <div></div>
         let createMealRecordButton = <div></div>
         if (this.state.person === null) {
@@ -349,7 +377,7 @@ class App extends Component {
         }
 
         // TODO: Remove the check for static data from here before release
-        let mealsData = mealsJson
+        let mealsData = []
         if (this.state.mealsJson && this.state.mealsJson.items.length > 0)
             mealsData = this.state.mealsJson.items
         let portionsData = []
