@@ -43,7 +43,7 @@ class CalorieButton extends Component {
     }
 }
 
-class App extends Component {
+class PWPApp extends Component {
     constructor(props) {
         super(props);
         this.personSetter = this.personSetter.bind(this);
@@ -157,8 +157,8 @@ class App extends Component {
                     console.log(resp.headers);
                 } else if (resp.status === 201) {
                     console.log(resp.headers);
+                    // eslint-disable-next-line no-unused-vars
                     let location = resp.headers.get('Location');
-                    // this.handleChangeUserByUrl(location
                 }
             }).then((_ => {
             this.fetchPortions()
@@ -184,6 +184,7 @@ class App extends Component {
                     console.log(resp.headers);
                 } else if (resp.status === 201) {
                     console.log(resp.headers);
+                    // eslint-disable-next-line no-unused-vars
                     let location = resp.headers.get('Location');
                 }
             }).then((_ => {
@@ -210,6 +211,7 @@ class App extends Component {
                     console.log(resp.headers);
                 } else if (resp.status === 201) {
                     console.log(resp.headers);
+                    // eslint-disable-next-line no-unused-vars
                     let location = resp.headers.get('Location');
                 }
             }).then((_ => {
@@ -410,4 +412,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default PWPApp;
