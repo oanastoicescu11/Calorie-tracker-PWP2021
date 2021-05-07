@@ -381,13 +381,13 @@ class PWPApp extends Component {
                     </Grid>
                     <Grid item xs={9}>
                         {/* Meal Records Grid*/}
-                        <div style={{backgroundColor: "blue"}}>
+                        <div style={{backgroundColor: "lightblue"}}>
                             {fetchMealRecordsForPersonButton}
                         </div>
-                        <div style={{backgroundColor: "blue"}}>
+                        <div style={{backgroundColor: "lightblue"}}>
                             <CalorieTableComponent type="Consumed Meals" data={mealRecordsData}/>
                         </div>
-                        <div style={{backgroundColor: "blue"}}>
+                        <div style={{backgroundColor: "lightblue"}}>
                             {createMealRecordButton}
                         </div>
                     </Grid>
