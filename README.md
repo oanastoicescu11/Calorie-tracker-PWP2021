@@ -7,6 +7,28 @@
 
 __Remember to include all required documentation and HOWTOs, including how to create and populate the database, how to run and test the API, the url to the entrypoint and instructions on how to setup and run the client__
 
+## How to run the Unit Tests in Docker:
+
+### Linux
+
+prerequisite: Docker environment available
+
+1. Build the docker pwp-tests package
+
+```docker build . --tag pwp-tests:1.0```
+
+2. Execute the tests
+
+```docker run --rm pwp-tests:1.0```
+
+(Optional)
+
+3. Clean up the image from consuming storage space
+
+```docker image rm pwp-tests:1.0```
+
+
+
 ## How to prepare the Python environment and execute the unit tests:
 
 ### Linux
