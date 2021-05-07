@@ -193,8 +193,8 @@ class App extends Component {
                 }),
             method: 'POST'
         }
-        // TODO: @controls
-        fetch(ROUTE_PORTIONS, postRequestOptions)
+        let url = SERVER_ROOT + this.state.controls.get('cameta:portions-all')
+        fetch(url, postRequestOptions)
             .then((resp) => {
                 if (resp.status === 409) {
                     console.log("409");
@@ -286,9 +286,6 @@ class App extends Component {
     }
 
     async fetchMeals() {
-        console.log(ROUTE_MEALS)
-        console.log(SERVER_ROOT + this.state.controls.get('cameta:meals-all'))
-        // let resp = await fetch(ROUTE_MEALS)
         let resp = await fetch(SERVER_ROOT + this.state.controls.get('cameta:meals-all'))
         if (!resp.ok) {
             console.log("UNABLE TO FETCH MEALS!")
