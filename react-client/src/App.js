@@ -6,9 +6,6 @@ import CalorieTableComponent from "./components/CalorieTableComponent";
 import CreatePortionDialog from "./components/PortionDialog";
 import MealDialog from "./components/MealDialog";
 import MealRecordDialog from "./components/MealRecordDialog";
-// Please, remove all the unused code
-// I'm just checking this code in to get things
-// moving forward.
 
 const SimpleItem = (props) => {
     const {id} = props;
@@ -30,31 +27,6 @@ const LoggedInUser = (props) => {
     )
 }
 
-class SimpleComponent extends Component {
-    render() {
-        const {id} = this.props;
-        return <div>component hello {id}</div>
-    }
-}
-
-const SimplePersonGreeter = (props) => {
-    // const {name, id} = this.props
-    return <div>SimpleStateComponent: Hello {props.name}! your id is <b>{props.id}</b></div>
-}
-
-class SimpleStateComponent extends Component {
-    state = {
-        id: "123",
-        name: "John Doe"
-    }
-
-    render() {
-        const {name} = this.state;
-        const {id} = this.state;
-        return <div>SimpleStateComponent: Hello {name}! your id is <b>{id}</b></div>
-    }
-}
-
 // TODO: These should come from the entrypoint request
 const ROUTE_PERSONS = 'http://localhost:5000/api/persons/';
 const ROUTE_MEALS = 'http://localhost:5000/api/meals/';
@@ -64,7 +36,6 @@ const SERVER_ROOT = 'http://localhost:5000'
 const API_ROOT = '/api/'
 
 class AddPersonButton extends Component {
-// AddPersonButton is a react component which
     //  1. Appears on the screen as a button
     //  2. When clicked prints a hello to the console
     //  3. And makes a POST request to create a new Person

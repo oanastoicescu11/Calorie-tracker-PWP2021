@@ -2,7 +2,9 @@ import {Component} from "react";
 
 const RenderRow = (props) => {
     return props.keys.map((key, index) => {
-        return <td key={props.data[key]}>{props.data[key]}</td>
+        // Add index as part of the key, otherwise too many duplicate keys
+        // in the same DOM
+        return <td key={index + props.data[key]}>{props.data[key]}</td>
     })
 }
 
