@@ -14,7 +14,6 @@ class CalorieTableComponent extends Component {
     // see `NameForm` on the site linked.
     constructor(props) {
         super(props);
-
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.getKeysNotActions = this.getKeysNotActions.bind(this)
@@ -33,7 +32,7 @@ class CalorieTableComponent extends Component {
 
     getHeader() {
         let keys = this.getKeysNotActions();
-        return keys.map((key, index) => {
+        return keys.map((key) => {
             return <th key={key}>{key.toUpperCase()}</th>
         })
     }

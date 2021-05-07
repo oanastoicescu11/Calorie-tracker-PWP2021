@@ -7,13 +7,6 @@ import CreatePortionDialog from "./components/PortionDialog";
 import MealDialog from "./components/MealDialog";
 import MealRecordDialog from "./components/MealRecordDialog";
 
-const SimpleItem = (props) => {
-    const {id} = props;
-    return (
-        <div>Element ID: {id}</div>
-    )
-}
-
 const LoggedInUser = (props) => {
     return (
         <div>
@@ -34,21 +27,6 @@ const ROUTE_MEALRECORDS = 'http://localhost:5000/api/mealrecords/';
 const ROUTE_PORTIONS = 'http://localhost:5000/api/portions/';
 const SERVER_ROOT = 'http://localhost:5000'
 const API_ROOT = '/api/'
-
-class AddPersonButton extends Component {
-    //  1. Appears on the screen as a button
-    //  2. When clicked prints a hello to the console
-    //  3. And makes a POST request to create a new Person
-    //  4. Saves returned 'Location' of the person to the application state
-    handleCreatePersonButtonClick = () => {
-        console.log("AddPersonButton clicked");
-        this.props.cb();
-    }
-
-    render() {
-        return <button onClick={this.handleCreatePersonButtonClick}>Add Person</button>
-    }
-}
 
 class CalorieButton extends Component {
     // 1. Appears on the screen as a button
@@ -364,7 +342,7 @@ class App extends Component {
         let createMealRecordButton = <div></div>
         if (this.state.person === null) {
             // Not logged in, show option to create a new Person
-            personElement = <AddPersonButton cb={this.actionPostUser}/>
+            personElement = <CalorieButton title="Generate a new User" cb={this.actionPostUser}/>
         } else {
             // Logged in, show all Person related fields
             personElement = <LoggedInUser id={this.state.person.id} cb={this.handleLogout}/>
