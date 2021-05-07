@@ -103,6 +103,9 @@ class PWPApp extends Component {
         this.setState({
             personMealRecordsJson: data
         })
+        if (this.state.personMealRecordsJson.items.length === 0) {
+            this.promptHelp()
+        }
     }
 
     async actionPostMealrecord(name, amount, datetime) {
@@ -334,7 +337,7 @@ class PWPApp extends Component {
     }
 
     promptHelp() {
-        alert("HINT: Login as a '123' to view prepopulated data")
+        alert("HINT: Login as a '123' AND click 'Fetch Consumed Meals to view prepopulated data.")
     }
 
     componentDidMount() {
@@ -400,7 +403,7 @@ class PWPApp extends Component {
                             <CalorieTableComponent type="Meals" data={mealsData} color={"orange"}/>
                         </div>
                         <div>
-                            <MealDialog cb={this.createMeal} color={"orange"}/>
+                            <MealDialog cb={this.createMeal}/>
                         </div>
                     </Grid>
                     <Grid item xs={9}>
@@ -409,7 +412,7 @@ class PWPApp extends Component {
                             <CalorieTableComponent type="Portions" data={portionsData} color={"lightgreen"}/>
                         </div>
                         <div>
-                            <CreatePortionDialog cb={this.createPortion} color={"lightgreen"}/>
+                            <CreatePortionDialog cb={this.createPortion}/>
                         </div>
                     </Grid>
                 </Grid>
