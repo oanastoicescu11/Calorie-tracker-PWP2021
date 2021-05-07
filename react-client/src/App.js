@@ -1,5 +1,6 @@
 import './App.css';
 import {Component, useState} from "react";
+import Grid from '@material-ui/core/Grid';
 import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
 import MealsTableComponent from "./components/MealsTableComponent";
 import CreatePortionDialog from "./components/PortionDialog";
@@ -360,31 +361,46 @@ class App extends Component {
 
         return (
             <div>
-                <div>
-                    <PersonSelectionInputComponent cb={this.handleChangeUserById}/>
-                    {personElement}
-                </div>
-                <div>
-                    {fetchButton}
-                </div>
-                <div>
-                    <MealsTableComponent data={mealRecordsData}/>
-                </div>
-                <div>
-                    {createMealRecordButton}
-                </div>
-                <div>
-                    <MealsTableComponent data={mealsData}/>
-                </div>
-                <div>
-                    <MealsTableComponent data={portionsData}/>
-                </div>
-                <div>
-                    <CreatePortionDialog cb={this.createPortion}/>
-                </div>
-                <div>
-                    <MealDialog cb={this.createMeal}/>
-                </div>
+                <Grid container spacing={3}>
+                    {/*Start of the grid*/}
+                    <Grid item xs={12}>
+                        {/*Login Grid*/}
+                        <div style={{backgroundColor: "red"}}>
+                            <PersonSelectionInputComponent cb={this.handleChangeUserById}/>
+                            {personElement}
+                        </div>
+                    </Grid>
+                    <Grid item xs={9}>
+                        {/* Meal Records Grid*/}
+                        <div style={{backgroundColor: "blue"}}>
+                            {fetchButton}
+                        </div>
+                        <div style={{backgroundColor: "blue"}}>
+                            <MealsTableComponent data={mealRecordsData}/>
+                        </div>
+                        <div style={{backgroundColor: "blue"}}>
+                            {createMealRecordButton}
+                        </div>
+                    </Grid>
+                    <Grid item xs={9}>
+                        {/*Meals Grid*/}
+                        <div style={{backgroundColor: "orange"}}>
+                            <MealsTableComponent data={mealsData}/>
+                        </div>
+                        <div style={{backgroundColor: "orange"}}>
+                            <MealDialog cb={this.createMeal}/>
+                        </div>
+                    </Grid>
+                    <Grid item xs={9}>
+                        {/*Portions Grid*/}
+                        <div style={{backgroundColor: "lightgreen"}}>
+                            <MealsTableComponent data={portionsData}/>
+                        </div>
+                        <div style={{backgroundColor: "lightgreen"}}>
+                            <CreatePortionDialog cb={this.createPortion}/>
+                        </div>
+                    </Grid>
+                </Grid>
             </div>
         )
     }
