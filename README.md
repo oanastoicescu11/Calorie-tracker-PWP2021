@@ -15,7 +15,7 @@ prerequisite: Docker environment available
 
 1. Build the docker pwp-tests package
 
-```docker build . --tag pwp-tests:1.0```
+```docker build . -f Dockerfile-tests --tag pwp-tests:1.0```
 
 2. Execute the tests
 
@@ -76,3 +76,28 @@ prerequisite: **python3 installed** (tested on: Windows 10 Home)
 
 ```pytest```
 
+
+
+## How to run the App in Docker:
+
+### Linux
+
+prerequisite: Docker environment available
+
+1. Build the docker pwp package
+
+```docker build . --tag pwp:1.0```
+
+2. Start the container
+
+```docker run -d --name pwp --rm -p 5000:5000 -p 3000:3000 pwp:1.0```
+
+3. Navigate your favourite browser to http://localhost:5000/
+
+4. Stop the container
+
+```docker stop pwp```
+
+5. Clean up the image from consuming storage space
+
+```docker image rm pwp:1.0```

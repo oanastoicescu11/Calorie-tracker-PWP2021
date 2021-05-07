@@ -1,13 +1,36 @@
-from python:3.9
+from ubuntu:20.04
 
-COPY ./requirements.txt /app/requirements.txt
+ARG DEBIAN_FRONTEND=noninteractive
 
-WORKDIR /app
+RUN apt-get update; apt-get -y upgrade; apt-get -y autoremove
+
+RUN apt-get install -y npm python3-pip python3
+
+RUN mkdir /pwp
+
+WORKDIR /pwp
+
+COPY ./requirements.txt /pwp/requirements.txt
 
 RUN pip3 install -r requirements.txt
 
-COPY . /app
-WORKDIR /app
+COPY . /pwp
 
-ENTRYPOINT exec pytest -n 15 --cov=tapi --cov-report term-missing
+WORKDIR /pwp/react-client
+
+RUN npm install
+
+RUN npm run-script build
+
+RUN npm install -g serve
+
+WORKDIR /pwp
+
+ENV FLASK_APP=tapi
+
+EXPOSE 5000
+EXPOSE 3000
+
+CMD [ "sh", "start.sh" ]
+
 
