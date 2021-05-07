@@ -3,7 +3,6 @@ import os
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 # END of the content taken from the exercise example
-
 db = SQLAlchemy()
 
 
@@ -30,6 +29,9 @@ def create_app(test_config=None):
     # Create all the tables if don't exist
     with app.app_context():
         db.create_all()
+        from tapi.example_data import db_load_example_data
+        db_load_example_data(db)
+
 
 
 # @app.after_request taken from Blog post: https://modernweb.com/unlimited-access-with-cors/
