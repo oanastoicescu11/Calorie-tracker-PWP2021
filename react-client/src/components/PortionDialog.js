@@ -40,7 +40,7 @@ const CreatePortionDialog = (props) => {
                 Create Portion
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+                <DialogTitle id="form-dialog-title">New Portion</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Please input elements for your Portion
@@ -49,7 +49,7 @@ const CreatePortionDialog = (props) => {
                         autoFocus
                         margin="dense"
                         id="name"
-                        label="Name"
+                        label="Portion Name"
                         type="text"
                         onChange={handleChangeName}
                         fullWidth

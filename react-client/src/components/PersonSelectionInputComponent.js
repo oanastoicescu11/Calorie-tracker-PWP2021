@@ -17,7 +17,9 @@ class PersonSelectionInputComponent extends Component {
     }
 
     handleSubmit(event) {
+        // Send the given userId to callback and clear the input field
         this.props.cb(this.state.value)
+        this.setState({value: ''})
         event.preventDefault();
     }
 

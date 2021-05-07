@@ -78,7 +78,7 @@ const MealDialog = (props) => {
                 Create Meal
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+                <DialogTitle id="form-dialog-title">New Meal</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Please input elements for your Meal

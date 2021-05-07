@@ -18,9 +18,15 @@ const SimpleItem = (props) => {
 }
 
 const LoggedInUser = (props) => {
-    const {id} = props;
     return (
-        <div>Logged in user: {id}</div>
+        <div>
+            <div>
+                <div>Logged in user: {props.id}</div>
+            </div>
+            <div>
+                <CalorieButton title="Logout" cb={props.cb}/>
+            </div>
+        </div>
     )
 }
 
@@ -56,6 +62,7 @@ const ROUTE_MEALRECORDS = 'http://localhost:5000/api/mealrecords/';
 const ROUTE_PORTIONS = 'http://localhost:5000/api/portions/';
 const SERVER_ROOT = 'http://localhost:5000'
 const API_ROOT = '/api/'
+
 class AddPersonButton extends Component {
 // AddPersonButton is a react component which
     //  1. Appears on the screen as a button
@@ -81,6 +88,7 @@ class CalorieButton extends Component {
         console.log(this.props.title + " button clicked");
         this.props.cb();
     }
+
     render() {
         return <button onClick={this.handleClick}>{this.props.title}</button>
     }
@@ -98,6 +106,7 @@ class App extends Component {
         this.createPortion = this.createPortion.bind(this);
         this.createMeal = this.createMeal.bind(this);
         this.fetchMealsForPerson = this.fetchMealsForPerson.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -312,6 +321,10 @@ class App extends Component {
         })
     }
 
+    handleLogout = () => {
+        // empty userId logs out
+        this.handleChangeUserById("")
+    }
     handleChangeUserById = (userId) => {
         // Called when the Login button is clicked
         // Empty userId logs the user out
@@ -366,6 +379,7 @@ class App extends Component {
         })
         this.setState({controls: controls})
     }
+
     componentDidMount() {
         // Page building starts here, when the view is opened in the browser
         this.initApp()
@@ -382,8 +396,9 @@ class App extends Component {
             personElement = <AddPersonButton cb={this.actionPostUser}/>
         } else {
             // Logged in, show all Person related fields
-            personElement = <LoggedInUser id={this.state.person.id}/>
-            fetchMealRecordsForPersonButton = <CalorieButton title="Fetch Consumed Meals" cb={this.fetchMealsForPerson}/>
+            personElement = <LoggedInUser id={this.state.person.id} cb={this.handleLogout}/>
+            fetchMealRecordsForPersonButton =
+                <CalorieButton title="Fetch Consumed Meals" cb={this.fetchMealsForPerson}/>
             createMealRecordButton = <MealRecordDialog cb={this.actionPostMealrecord}/>
         }
 
