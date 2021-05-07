@@ -27,7 +27,10 @@ def app():
     app = create_app(config)
 
     with app.app_context():
+        db.reflect()
+        db.drop_all()
         db.create_all()
+
 
     yield app
     db.session.remove()

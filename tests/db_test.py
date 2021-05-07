@@ -25,6 +25,10 @@ def app():
     app = create_app(config)
 
     with app.app_context():
+        # First empty the prepopulated db
+        db.reflect()
+        db.drop_all()
+        # create tables
         db.create_all()
 
     yield app
