@@ -76,20 +76,13 @@ def db_load_example_data(db):
     m3.amount = 1
     m3.timestamp = datetime.datetime(2020, 1, 31, 13, 14, 31)
 
-    db.session.add(person)
-    db.session.add(portion1)
-    db.session.add(portion2)
-    db.session.add(portion3)
-    db.session.add(portion4)
-    db.session.add(portion5)
-    db.session.add(meal1)
-    db.session.add(meal2)
-    db.session.add(mp1)
-    db.session.add(mp2)
-    db.session.add(mp3)
-    db.session.add(mp4)
-    db.session.add(mp5)
-    db.session.add(m1)
-    db.session.add(m2)
-    db.session.add(m3)
-    db.session.commit()
+    entities = [person, portion1, portion2, portion3, portion4, portion5,
+                meal1, meal2, mp1, mp2, mp3, mp4, mp5, m1, m2, m3]
+
+    fetched = Person.query.filter(Person.id == person.id).first()
+    if fetched is None:
+        for i in entities:
+            db.session.add(i)
+        db.session.commit()
+    else:
+        return
