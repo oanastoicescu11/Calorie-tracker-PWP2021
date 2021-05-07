@@ -13,7 +13,7 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 
 prerequisite: Docker environment available
 
-1. Build the docker pwp-tests package
+1. Build the pwp-tests Docker image 
 
 ```docker build . -f Dockerfile-tests --tag pwp-tests:1.0```
 
@@ -84,7 +84,7 @@ prerequisite: **python3 installed** (tested on: Windows 10 Home)
 
 prerequisite: Docker environment available
 
-1. Build the docker pwp package
+1. Build the pwp Docker image 
 
 ```docker build . --tag pwp:1.0```
 
