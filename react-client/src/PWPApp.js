@@ -286,7 +286,8 @@ class PWPApp extends Component {
             alert("Logging out...");
             this.setState({
                 loggedIn: false,
-                person: null
+                person: null,
+                personMealRecordsJson: null
             })
         }
     }
@@ -331,9 +332,11 @@ class PWPApp extends Component {
         })
         this.setState({controls: controls})
     }
+
     promptHelp() {
         alert("HINT: Login as a '123' to view prepopulated data")
     }
+
     componentDidMount() {
         // Page building starts here, when the view is opened in the browser
         this.initApp()
@@ -384,33 +387,33 @@ class PWPApp extends Component {
                         <div style={{backgroundColor: "lightblue"}}>
                             {fetchMealRecordsForPersonButton}
                         </div>
-                        <div style={{backgroundColor: "lightblue"}}>
-                            <CalorieTableComponent type="Consumed Meals" data={mealRecordsData}/>
+                        <div>
+                            <CalorieTableComponent type="Consumed Meals" data={mealRecordsData} color={"lightblue"}/>
                         </div>
-                        <div style={{backgroundColor: "lightblue"}}>
+                        <div>
                             {createMealRecordButton}
                         </div>
                     </Grid>
                     <Grid item xs={9}>
                         {/*Meals Grid*/}
-                        <div style={{backgroundColor: "orange"}}>
-                            <CalorieTableComponent type="Meals" data={mealsData}/>
+                        <div>
+                            <CalorieTableComponent type="Meals" data={mealsData} color={"orange"}/>
                         </div>
-                        <div style={{backgroundColor: "orange"}}>
-                            <MealDialog cb={this.createMeal}/>
+                        <div>
+                            <MealDialog cb={this.createMeal} color={"orange"}/>
                         </div>
                     </Grid>
                     <Grid item xs={9}>
                         {/*Portions Grid*/}
-                        <div style={{backgroundColor: "lightgreen"}}>
-                            <CalorieTableComponent type="Portions" data={portionsData}/>
+                        <div>
+                            <CalorieTableComponent type="Portions" data={portionsData} color={"lightgreen"}/>
                         </div>
-                        <div style={{backgroundColor: "lightgreen"}}>
-                            <CreatePortionDialog cb={this.createPortion}/>
+                        <div>
+                            <CreatePortionDialog cb={this.createPortion} color={"lightgreen"}/>
                         </div>
                     </Grid>
                 </Grid>
-                <CalorieButton title="Help!" cb={this.promptHelp} />
+                <CalorieButton title="Help!" cb={this.promptHelp}/>
             </div>
         )
     }

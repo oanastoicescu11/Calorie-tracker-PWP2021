@@ -60,7 +60,6 @@ const MealRecordDialog = (props) => {
                         fullWidth
                     />
                     <TextField
-                        // autoFocus
                         margin="dense"
                         id="servings"
                         label="Servings consumed"
@@ -70,11 +69,10 @@ const MealRecordDialog = (props) => {
                     />
                     <TextField
                         id="datetime-local"
-                        label="Next appointment"
+                        label="Consumption time"
                         type="datetime-local"
-                        defaultValue="2017-05-24T10:30"
+                        defaultValue="2021-05-08T10:30"
                         onChange={handleChangeDateTime}
-                        // className={classes.textField}
                         InputLabelProps={{
                             shrink: true,
                         }}
