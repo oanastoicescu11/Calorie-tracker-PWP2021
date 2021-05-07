@@ -92,7 +92,7 @@ prerequisite: Docker environment available
 
 ```docker run -d --name pwp --rm -p 5000:5000 -p 3000:3000 pwp:1.0```
 
-3. Navigate your favourite browser to http://localhost:5000/
+3. Navigate your favourite browser to http://localhost:3000/
 
 4. Stop the container
 
