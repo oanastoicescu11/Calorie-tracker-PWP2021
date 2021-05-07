@@ -57,7 +57,7 @@ const MealDialog = (props) => {
     }
     const handleChangePortionName3 = (event) => {
         console.log("changed: " + event.target.value)
-        setP1s(event.target.value)
+        setP3(event.target.value)
     }
     const handleChangePortionServings1 = (event) => {
         console.log("changed: " + event.target.value)

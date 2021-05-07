@@ -2,7 +2,7 @@ import './App.css';
 import {Component} from "react";
 import Grid from '@material-ui/core/Grid';
 import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
-import MealsTableComponent from "./components/MealsTableComponent";
+import CalorieTableComponent from "./components/CalorieTableComponent";
 import CreatePortionDialog from "./components/PortionDialog";
 import MealDialog from "./components/MealDialog";
 import MealRecordDialog from "./components/MealRecordDialog";
@@ -376,7 +376,6 @@ class App extends Component {
             createMealRecordButton = <MealRecordDialog cb={this.actionPostMealrecord}/>
         }
 
-        // TODO: Remove the check for static data from here before release
         let mealsData = []
         if (this.state.mealsJson && this.state.mealsJson.items.length > 0)
             mealsData = this.state.mealsJson.items
@@ -404,7 +403,7 @@ class App extends Component {
                             {fetchButton}
                         </div>
                         <div style={{backgroundColor: "blue"}}>
-                            <MealsTableComponent data={mealRecordsData}/>
+                            <CalorieTableComponent type="Consumed Meals" data={mealRecordsData}/>
                         </div>
                         <div style={{backgroundColor: "blue"}}>
                             {createMealRecordButton}
@@ -413,7 +412,7 @@ class App extends Component {
                     <Grid item xs={9}>
                         {/*Meals Grid*/}
                         <div style={{backgroundColor: "orange"}}>
-                            <MealsTableComponent data={mealsData}/>
+                            <CalorieTableComponent type="Meals" data={mealsData}/>
                         </div>
                         <div style={{backgroundColor: "orange"}}>
                             <MealDialog cb={this.createMeal}/>
@@ -422,7 +421,7 @@ class App extends Component {
                     <Grid item xs={9}>
                         {/*Portions Grid*/}
                         <div style={{backgroundColor: "lightgreen"}}>
-                            <MealsTableComponent data={portionsData}/>
+                            <CalorieTableComponent type="Portions" data={portionsData}/>
                         </div>
                         <div style={{backgroundColor: "lightgreen"}}>
                             <CreatePortionDialog cb={this.createPortion}/>

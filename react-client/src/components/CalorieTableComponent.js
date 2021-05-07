@@ -6,7 +6,7 @@ const RenderRow = (props) => {
     })
 }
 
-class MealsTableComponent extends Component {
+class CalorieTableComponent extends Component {
 // I found an example and copy-pasted this component here
     // and renamed it. https://reactjs.org/docs/forms.html
     // see `NameForm` on the site linked.
@@ -55,8 +55,15 @@ class MealsTableComponent extends Component {
     }
 
     render() {
+        let type = "items"
+        if (this.props.type)
+            type = this.props.type
         if (this.props.data.length > 0) {
             return (
+                <div>
+                <div>
+                    <b>{type}</b>
+                </div>
                 <div>
                     <table>
                         <thead>
@@ -67,11 +74,12 @@ class MealsTableComponent extends Component {
                         </tbody>
                     </table>
                 </div>
+                </div>
             );
         } else {
-            return <div>No meals</div>
+            return <div>No {type} found.</div>
         }
     }
 }
 
-export default MealsTableComponent;
+export default CalorieTableComponent;
