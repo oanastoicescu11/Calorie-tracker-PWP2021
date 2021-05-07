@@ -56,6 +56,7 @@ class PWPApp extends Component {
         this.createMeal = this.createMeal.bind(this);
         this.fetchMealsForPerson = this.fetchMealsForPerson.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
+        this.promptHelp = this.promptHelp.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -330,7 +331,9 @@ class PWPApp extends Component {
         })
         this.setState({controls: controls})
     }
-
+    promptHelp() {
+        alert("HINT: Login as a '123' to view prepopulated data")
+    }
     componentDidMount() {
         // Page building starts here, when the view is opened in the browser
         this.initApp()
@@ -407,6 +410,7 @@ class PWPApp extends Component {
                         </div>
                     </Grid>
                 </Grid>
+                <CalorieButton title="Help!" cb={this.promptHelp} />
             </div>
         )
     }
