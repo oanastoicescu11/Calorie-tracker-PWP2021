@@ -46,14 +46,13 @@ class CalorieButton extends Component {
 class PWPApp extends Component {
     constructor(props) {
         super(props);
-        this.personSetter = this.personSetter.bind(this);
         this.actionChangeUser = this.actionChangeUser.bind(this);
         this.actionPostUser = this.actionPostUser.bind(this);
         this.actionPostMealrecord = this.actionPostMealrecord.bind(this);
         this.fetchMeals = this.fetchMeals.bind(this);
         this.fetchPortions = this.fetchPortions.bind(this);
-        this.createPortion = this.createPortion.bind(this);
-        this.createMeal = this.createMeal.bind(this);
+        this.actionCreatePortion = this.actionCreatePortion.bind(this);
+        this.actionPostMeal = this.actionPostMeal.bind(this);
         this.fetchMealsForPerson = this.fetchMealsForPerson.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.promptHelp = this.promptHelp.bind(this);
@@ -61,36 +60,33 @@ class PWPApp extends Component {
 
     // state holds all the variables our site needs for functionality
     state = {
-        // data will have the fetched body for the GET /persons/
-        data: {},
         // person will have API URL for created person
         person: null,
         loggedIn: false,
         mealsJson: null,
         portionsJson: null,
         personMealRecordsJson: null,
-        controls: null
-    }
-    personSetter = (person) => {
-        // THIS is called when the Add Person button is clicked
-        console.log("SET STATE: " + person)
-
-        this.setState({
-            // Let's store the URL to the person
-            person: person
-        })
+        controls: null, // @controls fetched from the API Entrypoint
+        personControls: null // @controls specific to the Person
     }
 
     actionChangeUser = (userJson) => {
         console.log(userJson);
+        // Simple Map (control -> href)
+        let controls = new Map()
+        Object.keys(userJson['@controls']).forEach((it) => {
+            controls.set(it, userJson['@controls'][it]['href'])
+        })
         this.setState({
+            personControls: controls,
             loggedIn: true,
             person: userJson
         });
     }
 
     async fetchMealsForPerson() {
-        let uri = SERVER_ROOT + this.state.person['@controls']['cameta:mealrecords-by']['href']
+        // let uri = SERVER_ROOT + this.state.person['@controls']['cameta:mealrecords-by']['href']
+        let uri = SERVER_ROOT + this.state.personControls.get('cameta:mealrecords-by')
         let resp = await fetch(uri)
             .catch((err) => {
                 console.log(err)
@@ -134,7 +130,7 @@ class PWPApp extends Component {
                     console.log(resp.headers);
                 } else if (resp.status === 201) {
                     console.log(resp.headers);
-                    // TODO: (future imporovement) fetch and show a prompt of just created entity
+                    // TODO: (future improvement) fetch and show a prompt of just created entity
                     // eslint-disable-next-line no-unused-vars
                     let location = resp.headers.get('Location');
                     this.fetchMealsForPerson()
@@ -142,7 +138,7 @@ class PWPApp extends Component {
             })
     }
 
-    async createPortion(name, calories) {
+    async actionCreatePortion(name, calories) {
         let postRequestOptions = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(
@@ -196,7 +192,7 @@ class PWPApp extends Component {
         }))
     }
 
-    async createMeal(name, servings, portions) {
+    async actionPostMeal(name, servings, portions) {
         let postRequestOptions = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(
@@ -290,7 +286,8 @@ class PWPApp extends Component {
             this.setState({
                 loggedIn: false,
                 person: null,
-                personMealRecordsJson: null
+                personMealRecordsJson: null,
+                personControls: null
             })
         }
     }
@@ -403,7 +400,7 @@ class PWPApp extends Component {
                             <CalorieTableComponent type="Meals" data={mealsData} color={"orange"}/>
                         </div>
                         <div>
-                            <MealDialog cb={this.createMeal}/>
+                            <MealDialog cb={this.actionPostMeal}/>
                         </div>
                     </Grid>
                     <Grid item xs={9}>
@@ -412,7 +409,7 @@ class PWPApp extends Component {
                             <CalorieTableComponent type="Portions" data={portionsData} color={"lightgreen"}/>
                         </div>
                         <div>
-                            <CreatePortionDialog cb={this.createPortion}/>
+                            <CreatePortionDialog cb={this.actionCreatePortion}/>
                         </div>
                     </Grid>
                 </Grid>
