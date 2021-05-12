@@ -7,6 +7,12 @@
 
 __Remember to include all required documentation and HOWTOs, including how to create and populate the database, how to run and test the API, the url to the entrypoint and instructions on how to setup and run the client__
 
+## Release notes
+
+1.0.1 - Added delete Portion functionaly to the React Client
+
+1.0 - First version of the PWP
+
 ## How to run the Unit Tests in Docker:
 
 ### Linux
