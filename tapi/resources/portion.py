@@ -110,6 +110,7 @@ class PortionItem(Resource):
             for portion in Portion.query.all():
                 m = portion_to_api_portion(portion)
                 m.add_control_collection(api.url_for(PortionItem, handle=None))
+                m.add_control_delete(api.url_for(PortionItem, handle=portion.id))
                 resp['items'].append(m)
             add_control_add_portion(resp)
         else:
@@ -212,7 +213,7 @@ class PortionItem(Resource):
         )
 
     @classmethod
-    def delete(cls, handle=None):
+    def delete(cls, handle):
         portion = Portion.query.filter(Portion.id == handle).first()
         if portion is None:
             return error_404()

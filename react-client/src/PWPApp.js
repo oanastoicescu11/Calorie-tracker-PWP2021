@@ -56,6 +56,7 @@ class PWPApp extends Component {
         this.fetchMealsForPerson = this.fetchMealsForPerson.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.promptHelp = this.promptHelp.bind(this);
+        this.deletePortion = this.deletePortion.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -342,6 +343,13 @@ class PWPApp extends Component {
         this.initApp()
     }
 
+    async deletePortion(portion) {
+        let resp = await fetch(SERVER_ROOT + portion['@controls']['cameta:delete']['href'], { method: 'DELETE' })
+        if (!resp.ok)
+            alert("Unable to delete the Portion, maybe you have defined meals with the Portion included?")
+        else
+            await this.fetchPortions()
+    }
 // render() 'populates' our site with <div></div> components
 // What is returned from here, appears on the screen.
     render() {
@@ -406,7 +414,7 @@ class PWPApp extends Component {
                     <Grid item xs={9}>
                         {/*Portions Grid*/}
                         <div>
-                            <CalorieTableComponent type="Portions" data={portionsData} color={"lightgreen"}/>
+                            <CalorieTableComponent type="Portions" data={portionsData} color={"lightgreen"} cb={this.deletePortion}/>
                         </div>
                         <div>
                             <CreatePortionDialog cb={this.actionCreatePortion}/>

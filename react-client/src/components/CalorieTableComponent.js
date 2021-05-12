@@ -24,6 +24,7 @@ class CalorieTableComponent extends Component {
         this.getKeysNotActions = this.getKeysNotActions.bind(this)
         this.getHeader = this.getHeader.bind(this)
         this.getRows = this.getRows.bind(this)
+        this.edit = this.edit.bind(this)
     }
 
     getKeysNotActions() {
@@ -37,17 +38,29 @@ class CalorieTableComponent extends Component {
 
     getHeader() {
         let keys = this.getKeysNotActions();
-        return keys.map((key) => {
+        let headerKeys = keys.map((key) => {
             return <TableCell key={key}>{key.toUpperCase()}</TableCell>
         })
+        return headerKeys
+        // headerKeys.push(<TableCell key={"delete"}>{"DELETE"}</TableCell>)
+        // return headerKeys
+    }
+
+    edit(index) {
+        this.props.cb(this.props.data[index])
     }
 
     getRows() {
         let items = this.props.data;
         let keys = this.getKeysNotActions();
 
+        let editFunction = () => {};
+        // enable edit if type is Portions
+        if (this.props.type === "Portions")
+            editFunction = this.edit
+
         return items.map((row, index) => {
-            return <TableRow key={index}><RenderRow key={index} data={row} keys={keys}/></TableRow>
+                return <TableRow onClick={() => editFunction(index)} key={index}><RenderRow key={index} data={row} keys={keys}/></TableRow>
         })
     }
 
@@ -64,6 +77,8 @@ class CalorieTableComponent extends Component {
         let type = "items"
         if (this.props.type)
             type = this.props.type
+        if (this.props.type === "Portions")
+            type = this.props.type + " (delete portion by click)"
         if (this.props.data.length > 0) {
             return (
                 <div style={{backgroundColor: this.props.color}}>
