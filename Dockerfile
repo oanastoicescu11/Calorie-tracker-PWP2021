@@ -1,10 +1,4 @@
-from ubuntu:20.04
-
-ARG DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update; apt-get -y upgrade; apt-get -y autoremove
-
-RUN apt-get install -y npm python3-pip python3
+from nikolaik/python-nodejs:python3.9-nodejs16-alpine
 
 RUN mkdir /pwp
 
