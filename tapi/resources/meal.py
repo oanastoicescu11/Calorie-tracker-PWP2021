@@ -81,6 +81,7 @@ class MealItem(Resource):
             for meal in Meal.query.all():
                 m = meal_to_api_meal(meal)
                 m.add_control_collection(api.url_for(MealItem, handle=None))
+                add_control_edit_meal(m, handle=meal.id)
                 resp['items'].append(m)
             add_control_add_meal(resp)
         else:

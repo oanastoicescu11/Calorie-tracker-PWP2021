@@ -331,6 +331,18 @@ def test_meal_collection_200(app):
         assert_control(r, NS + ":add-meal", ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION)
         assert_post_control_properties(r, NS + ":add-meal")
 
+def test_meal_collection_entries_have_edit_controls(app):
+    with app.app_context():
+        # create meal for testing and put it into the db
+        meal_id = "oatmeal"
+        add_meal_to_db(meal_id)
+        # obtain test client and make request
+        client = app.test_client()
+        r = client.get(ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION, method="GET")
+        assert r.status_code == 200
+        body = json.loads(r.data)
+        # assert items have edit-meal control
+        assert body['items'][0]['@controls'][NS + ":edit-meal"]['href'] == ROUTE_ENTRYPOINT + ROUTE_MEAL_COLLECTION + body['items'][0]['id'] + '/'
 
 def test_get_meal_200(app):
     with app.app_context():
