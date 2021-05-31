@@ -57,6 +57,7 @@ class PWPApp extends Component {
         this.handleLogout = this.handleLogout.bind(this);
         this.promptHelp = this.promptHelp.bind(this);
         this.deletePortion = this.deletePortion.bind(this);
+        this.editMeal = this.editMeal.bind(this);
     }
 
     // state holds all the variables our site needs for functionality
@@ -343,13 +344,55 @@ class PWPApp extends Component {
         this.initApp()
     }
 
+    async editMeal(meal, name) {
+        console.log("EDIT MEALLLL: " + meal.id + " " + name)
+        console.log("EDIT MEALLLL: " + meal['@controls']['cameta:edit-meal']['href'])
+        console.log("FUUUUUUU: " + meal['@controls']['self']['href'])
+
+        fetch(SERVER_ROOT + meal['@controls']['self']['href'])
+            .then(response =>
+            response.json()
+                .then(data => ({
+                    data: data,
+                    status: response.status
+                })
+            )
+                .then(res => {
+                console.log(res.status, res.data)
+                    let putMeal = res.data
+                    putMeal['name'] = name
+
+                    let editUrl = putMeal['@controls']['cameta:edit-meal']['href']
+                    for (let propName in putMeal) {
+                        if (propName.startsWith('@'))
+                            delete putMeal[propName];
+                    }
+                    if (putMeal['description'] === null)
+                        putMeal['description'] = ''
+                    let putRequestOptions = {
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(putMeal),
+                        method: 'PUT'
+                    }
+                    fetch(SERVER_ROOT + editUrl, putRequestOptions)
+                        .then((resp: Response) => {
+                            if (!resp.ok)
+                                alert("Unable to rename the Meal!")
+                        }).then(_ => {
+                            this.fetchMeals();
+                    })
+            }))
+
+    }
+
     async deletePortion(portion) {
-        let resp = await fetch(SERVER_ROOT + portion['@controls']['cameta:delete']['href'], { method: 'DELETE' })
+        let resp = await fetch(SERVER_ROOT + portion['@controls']['cameta:delete']['href'], {method: 'DELETE'})
         if (!resp.ok)
             alert("Unable to delete the Portion, maybe you have defined meals with the Portion included?")
         else
             await this.fetchPortions()
     }
+
 // render() 'populates' our site with <div></div> components
 // What is returned from here, appears on the screen.
     render() {
@@ -405,7 +448,7 @@ class PWPApp extends Component {
                     <Grid item xs={9}>
                         {/*Meals Grid*/}
                         <div>
-                            <CalorieTableComponent type="Meals" data={mealsData} color={"orange"}/>
+                            <CalorieTableComponent type="Meals" data={mealsData} color={"orange"} cb={this.editMeal}/>
                         </div>
                         <div>
                             <MealDialog cb={this.actionPostMeal}/>
@@ -414,7 +457,8 @@ class PWPApp extends Component {
                     <Grid item xs={9}>
                         {/*Portions Grid*/}
                         <div>
-                            <CalorieTableComponent type="Portions" data={portionsData} color={"lightgreen"} cb={this.deletePortion}/>
+                            <CalorieTableComponent type="Portions" data={portionsData} color={"lightgreen"}
+                                                   cb={this.deletePortion}/>
                         </div>
                         <div>
                             <CreatePortionDialog cb={this.actionCreatePortion}/>

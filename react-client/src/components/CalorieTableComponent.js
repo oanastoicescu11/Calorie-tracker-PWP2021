@@ -4,6 +4,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import MealDialogEdit from "./MealDialogEdit";
+import MealDialog from "./MealDialog";
 
 const RenderRow = (props) => {
     return props.keys.map((key, index) => {
@@ -42,12 +44,11 @@ class CalorieTableComponent extends Component {
             return <TableCell key={key}>{key.toUpperCase()}</TableCell>
         })
         return headerKeys
-        // headerKeys.push(<TableCell key={"delete"}>{"DELETE"}</TableCell>)
-        // return headerKeys
     }
 
     edit(index) {
-        this.props.cb(this.props.data[index])
+        if (this.props.type !== "Meals")
+            this.props.cb(this.props.data[index])
     }
 
     getRows() {
@@ -56,11 +57,14 @@ class CalorieTableComponent extends Component {
 
         let editFunction = () => {};
         // enable edit if type is Portions
-        if (this.props.type === "Portions")
+        if (this.props.type === "Portions" || this.props.type === "Meals")
             editFunction = this.edit
 
         return items.map((row, index) => {
-                return <TableRow onClick={() => editFunction(index)} key={index}><RenderRow key={index} data={row} keys={keys}/></TableRow>
+            if (this.props.type === "Meals") {
+                row['EDIT'] = <div><MealDialogEdit meal={this.props.data[index]} cb={this.props.cb}/></div>
+            }
+            return <TableRow onClick={() => editFunction(index)} key={index}><RenderRow key={index} data={row} keys={keys}/></TableRow>
         })
     }
 
