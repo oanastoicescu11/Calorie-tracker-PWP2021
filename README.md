@@ -9,6 +9,8 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 
 ## Release notes
 
+1.0.2 - Added PUT Meal functionality to the React Client
+
 1.0.1 - Added delete Portion functionaly to the React Client
 
 1.0 - First version of the PWP
