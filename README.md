@@ -9,6 +9,8 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 
 ## Release notes
 
+1.0.3 - Added docker-compose configuration
+
 1.0.2 - Added PUT Meal functionality to the React Client
 
 1.0.1 - Added delete Portion functionaly to the React Client
@@ -21,20 +23,44 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 
 prerequisite: Docker environment available
 
-1. Build the pwp-tests Docker image 
+1. Go to the flask-server directory
+
+```cd flask-server```
+
+2. Build the pwp-tests Docker image 
 
 ```docker build . -f Dockerfile-tests --tag pwp-tests:1.0```
 
-2. Execute the tests
+3. Execute the tests
 
 ```docker run --rm pwp-tests:1.0```
 
 (Optional)
 
-3. Clean up the image from consuming storage space
+4. Clean up the image from consuming storage space
 
 ```docker image rm pwp-tests:1.0```
 
+
+## How to run the app with docker-compose
+
+prerequisite: **docker-compose installed** (tested on: Ubuntu 20.04.3 LTS)
+
+1. Build and start the service
+
+```docker-compose up```
+
+2. Try the application
+
+http://localhost:3000
+
+3. Stop the service
+
+```Ctrl+C```
+
+4. Clean up
+
+```docker-compose down --rmi all```
 
 
 ## How to prepare the Python environment and execute the unit tests:
@@ -44,21 +70,23 @@ prerequisite: Docker environment available
 
 prerequisite: **python3 installed** (tested on: Ubuntu 20.04)
 
+1. Go to the flask-server directory
 
+```cd flask-server```
 
-1. Create a new virtual environment for installation
+2. Create a new virtual environment for installation
 
 ```python3 -m venv pwp-environment```
 
-2. Switch to the newly create environment
+3. Switch to the newly create environment
 
 ```source pwp-environment/bin/activate```
 
-3. Install dependencies
+4. Install dependencies
 
 ```pip install -r requirements.txt```
 
-4. Execute unit tests
+5. Execute unit tests
 
 ```pytest```
 
@@ -68,19 +96,23 @@ prerequisite: **python3 installed** (tested on: Ubuntu 20.04)
 
 prerequisite: **python3 installed** (tested on: Windows 10 Home)
 
-1. Create a new virtual environment for installation
+1. Go to the flask-server directory
+
+```cd flask-server```
+
+2. Create a new virtual environment for installation
 
 ```python -m venv pwp-environment```
 
-2. Switch to the newly create environment
+3. Switch to the newly create environment
 
 ```pwp-environment\Scripts\activate.bat```
 
-3. Install dependencies
+4. Install dependencies
 
 ```pip install -r requirements.txt```
 
-4. Execute unit tests
+5. Execute unit tests
 
 ```pytest```
 
@@ -92,20 +124,24 @@ prerequisite: **python3 installed** (tested on: Windows 10 Home)
 
 prerequisite: Docker environment available
 
-1. Build the pwp Docker image 
+1. Go to the flask-server directory
+
+```cd flask-server```
+
+2. Build the pwp Docker image 
 
 ```docker build . --tag pwp:1.0```
 
-2. Start the container
+3. Start the container
 
 ```docker run -d --name pwp --rm -p 5000:5000 -p 3000:3000 pwp:1.0```
 
-3. Navigate your favourite browser to http://localhost:3000/
+4. Navigate your favourite browser to http://localhost:3000/
 
-4. Stop the container
+5. Stop the container
 
 ```docker stop pwp```
 
-5. Clean up the image from consuming storage space
+6. Clean up the image from consuming storage space
 
 ```docker image rm pwp:1.0```
