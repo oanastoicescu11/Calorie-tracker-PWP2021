@@ -167,7 +167,7 @@ class PortionItem(Resource):
             return error_409()
 
         h = add_mason_response_header()
-        h.add('Location', api.url_for(PortionItem, handle=portion.id))
+        h.add('Location', api.url_for(PortionItem, handle=portion.id, _external=True))
 
         return Response(
             status=201,

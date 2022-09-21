@@ -168,7 +168,8 @@ class MealRecordItem(Resource):
         h.add('Location', api.url_for(MealRecordItem, meal=mealrecord.meal_id,
                                       handle=make_mealrecord_handle(mealrecord.person_id,
                                                                     mealrecord.meal_id,
-                                                                    mealrecord.timestamp)))
+                                                                    mealrecord.timestamp),
+                                      _external=True))
 
         return Response(
             status=201,

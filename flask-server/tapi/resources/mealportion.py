@@ -112,7 +112,8 @@ class MealPortionItem(Resource):
         h = add_mason_response_header()
         h.add('Location', api.url_for(MealPortionItem,
                                       meal=meal_id,
-                                      handle=make_mealportion_handle(meal_id, portion_id)))
+                                      handle=make_mealportion_handle(meal_id, portion_id),
+                                      _external=True))
 
         return Response(
             status=201,
