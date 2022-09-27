@@ -8,6 +8,8 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 
 ## Release notes
 
+1.0.5 - Updated Node dependencies and optimized docker images
+
 1.0.4 - Fixed dependency issues by updating Python and server dependencies to latest stable versions, and by fixing Node version.
 
 1.0.3 - Added docker-compose configuration
