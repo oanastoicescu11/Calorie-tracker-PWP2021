@@ -84,7 +84,7 @@ class MealPortionItem(Resource):
     @classmethod
     def post(cls, handle):
         try:
-            if request.json is None:
+            if request.content_type != "application/json" or request.json is None:
                 return error_415()
         except BadRequest:
             return error_415()
@@ -123,7 +123,7 @@ class MealPortionItem(Resource):
     @classmethod
     def put(cls, meal, handle):
         try:
-            if request.json is None:
+            if request.content_type != "application/json" or request.json is None:
                 return error_415()
         except BadRequest:
             return error_415()

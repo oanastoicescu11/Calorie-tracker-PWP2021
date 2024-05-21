@@ -468,6 +468,9 @@ def test_post_meal_415_invalid_content_type(app):
             data=json.dumps(VALID_MEAL),
             content_type="application/xml",
             method='POST')
+        print("fuuuu")
+        print(r)
+        print(r.status_code)
         assert r.status_code == 415
         assert_content_type(r)
         assert_control_profile_error(r)

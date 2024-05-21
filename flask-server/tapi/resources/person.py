@@ -82,7 +82,7 @@ class PersonItem(Resource):
     @classmethod
     def post(cls):
         try:
-            if request.json is None:
+            if request.content_type != "application/json" or request.json is None:
                 return error_415()
         except BadRequest:
             return error_415()
