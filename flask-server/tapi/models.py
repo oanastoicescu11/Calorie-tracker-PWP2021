@@ -46,7 +46,7 @@ class Meal(db.Model):
     servings = db.Column(db.Float, nullable=False)
     # Description max size 8K for simplicity reasons
     description = db.Column(db.String(8*1024), nullable=True)
-    meal_records = relationship("MealRecord", cascade="all, delete-orphan")
+    meal_records = relationship("MealRecord", back_populates="meal", cascade="all, delete-orphan")
     portions = relationship("MealPortion", cascade="all, delete-orphan")
 
 
@@ -55,7 +55,7 @@ class MealRecord(db.Model):
     person_id = db.Column(db.String(128), ForeignKey('person.id'), primary_key=True)
     meal_id = db.Column(db.String(128), ForeignKey('meal.id'), primary_key=True)
     person = relationship(Person, backref=backref("meals", cascade="all, delete-orphan"))
-    meal = relationship(Meal, backref=backref("mealrecords"))
+    meal = relationship(Meal, back_populates="meal_records")
     amount = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, primary_key=True)
 
