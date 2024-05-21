@@ -32,10 +32,10 @@ def app():
         db.create_all()
 
 
-    yield app
-    db.session.remove()
-    os.close(db_fd)
-    os.unlink(db_fname)
+        yield app
+        db.session.remove()
+        os.close(db_fd)
+        os.unlink(db_fname)
 
 
 # TODO: check if this is needed at all
