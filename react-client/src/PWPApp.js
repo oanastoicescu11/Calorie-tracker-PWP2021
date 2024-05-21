@@ -1,6 +1,7 @@
 import './App.css';
+import { styled } from '@mui/material/styles'; 
 import {Component} from "react";
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import PersonSelectionInputComponent from './components/PersonSelectionInputComponent.js'
 import CalorieTableComponent from "./components/CalorieTableComponent";
 import CreatePortionDialog from "./components/PortionDialog";
