@@ -1,4 +1,4 @@
-FROM node:16.16.0 as builder
+FROM node:18.20.3 as builder
 
 COPY . /react-client
 
@@ -8,7 +8,7 @@ RUN npm install
 
 RUN npm run-script build
 
-FROM node:16.16.0-alpine
+FROM node:18.20.3-alpine
 
 RUN npm install -g serve
 
