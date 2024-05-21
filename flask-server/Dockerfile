@@ -1,4 +1,4 @@
-FROM python:3.10.7 as builder
+from python:3.12.3-alpine as builder
 
 WORKDIR /pwp
 
@@ -16,7 +16,7 @@ COPY requirements-prod.txt .
 
 RUN pip3 install -r requirements-prod.txt
 
-FROM python:3.10.7-alpine
+FROM python:3.12.3-alpine
 
 COPY --from=builder /opt/venv /opt/venv
 
