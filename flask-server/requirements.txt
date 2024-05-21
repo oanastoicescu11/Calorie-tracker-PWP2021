@@ -1,7 +1,7 @@
 pytest==8.2.1
 sqlalchemy==1.4.51
-Flask==2.3.3
-flask_sqlalchemy==3.0.0
+Flask==3.0.3
+flask_sqlalchemy==3.0.5
 flask-restful==0.3.10
 jsonschema==4.22.0
 pytest-cov==5.0.0
