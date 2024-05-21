@@ -8,6 +8,8 @@ __Remember to include all required documentation and HOWTOs, including how to cr
 
 ## Release notes
 
+1.0.6 - Updated dependencies: Python, Flask, SqlAlchemy, Node, Material-ui
+
 1.0.5 - Updated Node dependencies and optimized docker images
 
 1.0.4 - Fixed dependency issues by updating Python and server dependencies to latest stable versions, and by fixing Node version.
@@ -47,7 +49,7 @@ prerequisite: Docker environment available
 
 ## How to run the app with docker-compose
 
-prerequisite: **docker-compose installed** (tested on: Ubuntu 20.04.3 LTS)
+prerequisite: **docker-compose installed** (tested on: Ubuntu 24.04 LTS)
 
 1. Build and start the service
 
@@ -71,7 +73,7 @@ http://localhost:3000
 ### Linux
 
 
-prerequisite: **python3 installed** (tested on: Ubuntu 20.04)
+prerequisite: **python3 installed** (tested on: Ubuntu 24.04 LTS)
 
 1. Go to the flask-server directory
 
